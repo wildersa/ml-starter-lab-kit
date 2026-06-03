@@ -5,6 +5,9 @@ import re
 from pathlib import Path
 
 
+STARTER_ROOT = Path(__file__).resolve().parent
+
+
 TASKS = {
     "1": "generic",
     "2": "supervised",
@@ -230,7 +233,8 @@ def create_readme(root: Path, values: dict[str, str], *, force: bool) -> None:
     content = '''
 # {{PROJECT_NAME}}
 
-Projeto de Machine Learning gerado com `ml-starter-kit-builder`.
+This is a generated Machine Learning project, not the starter tool itself.
+Este é um projeto de Machine Learning gerado, não a própria ferramenta starter.
 
 ## Tipo de projeto
 
@@ -1175,7 +1179,25 @@ def main() -> None:
     else:
         target_column = ask("Nome da coluna target", "target")
 
-    output_dir = Path(ask("Diretório onde criar a estrutura", ".")).resolve()
+    default_output_dir = STARTER_ROOT.parent / package_name
+    while True:
+        output_dir = Path(ask("Diretório onde criar a estrutura", str(default_output_dir))).resolve()
+
+        is_inside = False
+        try:
+            if output_dir == STARTER_ROOT or output_dir.is_relative_to(STARTER_ROOT):
+                is_inside = True
+        except (ValueError, AttributeError):
+            is_inside = False
+
+        if is_inside:
+            print("\nAVISO: O diretório de destino está dentro do repositório do starter kit.")
+            print("Warning: The selected output directory is inside the starter repository.")
+            if ask_yes_no("Deseja continuar mesmo assim? / Do you want to continue anyway?", default=False):
+                break
+        else:
+            break
+
     include_docs = ask_yes_no("Criar arquivos de documentação?", True)
     include_pyproject = ask_yes_no("Criar pyproject.toml sem dependências?", True)
 
