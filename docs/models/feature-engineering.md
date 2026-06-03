@@ -31,6 +31,30 @@ Better example:
 use purchases before the campaign to predict campaign conversion
 ```
 
+## Measuring if a feature helped
+
+Do not keep a feature only because it looks clever.
+
+Measure it.
+
+Useful checks:
+
+- compare baseline without the feature vs. baseline with the feature;
+- use the same split and the same metric;
+- inspect improvement by segment, not only global score;
+- check if the feature increases leakage risk;
+- check if the feature is stable across train, validation, and test;
+- remove features that add complexity without measurable gain.
+
+A simple feature impact table can look like this:
+
+| Feature | Metric before | Metric after | Delta | Keep? | Note |
+|---|---:|---:|---:|---|---|
+| `customer_avg_purchase_30d` | 0.712 | 0.728 | +0.016 | yes | stable gain |
+| `campaign_duration` | 0.712 | 0.801 | +0.089 | no | leakage risk |
+
+See [feature measurement](../workflows/feature-measurement.md).
+
 ## Practical rule
 
 Before adding a feature, ask:
@@ -40,3 +64,11 @@ Would I know this value at the moment of prediction?
 ```
 
 If the answer is no, the feature is probably leaking information.
+
+Then ask:
+
+```text
+Does this feature improve the metric on validation data?
+```
+
+If the answer is no, remove it or document why it stays.

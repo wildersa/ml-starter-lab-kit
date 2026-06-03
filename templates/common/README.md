@@ -13,6 +13,7 @@ These templates are intentionally lightweight and avoid external dependencies. T
 | `visualization.py.tpl` | `visualization.py` | placeholder chart helpers, no plotting dependency by default |
 | `metrics.py.tpl` | `metrics.py` | simple metrics implemented with standard library |
 | `optimization.py.tpl` | `optimization.py` | simple grid/random search scaffolding |
+| `feature_measurement.py.tpl` | `feature_measurement.py` | compare feature impact and document keep/remove decisions |
 | `notebook_factory.py.tpl` | `notebook_factory.py` | create starter `.ipynb` files using JSON |
 
 ## Dependency rule

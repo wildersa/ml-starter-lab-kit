@@ -13,6 +13,7 @@ Eles são intencionalmente leves e evitam dependências externas. A ideia é dar
 | `visualization.py.tpl` | `visualization.py` | helpers/placeholder para gráficos, sem dependência de plot por padrão |
 | `metrics.py.tpl` | `metrics.py` | métricas simples com biblioteca padrão |
 | `optimization.py.tpl` | `optimization.py` | estrutura simples para grid/random search |
+| `feature_measurement.py.tpl` | `feature_measurement.py` | comparar impacto de features e documentar decisões de manter/remover |
 | `notebook_factory.py.tpl` | `notebook_factory.py` | criação de notebooks `.ipynb` usando JSON |
 
 ## Regra de dependências
