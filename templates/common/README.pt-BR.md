@@ -6,7 +6,7 @@ Eles são intencionalmente leves e evitam dependências externas. A ideia é dar
 
 ## Templates
 
-| Template | Módulo gerado | Objetivo |
+| Template | Arquivo gerado | Objetivo |
 |---|---|---|
 | `eda.py.tpl` | `eda.py` | helpers básicos de inspeção de dados |
 | `preprocessing.py.tpl` | `preprocessing.py` | nulos, conversão de tipos, scaling simples |
@@ -15,6 +15,8 @@ Eles são intencionalmente leves e evitam dependências externas. A ideia é dar
 | `optimization.py.tpl` | `optimization.py` | estrutura simples para grid/random search |
 | `feature_measurement.py.tpl` | `feature_measurement.py` | comparar impacto de features e documentar decisões de manter/remover |
 | `notebook_factory.py.tpl` | `notebook_factory.py` | criação de notebooks `.ipynb` usando JSON |
+| `model_report.md.tpl` | `reports/model-report.md` | esqueleto simples de relatório de modelo |
+| `experiment_log.md.tpl` | `reports/experiment-log.md` | registro manual de experimentos |
 
 ## Regra de dependências
 

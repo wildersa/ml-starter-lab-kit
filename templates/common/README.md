@@ -6,7 +6,7 @@ These templates are intentionally lightweight and avoid external dependencies. T
 
 ## Templates
 
-| Template | Generated module | Purpose |
+| Template | Generated file | Purpose |
 |---|---|---|
 | `eda.py.tpl` | `eda.py` | basic dataset inspection helpers |
 | `preprocessing.py.tpl` | `preprocessing.py` | missing values, type conversion, simple scaling helpers |
@@ -15,6 +15,8 @@ These templates are intentionally lightweight and avoid external dependencies. T
 | `optimization.py.tpl` | `optimization.py` | simple grid/random search scaffolding |
 | `feature_measurement.py.tpl` | `feature_measurement.py` | compare feature impact and document keep/remove decisions |
 | `notebook_factory.py.tpl` | `notebook_factory.py` | create starter `.ipynb` files using JSON |
+| `model_report.md.tpl` | `reports/model-report.md` | simple model report skeleton |
+| `experiment_log.md.tpl` | `reports/experiment-log.md` | manual experiment tracking |
 
 ## Dependency rule
 
