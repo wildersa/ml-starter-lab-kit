@@ -19,6 +19,7 @@ workspace/
 ```
 
 See [starter and generated project layout](docs/usage/project-layout.md).
+See also a [generated project sample](examples/generated-project-sample/).
 
 ## Available project types
 

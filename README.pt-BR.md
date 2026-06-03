@@ -19,6 +19,7 @@ workspace/
 ```
 
 Veja [layout do starter e do projeto gerado](docs/usage/project-layout.pt-BR.md).
+Veja também um [exemplo de projeto gerado](examples/generated-project-sample/).
 
 ## Tipos disponíveis
 
