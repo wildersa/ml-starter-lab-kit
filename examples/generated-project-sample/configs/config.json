@@ -1,0 +1,57 @@
+
+{
+  "project": {
+    "name": "Sample ML Project",
+    "package": "sample_ml_project",
+    "task": "supervised"
+  },
+  "data": {
+    "raw_path": "data/raw/dataset.csv",
+    "processed_path": "data/processed/modeling_table.csv"
+  },
+  "target": {
+    "column": "target"
+  },
+  "split": {
+    "test_size": 0.2,
+    "random_state": 42
+  },
+  "features": {
+    "drop_columns": [],
+    "calculated_features": [
+      {
+        "type": "ratio",
+        "name": "example_ratio",
+        "numerator": "col_a",
+        "denominator": "col_b",
+        "enabled": false
+      },
+      {
+        "type": "datetime_parts",
+        "column": "event_date",
+        "enabled": false
+      },
+      {
+        "type": "lag",
+        "column": "value",
+        "lags": [1, 7],
+        "groupby": null,
+        "order_by": "event_date",
+        "enabled": false
+      },
+      {
+        "type": "rolling_mean",
+        "column": "value",
+        "windows": [7, 30],
+        "groupby": null,
+        "order_by": "event_date",
+        "shift": 1,
+        "enabled": false
+      }
+    ]
+  },
+  "model": {
+    "type": "baseline",
+    "params": {}
+  }
+}
