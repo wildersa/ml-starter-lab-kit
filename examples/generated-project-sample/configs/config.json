@@ -1,7 +1,6 @@
-
 {
   "project": {
-    "name": "Sample ML Project",
+    "name": "sample_ml_project",
     "package": "sample_ml_project",
     "task": "supervised"
   },
@@ -34,7 +33,10 @@
       {
         "type": "lag",
         "column": "value",
-        "lags": [1, 7],
+        "lags": [
+          1,
+          7
+        ],
         "groupby": null,
         "order_by": "event_date",
         "enabled": false
@@ -42,7 +44,10 @@
       {
         "type": "rolling_mean",
         "column": "value",
-        "windows": [7, 30],
+        "windows": [
+          7,
+          30
+        ],
         "groupby": null,
         "order_by": "event_date",
         "shift": 1,
@@ -53,5 +58,12 @@
   "model": {
     "type": "baseline",
     "params": {}
+  },
+  "eda": {
+    "id_columns": [],
+    "date_columns": [],
+    "categorical_columns": [],
+    "numeric_columns": [],
+    "suspected_leakage_columns": []
   }
 }

@@ -48,6 +48,8 @@ Comece pelo índice de documentação:
 
 ## Filosofia
 
+- Suporte a perfis de ambiente (Safe/Modern).
+- Requisitos opcionais para ML e PyTorch (CPU/CUDA).
 - Sem framework pesado por padrão.
 - Sem dependências extras no gerador.
 - Sem adicionar libs desnecessárias ao projeto gerado.
