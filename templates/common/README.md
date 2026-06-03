@@ -15,6 +15,7 @@ These templates are intentionally lightweight and avoid external dependencies. T
 | `optimization.py.tpl` | `optimization.py` | simple grid/random search scaffolding |
 | `feature_measurement.py.tpl` | `feature_measurement.py` | compare feature impact and document keep/remove decisions |
 | `notebook_factory.py.tpl` | `notebook_factory.py` | create starter `.ipynb` files using JSON |
+| `01_eda.ipynb.tpl` | `notebooks/01_eda.ipynb` | standardized EDA notebook (located in `templates/notebooks/`) |
 | `model_report.md.tpl` | `reports/model-report.md` | simple model report skeleton |
 | `experiment_log.md.tpl` | `reports/experiment-log.md` | manual experiment tracking |
 

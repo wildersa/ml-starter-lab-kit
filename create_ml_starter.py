@@ -71,8 +71,8 @@ def render(content: str, values: dict[str, str]) -> str:
     return content
 
 
-def load_template(name: str, values: dict[str, str]) -> str:
-    template_path = Path(__file__).parent / "templates" / "common" / f"{name}.tpl"
+def load_template(name: str, values: dict[str, str], folder: str = "common") -> str:
+    template_path = Path(__file__).parent / "templates" / folder / f"{name}.tpl"
     if not template_path.exists():
         return f"# Template {name} not found.\n"
 
@@ -183,6 +183,13 @@ def create_config(root: Path, values: dict[str, str], *, force: bool) -> None:
         "model": {
             "type": "baseline",
             "params": {}
+        },
+        "eda": {
+            "id_columns": [],
+            "date_columns": [],
+            "categorical_columns": [],
+            "numeric_columns": [],
+            "suspected_leakage_columns": []
         }
     }
 
@@ -740,45 +747,12 @@ def test_add_ratio_feature():
     write_text(root / "tests/test_features.py", content, force=force)
 
 
-def create_notebook_placeholder(root: Path, *, force: bool) -> None:
-    content = {
-        "cells": [
-            {
-                "cell_type": "markdown",
-                "metadata": {},
-                "source": [
-                    "# 01 - EDA\\n",
-                    "\\n",
-                    "Notebook inicial para análise exploratória.\\n",
-                    "\\n",
-                    "Sugestões:\\n",
-                    "- tamanho da base;\\n",
-                    "- tipos das colunas;\\n",
-                    "- nulos;\\n",
-                    "- distribuição do target;\\n",
-                    "- vazamento de dados;\\n",
-                    "- outliers;\\n",
-                    "- primeiras hipóteses de features.\\n"
-                ]
-            }
-        ],
-        "metadata": {
-            "kernelspec": {
-                "display_name": "Python 3",
-                "language": "python",
-                "name": "python3"
-            },
-            "language_info": {
-                "name": "python"
-            }
-        },
-        "nbformat": 4,
-        "nbformat_minor": 5
-    }
+def create_notebook_placeholder(root: Path, values: dict[str, str], *, force: bool) -> None:
+    content = load_template("01_eda.ipynb", values, folder="notebooks")
 
     write_text(
         root / "notebooks/01_eda.ipynb",
-        json.dumps(content, indent=2, ensure_ascii=False),
+        content,
         force=force,
     )
 
@@ -1230,7 +1204,7 @@ def main() -> None:
     create_package_files(output_dir, values, force=force)
     create_optional_files(output_dir, package_name, values, optional_options, force=force)
     create_tests(output_dir, values, force=force)
-    create_notebook_placeholder(output_dir, force=force)
+    create_notebook_placeholder(output_dir, values, force=force)
 
     if include_docs:
         create_docs(output_dir, values, force=force)
