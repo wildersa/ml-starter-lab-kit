@@ -44,6 +44,7 @@ Start with the documentation hub:
 - [Checklists](docs/checklists/README.md)
 - [Common mistakes](docs/common-mistakes/README.md)
 - [Glossary](docs/glossary/README.md)
+- [Changelog](CHANGELOG.md)
 
 Portuguese quick reference: [README.pt-BR.md](README.pt-BR.md)
 
