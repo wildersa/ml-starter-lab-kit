@@ -44,6 +44,7 @@ Comece pelo índice de documentação:
 - [Checklists](docs/checklists/README.pt-BR.md)
 - [Erros comuns](docs/common-mistakes/README.pt-BR.md)
 - [Glossário](docs/glossary/README.pt-BR.md)
+- [Changelog](CHANGELOG.md)
 
 ## Filosofia
 
