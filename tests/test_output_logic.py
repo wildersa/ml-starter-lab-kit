@@ -47,6 +47,9 @@ class TestOutputLogic(unittest.TestCase):
                 str(outside_path), # output_dir (outside)
                 "y",               # include docs
                 "y",               # include pyproject
+                "1",               # Python profile (safe 3.12)
+                "y",               # ML basics
+                "1",               # Torch variant (none)
                 "n", "n", "n", "n", "n", "n", "n", "n", "n", # optionals (9)
                 "y"                # force
             ]
