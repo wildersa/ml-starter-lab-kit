@@ -68,6 +68,15 @@ def render(content: str, values: dict[str, str]) -> str:
     return content
 
 
+def load_template(name: str, values: dict[str, str]) -> str:
+    template_path = Path(__file__).parent / "templates" / "common" / f"{name}.tpl"
+    if not template_path.exists():
+        return f"# Template {name} not found.\n"
+
+    content = template_path.read_text(encoding="utf-8")
+    return render(content, values)
+
+
 def write_text(path: Path, content: str, *, force: bool) -> bool:
     if path.exists() and not force:
         return False
@@ -1089,6 +1098,47 @@ testpaths = ["tests"]
     write_text(root / "pyproject.toml", render(content, values), force=force)
 
 
+def create_optional_files(
+    root: Path,
+    package_name: str,
+    values: dict[str, str],
+    options: dict[str, bool],
+    *,
+    force: bool,
+) -> None:
+    package_path = root / "src" / package_name
+    reports_path = root / "reports"
+
+    mapping = {
+        "eda": package_path / "eda.py",
+        "preprocessing": package_path / "preprocessing.py",
+        "visualization": package_path / "visualization.py",
+        "metrics": package_path / "metrics.py",
+        "optimization": package_path / "optimization.py",
+        "feature_measurement": package_path / "feature_measurement.py",
+        "notebook_factory": package_path / "notebook_factory.py",
+        "model_report": reports_path / "model-report.md",
+        "experiment_log": reports_path / "experiment-log.md",
+    }
+
+    template_names = {
+        "eda": "eda.py",
+        "preprocessing": "preprocessing.py",
+        "visualization": "visualization.py",
+        "metrics": "metrics.py",
+        "optimization": "optimization.py",
+        "feature_measurement": "feature_measurement.py",
+        "notebook_factory": "notebook_factory.py",
+        "model_report": "model_report.md",
+        "experiment_log": "experiment_log.md",
+    }
+
+    for key, enabled in options.items():
+        if enabled and key in mapping:
+            content = load_template(template_names[key], values)
+            write_text(mapping[key], content, force=force)
+
+
 def print_summary(root: Path, values: dict[str, str]) -> None:
     print()
     print("Starter-kit criado.")
@@ -1128,6 +1178,20 @@ def main() -> None:
     output_dir = Path(ask("Diretório onde criar a estrutura", ".")).resolve()
     include_docs = ask_yes_no("Criar arquivos de documentação?", True)
     include_pyproject = ask_yes_no("Criar pyproject.toml sem dependências?", True)
+
+    print("\nArquivos opcionais (templates):")
+    optional_options = {
+        "eda": ask_yes_no("Incluir suporte a EDA?", False),
+        "preprocessing": ask_yes_no("Incluir suporte a pré-processamento?", False),
+        "metrics": ask_yes_no("Incluir métricas personalizadas?", False),
+        "optimization": ask_yes_no("Incluir scaffolding de otimização?", False),
+        "feature_measurement": ask_yes_no("Incluir medição de features?", False),
+        "visualization": ask_yes_no("Incluir suporte a visualização?", False),
+        "notebook_factory": ask_yes_no("Incluir fábrica de notebooks?", False),
+        "model_report": ask_yes_no("Incluir template de relatório do modelo?", False),
+        "experiment_log": ask_yes_no("Incluir template de log de experimentos?", False),
+    }
+
     force = ask_yes_no("Sobrescrever arquivos existentes se houver conflito?", False)
 
     values = {
@@ -1142,6 +1206,7 @@ def main() -> None:
     create_config(output_dir, values, force=force)
     create_readme(output_dir, values, force=force)
     create_package_files(output_dir, values, force=force)
+    create_optional_files(output_dir, package_name, values, optional_options, force=force)
     create_tests(output_dir, values, force=force)
     create_notebook_placeholder(output_dir, force=force)
 
