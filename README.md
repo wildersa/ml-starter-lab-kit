@@ -1,31 +1,45 @@
-# ML Starter Kit Builder
+# ML Starter Lab Kit
 
-Gerador interativo para criar uma estrutura inicial de projeto de Machine Learning.
+Interactive starter kit for small Machine Learning projects, with no extra dependencies in the generator.
 
-O gerador usa apenas biblioteca padrão do Python.  
-Não depende de Cookiecutter, Kedro, MLflow, DVC ou qualquer framework extra.
+The goal is simple: create a clean project structure and provide short, practical explanations for common ML workflows.
 
-## Uso
+## Usage
 
 ```bash
 python create_ml_starter.py
 ```
 
-## Tipos disponíveis
+## Available project types
 
 ```text
-1. generic       - estrutura genérica de ML
-2. supervised    - classificação/regressão
+1. generic       - generic ML project structure
+2. supervised    - classification/regression
 3. unsupervised  - PCA/K-Means/clustering
-4. timeseries    - séries temporais/LSTM
-5. datathon      - estrutura expandida para Fase 5/Datathon
+4. timeseries    - time series/LSTM
+5. datathon      - expanded structure for Datathon/Fase 5
 ```
 
-## Filosofia
+## Learning notes
 
-- Sem framework pesado.
-- Sem dependências extras no gerador.
-- Sem adicionar libs desnecessárias ao projeto.
-- Estrutura simples e editável.
-- `features.py` separado para features calculadas.
-- Configuração em JSON.
+Start here:
+
+- [Model overview](docs/models/README.md)
+- [Initial ML checklist](docs/models/checklist.md)
+- [Feature engineering](docs/models/feature-engineering.md)
+- [Supervised learning](docs/models/supervised.md)
+- [Unsupervised learning](docs/models/unsupervised.md)
+- [Time series and LSTM](docs/models/time-series.md)
+- [Reinforcement Learning](docs/models/reinforcement-learning.md)
+- [Multi-Armed Bandits](docs/models/bandits.md)
+
+Portuguese quick reference: [README.pt-BR.md](README.pt-BR.md)
+
+## Philosophy
+
+- No heavy framework by default.
+- No extra dependencies in the generator.
+- No unnecessary libraries added to the generated project.
+- Simple and editable structure.
+- Dedicated `features.py` for calculated features.
+- JSON-based configuration.
