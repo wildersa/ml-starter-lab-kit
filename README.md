@@ -2,13 +2,23 @@
 
 Interactive starter kit for small Machine Learning projects, with no extra dependencies in the generator.
 
-The goal is simple: create a clean project structure and provide short, practical explanations for common ML workflows.
+The goal is simple: create a clean project structure and provide short, practical explanations for common ML workflows without going deep into theory.
 
 ## Usage
 
 ```bash
 python create_ml_starter.py
 ```
+
+Recommended layout:
+
+```text
+workspace/
+├── ml-starter-lab-kit/      # starter tool
+└── my-ml-project/           # generated project
+```
+
+See [starter and generated project layout](docs/usage/project-layout.md).
 
 ## Available project types
 
@@ -20,21 +30,19 @@ python create_ml_starter.py
 5. datathon      - expanded structure for Datathon/Fase 5
 ```
 
-## Learning notes
+## Documentation
 
-Start here:
+Start with the documentation hub:
 
-- [Model overview](docs/models/README.md)
+- [Documentation index](docs/README.md)
+- [Learning paths](docs/learning-paths.md)
 - [Architecture overview](docs/architectures/README.md)
+- [Workflow guides](docs/workflows/README.md)
+- [Model overview](docs/models/README.md)
 - [Metrics overview](docs/metrics/README.md)
-- [Initial ML checklist](docs/models/checklist.md)
-- [Feature engineering](docs/models/feature-engineering.md)
-- [Supervised learning](docs/models/supervised.md)
-- [Unsupervised learning](docs/models/unsupervised.md)
-- [Time series and LSTM](docs/models/time-series.md)
-- [Image models / Computer Vision](docs/models/vision.md)
-- [Reinforcement Learning](docs/models/reinforcement-learning.md)
-- [Multi-Armed Bandits](docs/models/bandits.md)
+- [Checklists](docs/checklists/README.md)
+- [Common mistakes](docs/common-mistakes/README.md)
+- [Glossary](docs/glossary/README.md)
 
 Portuguese quick reference: [README.pt-BR.md](README.pt-BR.md)
 

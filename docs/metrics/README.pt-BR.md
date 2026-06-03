@@ -15,6 +15,12 @@ Não escolha uma métrica só porque ela é popular. Escolha porque ela combina 
 | Bandits | [Reward, regret](bandits.pt-BR.md) |
 | Visão | [F1, mAP, IoU, Dice](vision.pt-BR.md) |
 
+## Guias relacionados
+
+- [Métrica incompatível](../common-mistakes/metric-mismatch.pt-BR.md)
+- [Medição de features](../workflows/feature-measurement.pt-BR.md)
+- [Checklist antes da avaliação](../checklists/before-evaluation.pt-BR.md)
+
 ## Regra prática
 
 Uma boa métrica deve responder:

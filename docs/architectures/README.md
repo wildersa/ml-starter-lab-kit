@@ -13,12 +13,20 @@ In ML, the word layer can mean two different things:
 
 Most ML projects can have pipeline layers. Only neural network projects have neural network layers.
 
-## Start here
+## Architecture guides
 
-- [ML pipeline layers](layers.md)
-- [Basic tabular training](basic-tabular-training.md)
-- [Unsupervised learning pipeline](unsupervised-pipeline.md)
-- [Time series pipeline](time-series-pipeline.md)
-- [Image training pipeline](image-training-pipeline.md)
-- [Bandit decision pipeline](bandit-decision-pipeline.md)
-- [Basic MLOps lifecycle](mlops-lifecycle.md)
+| Guide | Use for |
+|---|---|
+| [ML pipeline layers](layers.md) | understanding common ML project layers |
+| [Basic tabular training](basic-tabular-training.md) | supervised tabular projects |
+| [Unsupervised learning pipeline](unsupervised-pipeline.md) | PCA/K-Means/clustering projects |
+| [Time series pipeline](time-series-pipeline.md) | forecasting and temporal projects |
+| [Image training pipeline](image-training-pipeline.md) | image models and fine-tuning |
+| [Bandit decision pipeline](bandit-decision-pipeline.md) | adaptive decision systems |
+| [Basic MLOps lifecycle](mlops-lifecycle.md) | training, approval, serving, monitoring |
+
+## Related sections
+
+- [Workflows](../workflows/README.md)
+- [Model overview](../models/README.md)
+- [Metrics overview](../metrics/README.md)

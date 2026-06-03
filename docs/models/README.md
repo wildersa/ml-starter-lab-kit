@@ -14,15 +14,23 @@ Before choosing a model, ask:
 4. Do decisions affect future data?
 5. What metric proves that the model helps?
 
-## Common families
+## Model families
 
-| Family | Use when | Examples |
+| Family | Use when | Start here |
 |---|---|---|
-| Supervised learning | You have input data and known answers | XGBoost, Random Forest, Logistic Regression |
-| Unsupervised learning | You do not have a target and want structure | K-Means, PCA, clustering |
-| Time series | The order of events matters | ARIMA, Prophet, LSTM, temporal features |
-| Reinforcement Learning | An agent learns by actions and rewards | Q-learning, policy gradients |
-| Bandits | You choose among options and learn from feedback | Thompson Sampling, UCB, LinUCB |
+| Supervised learning | You have input data and known answers | [Supervised learning](supervised.md) |
+| Unsupervised learning | You do not have a target and want structure | [Unsupervised learning](unsupervised.md) |
+| Time series | The order of events matters | [Time series and LSTM](time-series.md) |
+| Image models | The input is an image or visual frame | [Image models / Computer Vision](vision.md) |
+| Reinforcement Learning | An agent learns through actions and rewards | [Reinforcement Learning](reinforcement-learning.md) |
+| Bandits | You choose among options and learn from feedback | [Multi-Armed Bandits](bandits.md) |
+
+## Shared topics
+
+- [Feature engineering](feature-engineering.md)
+- [Feature measurement](../workflows/feature-measurement.md)
+- [Metrics overview](../metrics/README.md)
+- [Common mistakes](../common-mistakes/README.md)
 
 ## Shared project skeleton
 

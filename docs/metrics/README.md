@@ -15,6 +15,12 @@ Do not choose a metric only because it is popular. Choose it because it matches 
 | Bandits | [Reward, regret](bandits.md) |
 | Vision | [F1, mAP, IoU, Dice](vision.md) |
 
+## Related guides
+
+- [Metric mismatch](../common-mistakes/metric-mismatch.md)
+- [Feature measurement](../workflows/feature-measurement.md)
+- [Before evaluation checklist](../checklists/before-evaluation.md)
+
 ## Practical rule
 
 A good metric should answer:

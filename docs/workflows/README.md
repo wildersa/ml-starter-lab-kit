@@ -4,15 +4,25 @@ This folder explains common Machine Learning workflow steps in a short and pract
 
 Use it as a quick reference, not as a deep theory guide.
 
-## Available guides
+## Workflow guides
 
-- [EDA](eda.md)
-- [Preprocessing](preprocessing.md)
-- [Feature engineering](../models/feature-engineering.md)
-- [Hyperparameters](hyperparameters.md)
-- [Hyperparameter optimization](hyperparameter-optimization.md)
-- [Fine-tuning](fine-tuning.md)
-- [Notebooks](notebooks.md)
+| Guide | Use for |
+|---|---|
+| [EDA](eda.md) | first look at the dataset |
+| [Preprocessing](preprocessing.md) | missing values, encoding, scaling, type conversion |
+| [Feature engineering](../models/feature-engineering.md) | creating useful input columns |
+| [Feature measurement](feature-measurement.md) | checking if a feature actually helped |
+| [Hyperparameters](hyperparameters.md) | understanding model/training settings |
+| [Hyperparameter optimization](hyperparameter-optimization.md) | tuning without overcomplicating |
+| [Fine-tuning](fine-tuning.md) | adapting pretrained models |
+| [Notebooks](notebooks.md) | using notebooks without making them the whole project |
+
+## Related sections
+
+- [Architectures](../architectures/README.md)
+- [Metrics](../metrics/README.md)
+- [Checklists](../checklists/README.md)
+- [Common mistakes](../common-mistakes/README.md)
 
 ## Practical rule
 

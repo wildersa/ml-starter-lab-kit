@@ -13,12 +13,20 @@ Em ML, a palavra camada pode significar duas coisas diferentes:
 
 A maioria dos projetos de ML pode ter camadas de pipeline. Só projetos com redes neurais têm camadas de rede neural.
 
-## Comece por aqui
+## Guias de arquitetura
 
-- [Camadas de pipeline ML](layers.pt-BR.md)
-- [Treino tabular básico](basic-tabular-training.pt-BR.md)
-- [Pipeline não supervisionado](unsupervised-pipeline.pt-BR.md)
-- [Pipeline de série temporal](time-series-pipeline.pt-BR.md)
-- [Pipeline de treino com imagem](image-training-pipeline.pt-BR.md)
-- [Pipeline de decisão com bandit](bandit-decision-pipeline.pt-BR.md)
-- [Ciclo básico de MLOps](mlops-lifecycle.pt-BR.md)
+| Guia | Use para |
+|---|---|
+| [Camadas de pipeline ML](layers.pt-BR.md) | entender camadas comuns de projetos ML |
+| [Treino tabular básico](basic-tabular-training.pt-BR.md) | projetos tabulares supervisionados |
+| [Pipeline não supervisionado](unsupervised-pipeline.pt-BR.md) | projetos com PCA/K-Means/clusterização |
+| [Pipeline de série temporal](time-series-pipeline.pt-BR.md) | previsão e projetos temporais |
+| [Pipeline de treino com imagem](image-training-pipeline.pt-BR.md) | modelos de imagem e fine-tuning |
+| [Pipeline de decisão com bandit](bandit-decision-pipeline.pt-BR.md) | sistemas de decisão adaptativa |
+| [Ciclo básico de MLOps](mlops-lifecycle.pt-BR.md) | treino, aprovação, serviço, monitoramento |
+
+## Seções relacionadas
+
+- [Workflows](../workflows/README.pt-BR.md)
+- [Visão geral dos modelos](../models/README.pt-BR.md)
+- [Visão geral de métricas](../metrics/README.pt-BR.md)

@@ -14,15 +14,23 @@ Antes de escolher o modelo, pergunte:
 4. Minhas decisões afetam dados futuros?
 5. Qual métrica prova que o modelo ajudou?
 
-## Famílias comuns
+## Famílias de modelos
 
-| Família | Use quando | Exemplos |
+| Família | Use quando | Comece aqui |
 |---|---|---|
-| Supervisionado | Você tem dados de entrada e respostas conhecidas | XGBoost, Random Forest, Regressão Logística |
-| Não supervisionado | Você não tem target e quer descobrir estrutura | K-Means, PCA, clustering |
-| Séries temporais | A ordem dos eventos importa | ARIMA, Prophet, LSTM, features temporais |
-| Reinforcement Learning | Um agente aprende por ações e recompensas | Q-learning, policy gradients |
-| Bandits | Você escolhe opções e aprende com feedback | Thompson Sampling, UCB, LinUCB |
+| Supervisionado | Você tem dados de entrada e respostas conhecidas | [Modelos supervisionados](supervised.pt-BR.md) |
+| Não supervisionado | Você não tem target e quer descobrir estrutura | [Modelos não supervisionados](unsupervised.pt-BR.md) |
+| Séries temporais | A ordem dos eventos importa | [Séries temporais e LSTM](time-series.pt-BR.md) |
+| Modelos de imagem | A entrada é imagem ou frame visual | [Modelos de imagem / Visão Computacional](vision.pt-BR.md) |
+| Reinforcement Learning | Um agente aprende por ações e recompensas | [Reinforcement Learning](reinforcement-learning.pt-BR.md) |
+| Bandits | Você escolhe opções e aprende com feedback | [Multi-Armed Bandits](bandits.pt-BR.md) |
+
+## Tópicos compartilhados
+
+- [Feature engineering](feature-engineering.pt-BR.md)
+- [Medição de features](../workflows/feature-measurement.pt-BR.md)
+- [Visão geral de métricas](../metrics/README.pt-BR.md)
+- [Erros comuns](../common-mistakes/README.pt-BR.md)
 
 ## Esqueleto comum
 
