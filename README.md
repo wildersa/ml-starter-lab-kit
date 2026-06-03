@@ -25,11 +25,14 @@ python create_ml_starter.py
 Start here:
 
 - [Model overview](docs/models/README.md)
+- [Architecture overview](docs/architectures/README.md)
+- [Metrics overview](docs/metrics/README.md)
 - [Initial ML checklist](docs/models/checklist.md)
 - [Feature engineering](docs/models/feature-engineering.md)
 - [Supervised learning](docs/models/supervised.md)
 - [Unsupervised learning](docs/models/unsupervised.md)
 - [Time series and LSTM](docs/models/time-series.md)
+- [Image models / Computer Vision](docs/models/vision.md)
 - [Reinforcement Learning](docs/models/reinforcement-learning.md)
 - [Multi-Armed Bandits](docs/models/bandits.md)
 
