@@ -23,7 +23,7 @@ Exemplos:
 ## Fluxo típico
 
 ```text
-dados -> EDA -> escala -> redução de dimensão -> clusterização -> interpretação
+dados -> EDA -> pré-processamento -> escala -> redução de dimensão -> clusterização -> interpretação
 ```
 
 ## PCA em uma frase
@@ -33,6 +33,12 @@ PCA cria novas colunas que preservam o máximo possível da variação dos dados
 ## K-Means em uma frase
 
 K-Means separa os dados em K grupos pela distância até centros de cluster.
+
+## Nota importante de pré-processamento
+
+Scaling costuma ser importante para K-Means, PCA, KNN, DBSCAN e outras técnicas baseadas em distância/variância.
+
+Veja [pré-processamento](../workflows/preprocessing.pt-BR.md) e [métricas de clusterização](../metrics/clustering.pt-BR.md).
 
 ## Erros comuns
 

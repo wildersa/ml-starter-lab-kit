@@ -23,7 +23,7 @@ Examples:
 ## Typical workflow
 
 ```text
-data -> EDA -> scaling -> dimensionality reduction -> clustering -> interpretation
+data -> EDA -> preprocessing -> scaling -> dimensionality reduction -> clustering -> interpretation
 ```
 
 ## PCA in one sentence
@@ -33,6 +33,12 @@ PCA creates new columns that preserve as much variance as possible with fewer di
 ## K-Means in one sentence
 
 K-Means separates data into K groups by distance to cluster centers.
+
+## Important preprocessing note
+
+Scaling is usually important for K-Means, PCA, KNN, DBSCAN, and other distance/variance-based techniques.
+
+See [preprocessing](../workflows/preprocessing.md) and [clustering metrics](../metrics/clustering.md).
 
 ## Common mistakes
 
