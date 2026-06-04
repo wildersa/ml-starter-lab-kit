@@ -327,13 +327,13 @@ pip install -r requirements-dev.txt
 pip install -r requirements-notebook.txt
 ```
 
-Se o suporte a ML ou Torch foi selecionado, instale também:
+Se o suporte a ML ou Torch foi selecionado (e os arquivos foram gerados), instale também:
 
 ```bash
-# ML básico (pandas, scikit-learn, etc)
+# ML básico (se requirements-ml.txt existir)
 pip install -r requirements-ml.txt
 
-# PyTorch (ajuste conforme a versão gerada)
+# PyTorch (se requirements-torch-*.txt existir)
 pip install -r requirements-torch-*.txt
 ```
 
@@ -1283,7 +1283,7 @@ def main() -> None:
 
     if include_pyproject:
         python_version = choose_python_profile()
-        include_ml_basics = ask_yes_no("Incluir dependências básicas de ML (pandas, scikit-learn)?", True)
+        include_ml_basics = ask_yes_no("Incluir dependências básicas de ML (pandas, scikit-learn)?", False)
         torch_variant = choose_torch_variant()
 
     print("\nArquivos opcionais (templates):")
@@ -1301,13 +1301,19 @@ def main() -> None:
 
     force = ask_yes_no("Sobrescrever arquivos existentes se houver conflito?", False)
 
+    python_requires = f">={python_version}"
+    if python_version == "3.12":
+        python_requires = ">=3.12,<3.13"
+    elif python_version == "3.14":
+        python_requires = ">=3.14,<3.15"
+
     values = {
         "PROJECT_NAME": project_name,
         "PACKAGE_NAME": package_name,
         "TASK": task,
         "DATASET_PATH": dataset_path,
         "TARGET_COLUMN": target_column,
-        "PYTHON_REQUIRES": f">={python_version}",
+        "PYTHON_REQUIRES": python_requires,
     }
 
     create_dirs(output_dir, package_name, task, include_docs)

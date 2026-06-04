@@ -44,13 +44,13 @@ pip install -r requirements-dev.txt
 pip install -r requirements-notebook.txt
 ```
 
-Se o suporte a ML ou Torch foi selecionado, instale também:
+Se o suporte a ML ou Torch foi selecionado (e os arquivos foram gerados), instale também:
 
 ```bash
-# ML básico (pandas, scikit-learn, etc)
+# ML básico (se requirements-ml.txt existir)
 pip install -r requirements-ml.txt
 
-# PyTorch (ajuste conforme a versão gerada)
+# PyTorch (se requirements-torch-*.txt existir)
 pip install -r requirements-torch-*.txt
 ```
 

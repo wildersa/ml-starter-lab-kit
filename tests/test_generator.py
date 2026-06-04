@@ -184,7 +184,7 @@ class TestGenerator(unittest.TestCase):
 
         with open(self.test_dir / "pyproject.toml") as f:
             content = f.read()
-            self.assertIn('requires-python = ">=3.12"', content)
+            self.assertIn('requires-python = ">=3.12,<3.13"', content)
 
         shutil.rmtree(self.test_dir)
         os.makedirs(self.test_dir)
@@ -200,7 +200,7 @@ class TestGenerator(unittest.TestCase):
 
         with open(self.test_dir / "pyproject.toml") as f:
             content = f.read()
-            self.assertIn('requires-python = ">=3.14"', content)
+            self.assertIn('requires-python = ">=3.14,<3.15"', content)
 
     @patch('create_ml_starter.input')
     def test_torch_generation(self, mock_input):
