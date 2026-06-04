@@ -13,7 +13,13 @@ TASKS = {
     "2": "supervised",
     "3": "unsupervised",
     "4": "timeseries",
-    "5": "datathon",
+    "5": "vision",
+}
+
+
+PRESETS = {
+    "1": "none",
+    "2": "datathon",
 }
 
 
@@ -35,18 +41,33 @@ def ask_yes_no(prompt: str, default: bool = True) -> bool:
 
 def choose_task() -> str:
     print()
-    print("Tipo de projeto:")
+    print("Tipo de projeto (ML Task):")
     print("1. generic       - estrutura genérica de ML")
     print("2. supervised    - classificação/regressão")
     print("3. unsupervised  - PCA/K-Means/clustering")
     print("4. timeseries    - séries temporais/LSTM")
-    print("5. datathon      - estrutura expandida para Fase 5/Datathon")
+    print("5. vision        - classificação/detecção de imagens")
 
     while True:
         choice = ask("Escolha uma opção", "2")
         if choice in TASKS:
             return TASKS[choice]
         if choice in TASKS.values():
+            return choice
+        print("Opção inválida.")
+
+
+def choose_preset() -> str:
+    print()
+    print("Preset do projeto (Contexto):")
+    print("1. none          - sem preset específico")
+    print("2. datathon      - estrutura expandida para Datathon (Fase 5)")
+
+    while True:
+        choice = ask("Escolha uma opção", "1")
+        if choice in PRESETS:
+            return PRESETS[choice]
+        if choice in PRESETS.values():
             return choice
         print("Opção inválida.")
 
@@ -139,7 +160,7 @@ def touch_gitkeep(path: Path) -> None:
         gitkeep.write_text("", encoding="utf-8")
 
 
-def create_dirs(root: Path, package_name: str, task: str, include_docs: bool) -> None:
+def create_dirs(root: Path, package_name: str, preset: str, include_docs: bool) -> None:
     dirs = [
         "configs",
         "data/raw",
@@ -155,7 +176,7 @@ def create_dirs(root: Path, package_name: str, task: str, include_docs: bool) ->
     if include_docs:
         dirs.append("docs")
 
-    if task == "datathon":
+    if preset == "datathon":
         dirs.extend([
             "data/kaggle",
             "data/synthetic_enrichment",
@@ -171,6 +192,7 @@ def create_dirs(root: Path, package_name: str, task: str, include_docs: bool) ->
 
 def create_config(root: Path, values: dict[str, str], *, force: bool) -> None:
     task = values["TASK"]
+    preset = values.get("PRESET", "none")
 
     config: dict[str, object] = {
         "project": {
@@ -256,7 +278,7 @@ def create_config(root: Path, values: dict[str, str], *, force: bool) -> None:
             "groupby": None
         }
 
-    if task == "datathon":
+    if preset == "datathon":
         config["datathon"] = {
             "arms": [
                 "sem_oferta",
@@ -688,7 +710,7 @@ def main() -> None:
     task = config["project"]["task"]
     target_column = config["target"]["column"]
 
-    if task in {"generic", "supervised", "datathon"}:
+    if task in {"generic", "supervised", "vision"}:
         model = train_baseline_classifier(rows, target_column)
     elif task == "unsupervised":
         model = {
@@ -898,7 +920,7 @@ data/processed/*
 ''',
     }
 
-    if values["TASK"] == "datathon":
+    if values.get("PRESET") == "datathon":
         docs.update({
             "data/kaggle/README.md": '''
 # Base Kaggle
@@ -1226,6 +1248,7 @@ def print_summary(root: Path, values: dict[str, str]) -> None:
     print(f"Projeto: {values['PROJECT_NAME']}")
     print(f"Pacote: {values['PACKAGE_NAME']}")
     print(f"Tipo: {values['TASK']}")
+    print(f"Preset: {values.get('PRESET', 'none')}")
     print()
     print("Próximos passos:")
     print("1. Ajuste configs/config.json")
@@ -1247,6 +1270,7 @@ def main() -> None:
         ask("Nome do pacote Python", normalize_package_name(project_name))
     )
     task = choose_task()
+    preset = choose_preset()
 
     dataset_path = ask("Caminho do dataset", "data/raw/dataset.csv")
 
@@ -1311,12 +1335,13 @@ def main() -> None:
         "PROJECT_NAME": project_name,
         "PACKAGE_NAME": package_name,
         "TASK": task,
+        "PRESET": preset,
         "DATASET_PATH": dataset_path,
         "TARGET_COLUMN": target_column,
         "PYTHON_REQUIRES": python_requires,
     }
 
-    create_dirs(output_dir, package_name, task, include_docs)
+    create_dirs(output_dir, package_name, preset, include_docs)
     create_config(output_dir, values, force=force)
     create_readme(output_dir, values, force=force)
     create_package_files(output_dir, values, force=force)

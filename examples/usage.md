@@ -40,7 +40,8 @@ Depois adicione Keras/TensorFlow somente se for usar LSTM.
 Escolha:
 
 ```text
-task: datathon
+task: supervised (ou outro tipo real de ML)
+preset: datathon
 package: datathon_offerexp
 ```
 

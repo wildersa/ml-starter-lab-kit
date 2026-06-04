@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Replace `datathon` project type with real ML project type/preset separation.
+- Add `vision` as a first-class project type.
+- Add `preset` concept to separate ML task from delivery context.
 - Add Python environment profiles (safe 3.12, modern 3.14).
 - Add optional PyTorch requirements (CPU, CUDA 12.6, CUDA 12.8).
 - Refactor pyproject.toml and requirements generation to use templates.
