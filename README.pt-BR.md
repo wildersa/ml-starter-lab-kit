@@ -27,9 +27,11 @@ Veja também um [exemplo de projeto gerado](examples/generated-project-sample/).
 1. generic       - estrutura genérica de ML
 2. supervised    - classificação/regressão
 3. unsupervised  - PCA/K-Means/clustering
-4. timeseries    - séries temporais/LSTM
-5. datathon      - estrutura expandida para Datathon/Fase 5
+4. timeseries    - séries temporais/LSTM/previsão
+5. vision        - classificação/detecção/segmentação de imagens
 ```
+
+Datathon deve ser tratado como preset/contexto de entrega, não como família de modelo de Machine Learning.
 
 ## Documentação
 
