@@ -41,7 +41,7 @@ def main() -> None:
     task = config["project"]["task"]
     target_column = config["target"]["column"]
 
-    if task in {"generic", "supervised", "datathon"}:
+    if task in {"generic", "supervised", "vision"}:
         model = train_baseline_classifier(rows, target_column)
     elif task == "unsupervised":
         model = {

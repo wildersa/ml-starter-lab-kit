@@ -20,11 +20,12 @@ class TestGenerator(unittest.TestCase):
 
     @patch('create_ml_starter.input')
     def test_create_supervised_project(self, mock_input):
-        # 1. generic, 2. supervised, 3. unsupervised, 4. timeseries, 5. datathon
+        # 1. generic, 2. supervised, 3. unsupervised, 4. timeseries, 5. vision
         mock_input.side_effect = [
             self.project_name, # Project Name
             "", # Package Name (default)
             "2", # Task: supervised
+            "1", # Preset: none
             "data/raw/train.csv", # Dataset path
             "target", # Target column
             str(self.test_dir), # Output dir
@@ -66,6 +67,7 @@ class TestGenerator(unittest.TestCase):
             "generic_proj", # Project Name
             "generic_pkg", # Package Name
             "1", # Task: generic
+            "1", # Preset: none
             "data/raw/data.csv", # Dataset path
             "target", # Target column
             str(self.test_dir), # Output dir
@@ -89,6 +91,7 @@ class TestGenerator(unittest.TestCase):
             "opt_proj", # Project Name
             "opt_pkg", # Package Name
             "2", # Task: supervised
+            "1", # Preset: none
             "data/raw/train.csv", # Dataset path
             "target", # Target column
             str(self.test_dir), # Output dir
@@ -141,6 +144,7 @@ class TestGenerator(unittest.TestCase):
             "no_deps_proj", # Project Name
             "no_deps_pkg", # Package Name
             "1", # Task: generic
+            "1", # Preset: none
             "data/raw/data.csv", # Dataset path
             "target", # Target column
             str(self.test_dir), # Output dir
@@ -175,7 +179,7 @@ class TestGenerator(unittest.TestCase):
     def test_python_profiles(self, mock_input):
         # Test Safe Profile (3.12)
         mock_input.side_effect = [
-            "safe_proj", "safe_pkg", "1", "data/raw/data.csv", "target",
+            "safe_proj", "safe_pkg", "1", "1", "data/raw/data.csv", "target",
             str(self.test_dir), "y", "y", "1", "n", "1",
             "n", "n", "n", "n", "n", "n", "n", "n", "n", "y"
         ]
@@ -191,7 +195,7 @@ class TestGenerator(unittest.TestCase):
 
         # Test Modern Profile (3.14)
         mock_input.side_effect = [
-            "modern_proj", "modern_pkg", "1", "data/raw/data.csv", "target",
+            "modern_proj", "modern_pkg", "1", "1", "data/raw/data.csv", "target",
             str(self.test_dir), "y", "y", "2", "n", "1",
             "n", "n", "n", "n", "n", "n", "n", "n", "n", "y"
         ]
@@ -206,7 +210,7 @@ class TestGenerator(unittest.TestCase):
     def test_torch_generation(self, mock_input):
         # Test Torch CPU
         mock_input.side_effect = [
-            "torch_cpu", "torch_cpu", "1", "data/raw/data.csv", "target",
+            "torch_cpu", "torch_cpu", "1", "1", "data/raw/data.csv", "target",
             str(self.test_dir), "y", "y", "1", "n", "2",
             "n", "n", "n", "n", "n", "n", "n", "n", "n", "y"
         ]
@@ -221,7 +225,7 @@ class TestGenerator(unittest.TestCase):
 
         # Test Torch CUDA 12.8
         mock_input.side_effect = [
-            "torch_cuda", "torch_cuda", "1", "data/raw/data.csv", "target",
+            "torch_cuda", "torch_cuda", "1", "1", "data/raw/data.csv", "target",
             str(self.test_dir), "y", "y", "1", "n", "4",
             "n", "n", "n", "n", "n", "n", "n", "n", "n", "y"
         ]
@@ -231,6 +235,48 @@ class TestGenerator(unittest.TestCase):
         self.assertTrue((self.test_dir / "requirements-torch-cu128.txt").exists())
         with open(self.test_dir / "requirements-torch-cu128.txt") as f:
             self.assertIn("CUDA 12.8", f.read())
+
+    @patch('create_ml_starter.input')
+    def test_create_vision_project(self, mock_input):
+        mock_input.side_effect = [
+            "vision_proj", "vision_pkg", "5", "1", "data/raw/images.csv", "label",
+            str(self.test_dir), "y", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "y"
+        ]
+
+        with patch('sys.stdout', new=io.StringIO()):
+            create_ml_starter.main()
+
+        with open(self.test_dir / "configs/config.json") as f:
+            config = json.load(f)
+            self.assertEqual(config["project"]["task"], "vision")
+            self.assertEqual(config["target"]["column"], "label")
+
+        train_path = self.test_dir / "src/vision_pkg/train.py"
+        with open(train_path) as f:
+            content = f.read()
+            self.assertIn('"vision"', content)
+            self.assertNotIn('"datathon"', content)
+
+    @patch('create_ml_starter.input')
+    def test_datathon_preset(self, mock_input):
+        mock_input.side_effect = [
+            "dt_proj", "dt_pkg", "2", "2", "data/raw/data.csv", "target",
+            str(self.test_dir), "y", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "y"
+        ]
+
+        with patch('sys.stdout', new=io.StringIO()):
+            create_ml_starter.main()
+
+        # Check Datathon-specific folders
+        self.assertTrue((self.test_dir / "infra/azure").exists())
+        self.assertTrue((self.test_dir / "data/kaggle").exists())
+        self.assertTrue((self.test_dir / "docs/architecture-azure.md").exists())
+
+        with open(self.test_dir / "configs/config.json") as f:
+            config = json.load(f)
+            self.assertEqual(config["project"]["task"], "supervised")
+            self.assertIn("datathon", config)
+            self.assertEqual(config["datathon"]["policy_version"], "policy-demo-v0")
 
 if __name__ == "__main__":
     unittest.main()
