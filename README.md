@@ -27,9 +27,11 @@ See also a [generated project sample](examples/generated-project-sample/).
 1. generic       - generic ML project structure
 2. supervised    - classification/regression
 3. unsupervised  - PCA/K-Means/clustering
-4. timeseries    - time series/LSTM
-5. datathon      - expanded structure for Datathon/Fase 5
+4. timeseries    - time series/LSTM/forecasting
+5. vision        - image classification/detection/segmentation
 ```
+
+Datathon should be treated as a project preset or delivery context, not as a Machine Learning model family.
 
 ## Documentation
 
