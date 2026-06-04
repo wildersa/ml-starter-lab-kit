@@ -1,5 +1,36 @@
+# Python cache
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+
+# Virtual environments
 .venv/
+venv/
+env/
+ENV/
+
+# Local environment files
 .env
+.env.*
+!.env.example
+
+# Test/cache outputs
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Build/package outputs
+build/
+dist/
+*.egg-info/
+
+# Notebooks
 .ipynb_checkpoints/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
