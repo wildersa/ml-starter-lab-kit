@@ -1,8 +1,8 @@
 [project]
-name = "sample_ml_project"
+name = "{{PACKAGE_NAME}}"
 version = "0.1.0"
-description = "sample_ml_project"
-requires-python = ">=3.12,<3.13"
+description = "{{PROJECT_NAME}}"
+requires-python = "{{PYTHON_REQUIRES}}"
 
 # Intencionalmente sem dependências.
 # Adicione pandas, scikit-learn, xgboost, tensorflow, keras etc. somente quando o projeto precisar.

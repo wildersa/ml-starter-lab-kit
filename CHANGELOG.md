@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Add Python environment profiles (safe 3.12, modern 3.14).
+- Add optional PyTorch requirements (CPU, CUDA 12.6, CUDA 12.8).
+- Refactor pyproject.toml and requirements generation to use templates.
+
 - Add CHANGELOG.md and link it from the root README.
 
 ## [0.1.1]

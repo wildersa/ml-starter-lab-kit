@@ -30,6 +30,9 @@ class TestGenerator(unittest.TestCase):
             str(self.test_dir), # Output dir
             "y", # include docs
             "y", # include pyproject
+            "1", # Python profile: safe (3.12)
+            "y", # include ml basics
+            "1", # Torch variant: none
             "n", "n", "n", "n", "n", "n", "n", "n", "n", # Opcionais (9 nãos)
             "y", # force
         ]
@@ -68,6 +71,9 @@ class TestGenerator(unittest.TestCase):
             str(self.test_dir), # Output dir
             "y", # include docs
             "y", # include pyproject
+            "1", # Python profile: safe (3.12)
+            "y", # include ml basics
+            "1", # Torch variant: none
             "n", "n", "n", "n", "n", "n", "n", "n", "n", # Opcionais (9 nãos)
             "y", # force
         ]
@@ -88,6 +94,9 @@ class TestGenerator(unittest.TestCase):
             str(self.test_dir), # Output dir
             "y", # include docs
             "y", # include pyproject
+            "1", # Python profile: safe (3.12)
+            "y", # include ml basics
+            "1", # Torch variant: none
             "y", # eda
             "y", # preprocessing
             "y", # metrics
@@ -137,6 +146,9 @@ class TestGenerator(unittest.TestCase):
             str(self.test_dir), # Output dir
             "y", # include docs
             "y", # include pyproject
+            "1", # Python profile: safe (3.12)
+            "n", # include ml basics: NO
+            "1", # Torch variant: none
             "n", "n", "n", "n", "n", "n", "n", "n", "n", # Opcionais
             "y", # force
         ]
@@ -158,6 +170,67 @@ class TestGenerator(unittest.TestCase):
     def test_normalize_package_name(self):
         self.assertEqual(create_ml_starter.normalize_package_name("My Project"), "my_project")
         self.assertEqual(create_ml_starter.normalize_package_name("123-Project!"), "ml_123_project")
+
+    @patch('create_ml_starter.input')
+    def test_python_profiles(self, mock_input):
+        # Test Safe Profile (3.12)
+        mock_input.side_effect = [
+            "safe_proj", "safe_pkg", "1", "data/raw/data.csv", "target",
+            str(self.test_dir), "y", "y", "1", "n", "1",
+            "n", "n", "n", "n", "n", "n", "n", "n", "n", "y"
+        ]
+        with patch('sys.stdout', new=io.StringIO()):
+            create_ml_starter.main()
+
+        with open(self.test_dir / "pyproject.toml") as f:
+            content = f.read()
+            self.assertIn('requires-python = ">=3.12,<3.13"', content)
+
+        shutil.rmtree(self.test_dir)
+        os.makedirs(self.test_dir)
+
+        # Test Modern Profile (3.14)
+        mock_input.side_effect = [
+            "modern_proj", "modern_pkg", "1", "data/raw/data.csv", "target",
+            str(self.test_dir), "y", "y", "2", "n", "1",
+            "n", "n", "n", "n", "n", "n", "n", "n", "n", "y"
+        ]
+        with patch('sys.stdout', new=io.StringIO()):
+            create_ml_starter.main()
+
+        with open(self.test_dir / "pyproject.toml") as f:
+            content = f.read()
+            self.assertIn('requires-python = ">=3.14,<3.15"', content)
+
+    @patch('create_ml_starter.input')
+    def test_torch_generation(self, mock_input):
+        # Test Torch CPU
+        mock_input.side_effect = [
+            "torch_cpu", "torch_cpu", "1", "data/raw/data.csv", "target",
+            str(self.test_dir), "y", "y", "1", "n", "2",
+            "n", "n", "n", "n", "n", "n", "n", "n", "n", "y"
+        ]
+        with patch('sys.stdout', new=io.StringIO()):
+            create_ml_starter.main()
+
+        self.assertTrue((self.test_dir / "requirements-torch-cpu.txt").exists())
+        self.assertFalse((self.test_dir / "requirements-torch-cuda126.txt").exists())
+
+        shutil.rmtree(self.test_dir)
+        os.makedirs(self.test_dir)
+
+        # Test Torch CUDA 12.8
+        mock_input.side_effect = [
+            "torch_cuda", "torch_cuda", "1", "data/raw/data.csv", "target",
+            str(self.test_dir), "y", "y", "1", "n", "4",
+            "n", "n", "n", "n", "n", "n", "n", "n", "n", "y"
+        ]
+        with patch('sys.stdout', new=io.StringIO()):
+            create_ml_starter.main()
+
+        self.assertTrue((self.test_dir / "requirements-torch-cu128.txt").exists())
+        with open(self.test_dir / "requirements-torch-cu128.txt") as f:
+            self.assertIn("CUDA 12.8", f.read())
 
 if __name__ == "__main__":
     unittest.main()

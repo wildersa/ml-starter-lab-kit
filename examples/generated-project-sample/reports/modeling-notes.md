@@ -1,4 +1,3 @@
-
 # Notas de Modelagem
 
 ## Problema

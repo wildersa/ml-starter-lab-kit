@@ -51,6 +51,45 @@ def choose_task() -> str:
         print("Opção inválida.")
 
 
+def choose_python_profile() -> str:
+    print()
+    print("Perfil Python:")
+    print("1. safe   - Python 3.12 (estável)")
+    print("2. modern - Python 3.14 (experimental/recente)")
+
+    while True:
+        choice = ask("Escolha uma opção", "1")
+        if choice == "1" or choice == "safe":
+            return "3.12"
+        if choice == "2" or choice == "modern":
+            return "3.14"
+        print("Opção inválida.")
+
+
+def choose_torch_variant() -> str:
+    print()
+    print("Suporte a PyTorch:")
+    print("1. none     - Não incluir Torch")
+    print("2. cpu      - Torch para CPU")
+    print("3. cuda126  - Torch para CUDA 12.6")
+    print("4. cuda128  - Torch para CUDA 12.8")
+
+    mapping = {
+        "1": "none",
+        "2": "cpu",
+        "3": "cu126",
+        "4": "cu128"
+    }
+
+    while True:
+        choice = ask("Escolha uma opção", "1")
+        if choice in mapping:
+            return mapping[choice]
+        if choice in mapping.values():
+            return choice
+        print("Opção inválida.")
+
+
 def normalize_package_name(value: str) -> str:
     value = value.strip().lower().replace("-", "_").replace(" ", "_")
     value = re.sub(r"[^a-z0-9_]", "", value)
@@ -72,7 +111,11 @@ def render(content: str, values: dict[str, str]) -> str:
 
 
 def load_template(name: str, values: dict[str, str], folder: str = "common") -> str:
-    template_path = Path(__file__).parent / "templates" / folder / f"{name}.tpl"
+    if name.endswith(".tpl"):
+        template_path = Path(__file__).parent / "templates" / folder / name
+    else:
+        template_path = Path(__file__).parent / "templates" / folder / f"{name}.tpl"
+
     if not template_path.exists():
         return f"# Template {name} not found.\n"
 
@@ -258,6 +301,53 @@ src/{{PACKAGE_NAME}}/ código principal
 models/              modelos treinados
 reports/             métricas, figuras e relatórios
 tests/               testes mínimos
+```
+
+## Ambiente e Requisitos
+
+Este projeto utiliza arquivos de requisitos para gerenciar o ambiente local.
+
+```bash
+# Criar ambiente virtual
+python -m venv .venv
+
+# Ativar ambiente (Linux/macOS)
+source .venv/bin/activate
+
+# Ativar ambiente (Windows)
+.venv\\Scripts\\activate
+
+# Instalar dependências básicas e o próprio pacote em modo editável
+pip install -r requirements.txt
+
+# Para desenvolvimento e testes
+pip install -r requirements-dev.txt
+
+# Para notebooks
+pip install -r requirements-notebook.txt
+```
+
+Se o suporte a ML ou Torch foi selecionado (e os arquivos foram gerados), instale também:
+
+```bash
+# ML básico (se requirements-ml.txt existir)
+pip install -r requirements-ml.txt
+
+# PyTorch (se requirements-torch-*.txt existir)
+pip install -r requirements-torch-*.txt
+```
+
+> **Nota sobre CUDA**: Instalações CUDA podem exigir o index de wheel correto do PyTorch e compatibilidade de driver local.
+> Verifique em: [pytorch.org](https://pytorch.org/get-started/locally/)
+
+### Validação de ambiente
+
+```bash
+# Validar se o pacote está instalado corretamente
+python -c "import {{PACKAGE_NAME}}; print('Pacote {{PACKAGE_NAME}} pronto')"
+
+# Validar PyTorch e CUDA (se instalado)
+python -c "import torch; print(f'Torch {torch.__version__} disponível. CUDA: {torch.cuda.is_available()}')"
 ```
 
 ## Fluxo sugerido
@@ -1059,21 +1149,33 @@ evt_001,conversion,0,7
 
 
 def create_pyproject(root: Path, values: dict[str, str], *, force: bool) -> None:
-    content = '''
-[project]
-name = "{{PACKAGE_NAME}}"
-version = "0.1.0"
-description = "{{PROJECT_NAME}}"
-requires-python = ">=3.11"
+    content = load_template("pyproject.toml", values, folder="env")
+    write_text(root / "pyproject.toml", content, force=force)
 
-# Intencionalmente sem dependências.
-# Adicione pandas, scikit-learn, xgboost, tensorflow, keras etc. somente quando o projeto precisar.
 
-[tool.pytest.ini_options]
-pythonpath = ["."]
-testpaths = ["tests"]
-'''
-    write_text(root / "pyproject.toml", render(content, values), force=force)
+def create_env_files(
+    root: Path,
+    values: dict[str, str],
+    include_ml_basics: bool,
+    torch_variant: str,
+    *,
+    force: bool,
+) -> None:
+    files_to_create = [
+        "requirements.txt",
+        "requirements-dev.txt",
+        "requirements-notebook.txt",
+    ]
+
+    if include_ml_basics:
+        files_to_create.append("requirements-ml.txt")
+
+    if torch_variant != "none":
+        files_to_create.append(f"requirements-torch-{torch_variant}.txt")
+
+    for filename in files_to_create:
+        content = load_template(filename, values, folder="env")
+        write_text(root / filename, content, force=force)
 
 
 def create_optional_files(
@@ -1173,7 +1275,16 @@ def main() -> None:
             break
 
     include_docs = ask_yes_no("Criar arquivos de documentação?", True)
-    include_pyproject = ask_yes_no("Criar pyproject.toml sem dependências?", True)
+    include_pyproject = ask_yes_no("Criar pyproject.toml e arquivos de ambiente?", True)
+
+    python_version = "3.11"
+    torch_variant = "none"
+    include_ml_basics = False
+
+    if include_pyproject:
+        python_version = choose_python_profile()
+        include_ml_basics = ask_yes_no("Incluir dependências básicas de ML (pandas, scikit-learn)?", False)
+        torch_variant = choose_torch_variant()
 
     print("\nArquivos opcionais (templates):")
     optional_options = {
@@ -1190,12 +1301,19 @@ def main() -> None:
 
     force = ask_yes_no("Sobrescrever arquivos existentes se houver conflito?", False)
 
+    python_requires = f">={python_version}"
+    if python_version == "3.12":
+        python_requires = ">=3.12,<3.13"
+    elif python_version == "3.14":
+        python_requires = ">=3.14,<3.15"
+
     values = {
         "PROJECT_NAME": project_name,
         "PACKAGE_NAME": package_name,
         "TASK": task,
         "DATASET_PATH": dataset_path,
         "TARGET_COLUMN": target_column,
+        "PYTHON_REQUIRES": python_requires,
     }
 
     create_dirs(output_dir, package_name, task, include_docs)
@@ -1211,6 +1329,13 @@ def main() -> None:
 
     if include_pyproject:
         create_pyproject(output_dir, values, force=force)
+        create_env_files(
+            output_dir,
+            values,
+            include_ml_basics,
+            torch_variant,
+            force=force
+        )
 
     print_summary(output_dir, values)
 

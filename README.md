@@ -52,6 +52,8 @@ Portuguese quick reference: [README.pt-BR.md](README.pt-BR.md)
 
 ## Philosophy
 
+- Support for environment profiles (Safe/Modern).
+- Optional requirements for ML and PyTorch (CPU/CUDA).
 - No heavy framework by default.
 - No extra dependencies in the generator.
 - No unnecessary libraries added to the generated project.
