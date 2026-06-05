@@ -244,6 +244,11 @@ def main() -> None:
     else:
         optional_options = get_options_by_profile(profile)
 
+    if optional_options.get("advisor") and not include_ml_basics:
+        print("\nNOTE: Dataset Advisor requires basic ML dependencies (pandas, scikit-learn).")
+        if ask_yes_no("Enable basic ML dependencies now?", True):
+            include_ml_basics = True
+
     force = ask_yes_no("Overwrite existing files if there is a conflict?", False)
 
     python_requires = f">={python_version}"
@@ -251,6 +256,8 @@ def main() -> None:
         python_requires = ">=3.12,<3.13"
     elif python_version == "3.14":
         python_requires = ">=3.14,<3.15"
+
+    advisor_cmd = f"python -m {package_name}.advisor" if optional_options.get("advisor") else ""
 
     values = {
         "PROJECT_NAME": project_name,
@@ -260,6 +267,7 @@ def main() -> None:
         "DATASET_PATH": dataset_path,
         "TARGET_COLUMN": target_column,
         "PYTHON_REQUIRES": python_requires,
+        "ADVISOR_COMMAND": advisor_cmd,
     }
 
     create_dirs(output_dir, package_name, preset, include_docs)

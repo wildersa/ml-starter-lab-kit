@@ -43,11 +43,14 @@ class TestAdvisor(unittest.TestCase):
 
     def test_advisor_execution(self):
         """Verify the advisor runs and creates artifacts if dependencies are present."""
+        is_ci = os.environ.get("GITHUB_ACTIONS") == "true"
         try:
             import pandas
             import numpy
             import sklearn
         except ImportError:
+            if is_ci:
+                self.fail("ML dependencies (pandas, numpy, sklearn) missing in CI environment.")
             self.skipTest("ML dependencies (pandas, numpy, sklearn) not found. Skipping advisor execution test.")
 
         project_name = "advisor_exec_project"
