@@ -14,6 +14,7 @@ def run_generator(
     python_profile="1",
     include_ml_basics="y",
     torch_variant="1",
+    optional_profile="4",
     optionals=None,
     force="y",
     output_dir_sequence=None
@@ -46,7 +47,10 @@ def run_generator(
         inputs.append(include_ml_basics)
         inputs.append(torch_variant)
 
-    inputs.extend(optionals)
+    inputs.append(optional_profile)
+    if optional_profile == "4" or optional_profile == "custom":
+        inputs.extend(optionals)
+
     inputs.append(force)
 
     with patch("ml_starter_generator.cli.input", side_effect=inputs):
