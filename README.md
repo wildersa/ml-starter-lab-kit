@@ -11,7 +11,7 @@ The ML Starter Lab Kit is a **project generator** that helps you jumpstart ML ex
 
 1. **Clone** this repository:
    ```bash
-   git clone https://github.com/lucasoliveira/ml-starter-lab-kit.git
+   git clone https://github.com/wildersa/ml-starter-lab-kit.git
    cd ml-starter-lab-kit
    ```
 2. **Generate** your project:
