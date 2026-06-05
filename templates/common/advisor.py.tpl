@@ -27,9 +27,10 @@ def get_dataset(config: dict[str, Any]) -> pd.DataFrame:
 
 
 class DatasetAdvisor:
-    def __init__(self, df: pd.DataFrame, target_col: str | None = None):
+    def __init__(self, df: pd.DataFrame, target_col: str | None = None, problem_profile: dict[str, str] | None = None):
         self.df = df
         self.target_col = target_col
+        self.problem_profile = problem_profile
         self.results = {
             "signals": [],
             "recommendations": [],
@@ -49,6 +50,9 @@ class DatasetAdvisor:
         self.report_sections = []
 
     def run_checks(self):
+        # 0. Problem Framing Recommendations
+        self._add_model_recommendations()
+
         # 1. Basic Stats
         n_rows = len(self.df)
         n_cols = len(self.df.columns)
@@ -201,6 +205,155 @@ class DatasetAdvisor:
                     return False
         return False
 
+    def _add_model_recommendations(self):
+        if not self.problem_profile:
+            return
+
+        goal = self.problem_profile.get("goal", "").lower()
+        priority = self.problem_profile.get("priority", "").lower()
+        error_cost = self.problem_profile.get("error_cost", "").lower()
+        size = self.problem_profile.get("dataset_size", "").lower()
+        prefer_baseline = self.problem_profile.get("prefer_baseline", "").lower() == "yes"
+
+        recommendations = []
+
+        # Determine task type from goal
+        is_classification = "category" in goal
+        is_regression = "number" in goal
+        is_unsupervised = "group" in goal or "cluster" in goal
+        is_timeseries = "forecast" in goal
+        is_vision_text = "images" in goal or "text" in goal
+
+        # Initial recommendations based on goal and priority
+        if is_classification:
+            if "interpretability" in priority:
+                recommendations.append({
+                    "model": "Logistic Regression / Decision Tree",
+                    "user_intent": f"Prioritize {priority}",
+                    "data_finding": "Tabular classification task",
+                    "why": "These models are highly interpretable and provide a clear baseline for categorical predictions.",
+                    "search": "LogisticRegression sklearn, DecisionTreeClassifier interpretability"
+                })
+            elif "imbalanced" in priority:
+                recommendations.append({
+                    "model": "Random Forest / HistGradientBoosting (with class_weight='balanced')",
+                    "user_intent": f"Handle {priority}",
+                    "data_finding": "Target imbalance expected or detected",
+                    "why": "Tree-based ensembles handle non-linear relationships well and natively support class weighting to focus on the minority class.",
+                    "search": "sklearn Random Forest class_weight, handling imbalanced data"
+                })
+            else:
+                recommendations.append({
+                    "model": "Random Forest / Gradient Boosting",
+                    "user_intent": f"Goal: {goal}",
+                    "data_finding": "General tabular classification",
+                    "why": "Tree-based ensembles are strong general-purpose performers for tabular classification with minimal scaling required.",
+                    "search": "RandomForestClassifier vs HistGradientBoostingClassifier"
+                })
+
+        elif is_regression:
+            if "interpretability" in priority:
+                recommendations.append({
+                    "model": "Linear Regression / Ridge / Lasso",
+                    "user_intent": f"Prioritize {priority}",
+                    "data_finding": "Tabular regression task",
+                    "why": "Linear models show clear feature coefficients, making it easy to see which variables drive the outcome.",
+                    "search": "LinearRegression sklearn, Ridge regression tutorial"
+                })
+            else:
+                recommendations.append({
+                    "model": "Random Forest / Gradient Boosting",
+                    "user_intent": f"Goal: {goal}",
+                    "data_finding": "General tabular regression",
+                    "why": "Tree-based ensembles are effective at capturing non-linear patterns in regression without complex feature engineering.",
+                    "search": "RandomForestRegressor vs HistGradientBoostingRegressor"
+                })
+
+        elif is_timeseries:
+            recommendations.append({
+                "model": "Naive Seasonal / Exponential Smoothing",
+                "user_intent": f"Forecast future values",
+                "data_finding": "Time series task detected",
+                "why": "Always start with a naive baseline for time series to measure the value added by complex models. Often hard to beat!",
+                "search": "Time series naive baseline, ExponentialSmoothing statsmodels"
+            })
+            recommendations.append({
+                "model": "Prophet / ARIMA / Random Forest (with lag features)",
+                "user_intent": f"Goal: {goal}",
+                "data_finding": "Sequential data patterns",
+                "why": "Prophet handles seasonality well; ARIMA is a statistical standard; Random Forest is a strong tabular alternative if you engineer lag features.",
+                "search": "facebook prophet tutorial, ARIMA vs Prophet, time series lag features"
+            })
+
+        elif is_unsupervised:
+            recommendations.append({
+                "model": "K-Means / HDBSCAN",
+                "user_intent": f"Group similar records",
+                "data_finding": "Clustering task",
+                "why": "K-Means is the standard baseline; HDBSCAN is better if you expect clusters of different shapes and densities.",
+                "search": "KMeans sklearn, HDBSCAN clustering tutorial"
+            })
+
+        elif is_vision_text:
+            recommendations.append({
+                "model": "Pre-trained CNN (Vision) / Transformer (Text)",
+                "user_intent": f"Goal: {goal}",
+                "data_finding": "Unstructured data (images/text)",
+                "why": "For complex data like images or text, transfer learning with pre-trained models is the modern standard for performance.",
+                "search": "pytorch transfer learning vision, huggingface transformers getting started"
+            })
+
+        # Dataset size adjustments
+        if size == "small" or len(self.df) < 100:
+            recommendations.append({
+                "model": "Cross-validation + Simple Models",
+                "user_intent": f"Dataset size: {size}",
+                "data_finding": f"Dataset has {len(self.df)} rows",
+                "why": "With small datasets, complex models are prone to overfitting. Use StratifiedKFold and prefer simpler baselines to ensure generalization.",
+                "search": "machine learning small dataset strategy, StratifiedKFold cross-validation"
+            })
+
+        # Error cost adjustments
+        if "false negative" in error_cost:
+            recommendations.append({
+                "model": "Recall-optimized Evaluation",
+                "user_intent": f"Costly error: {error_cost}",
+                "data_finding": "Intent to minimize missed cases",
+                "why": "Since false negatives are more costly, you should evaluate using Recall or PR-AUC and consider lowering the model's decision threshold.",
+                "search": "precision recall trade-off, precision_recall_curve sklearn"
+            })
+        elif "false positive" in error_cost:
+            recommendations.append({
+                "model": "Precision-optimized Evaluation",
+                "user_intent": f"Costly error: {error_cost}",
+                "data_finding": "Intent to minimize false alarms",
+                "why": "Since false positives are more costly, you should prioritize Precision and consider raising the model's decision threshold.",
+                "search": "optimizing for precision sklearn, confusion matrix false positives"
+            })
+
+        # Final Baseline suggestion
+        if prefer_baseline:
+            recommendations.append({
+                "model": "Dummy Models (Baseline)",
+                "user_intent": "Prefer simple baseline first",
+                "data_finding": "Initial experiment setup",
+                "why": "Use DummyClassifier or DummyRegressor to establish the minimum performance any 'real' model must beat.",
+                "search": "DummyClassifier sklearn, DummyRegressor baseline"
+            })
+
+        if recommendations:
+            report_section = "\n## Suggested Starting Models\n"
+            report_section += "Based on your problem framing and initial data analysis:\n\n"
+            for rec in recommendations:
+                report_section += f"### {rec['model']}\n"
+                report_section += f"- **User intent**: {rec['user_intent']}\n"
+                report_section += f"- **Data finding**: {rec['data_finding']}\n"
+                report_section += f"- **Why suggested**: {rec['why']}\n"
+                report_section += f"- **Search terms**: `{rec['search']}`\n\n"
+
+            self.report_sections.append(report_section)
+            self.results["model_recommendations"] = recommendations
+
     def _add_signal(self, title, found, recommendation, search_terms):
         self.results["signals"].append({
             "title": title,
@@ -306,6 +459,14 @@ def main():
     config = load_config()
     target_col = config.get("target", {}).get("column")
 
+    problem_profile = None
+    profile_path = project_root() / "configs/problem_profile.json"
+    if profile_path.exists():
+        try:
+            problem_profile = json.loads(profile_path.read_text(encoding="utf-8"))
+        except Exception as e:
+            print(f"Warning: Could not load problem_profile.json: {e}")
+
     try:
         df = get_dataset(config)
     except FileNotFoundError as e:
@@ -314,7 +475,7 @@ def main():
 
     print(f"Analyzing dataset with {len(df)} rows and {len(df.columns)} columns...")
 
-    advisor = DatasetAdvisor(df, target_col)
+    advisor = DatasetAdvisor(df, target_col, problem_profile)
     advisor.run_checks()
     advisor.write_reports()
     advisor.write_pipeline_code("{{PACKAGE_NAME}}")
