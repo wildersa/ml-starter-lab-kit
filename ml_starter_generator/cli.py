@@ -169,9 +169,9 @@ def print_summary(root: Path, values: dict[str, str]) -> None:
     print("2. Place your dataset in data/raw/")
     print("3. Edit src/<package>/features.py")
     print("4. Run:")
-    print(f"   python -m src.{values['PACKAGE_NAME']}.data")
-    print(f"   python -m src.{values['PACKAGE_NAME']}.train")
-    print(f"   python -m src.{values['PACKAGE_NAME']}.evaluate")
+    print(f"   python -m {values['PACKAGE_NAME']}.data")
+    print(f"   python -m {values['PACKAGE_NAME']}.train")
+    print(f"   python -m {values['PACKAGE_NAME']}.evaluate")
 
 
 def main() -> None:
