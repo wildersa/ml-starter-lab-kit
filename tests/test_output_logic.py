@@ -40,7 +40,6 @@ class TestOutputLogic(unittest.TestCase):
                 "My Project",      # project_name
                 "my_project",      # package_name
                 "2",               # task (supervised)
-                "1",               # preset (none)
                 "data.csv",        # dataset_path
                 "target",          # target_column
                 str(inside_path),  # output_dir (inside)

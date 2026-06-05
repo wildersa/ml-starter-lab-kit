@@ -31,15 +31,6 @@ See also a [generated project sample](examples/generated-project-sample/).
 5. vision        - image classification/detection/segmentation
 ```
 
-## Available presets
-
-```text
-1. none          - default structure
-2. datathon      - expanded structure for Datathon/Fase 5
-```
-
-Datathon is treated as a project preset or delivery context, not as a Machine Learning model family.
-
 ## Documentation
 
 Start with the documentation hub:
