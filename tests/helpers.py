@@ -16,6 +16,12 @@ def run_generator(
     torch_variant="1",
     optional_profile="4",
     optionals=None,
+    problem_goal=None,
+    problem_priority=None,
+    problem_error_cost=None,
+    problem_size=None,
+    problem_baseline=None,
+    problem_note=None,
     force="y",
     output_dir_sequence=None
 ):
@@ -33,6 +39,14 @@ def run_generator(
     is_unsupervised = (task == "3" or task == "unsupervised")
     if not is_unsupervised:
         inputs.append(target_column)
+
+    # Problem Framing Wizard inputs
+    inputs.append(problem_goal if problem_goal is not None else "")
+    inputs.append(problem_priority if problem_priority is not None else "")
+    inputs.append(problem_error_cost if problem_error_cost is not None else "")
+    inputs.append(problem_size if problem_size is not None else "")
+    inputs.append(problem_baseline if problem_baseline is not None else "")
+    inputs.append(problem_note if problem_note is not None else "")
 
     if output_dir_sequence:
         inputs.extend(output_dir_sequence)

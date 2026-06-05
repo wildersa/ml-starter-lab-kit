@@ -4,7 +4,12 @@ import json
 from pathlib import Path
 from .io import write_text
 
-def create_config(root: Path, values: dict[str, str], *, force: bool) -> None:
+def create_config(
+    root: Path,
+    values: dict[str, str],
+    *,
+    force: bool
+) -> None:
     task = values["TASK"]
 
     config: dict[str, object] = {
@@ -94,5 +99,18 @@ def create_config(root: Path, values: dict[str, str], *, force: bool) -> None:
     write_text(
         root / "configs/config.json",
         json.dumps(config, indent=2, ensure_ascii=False),
+        force=force,
+    )
+
+
+def create_problem_profile(
+    root: Path,
+    problem_profile: dict[str, str],
+    *,
+    force: bool
+) -> None:
+    write_text(
+        root / "configs/problem_profile.json",
+        json.dumps(problem_profile, indent=2, ensure_ascii=False),
         force=force,
     )

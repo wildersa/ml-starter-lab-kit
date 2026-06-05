@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 from .constants import STARTER_ROOT, TASKS
-from .config import create_config
+from .config import create_config, create_problem_profile
 from .scaffold import (
     create_dirs,
     create_readme,
@@ -144,6 +144,69 @@ def get_options_by_profile(profile: str) -> dict[str, bool]:
     return options
 
 
+def run_problem_framing_wizard(task: str) -> dict[str, str]:
+    print("\nProblem Framing Wizard (Optional)")
+    print("---------------------------------")
+    print("Press Enter to use defaults.")
+
+    # 1. Main goal?
+    print("\n1. Main goal?")
+    goals = {
+        "supervised": "predict a category",
+        "unsupervised": "group similar records",
+        "timeseries": "forecast future values",
+        "vision": "work with images/text",
+        "generic": "predict a category"
+    }
+    default_goal = goals.get(task, "predict a category")
+    print(f"   - predict a category")
+    print(f"   - predict a number")
+    print(f"   - group similar records")
+    print(f"   - forecast future values")
+    print(f"   - work with images/text")
+    goal = ask("Goal", default_goal)
+
+    # 2. What matters most?
+    print("\n2. What matters most?")
+    print("   - interpretability")
+    print("   - predictive performance")
+    print("   - speed/simplicity")
+    print("   - handling imbalanced classes")
+    print("   - learning/experimentation")
+    priority = ask("Priority", "learning/experimentation")
+
+    # 3. Which error is more costly?
+    print("\n3. Which error is more costly?")
+    print("   - false positive")
+    print("   - false negative")
+    print("   - both similar")
+    print("   - not sure")
+    error_cost = ask("Error cost", "not sure")
+
+    # 4. Expected dataset size?
+    print("\n4. Expected dataset size?")
+    print("   - small")
+    print("   - medium")
+    print("   - large")
+    print("   - not sure")
+    dataset_size = ask("Size", "not sure")
+
+    # 5. Prefer simple baseline first?
+    prefer_baseline = "yes" if ask_yes_no("\n5. Prefer simple baseline first?", True) else "no"
+
+    # 6. Any domain note?
+    domain_note = ask("\n6. Any domain note? (optional)", "")
+
+    return {
+        "goal": goal,
+        "priority": priority,
+        "error_cost": error_cost,
+        "dataset_size": dataset_size,
+        "prefer_baseline": prefer_baseline,
+        "domain_note": domain_note
+    }
+
+
 def normalize_package_name(value: str) -> str:
     value = value.strip().lower().replace("-", "_").replace(" ", "_")
     value = re.sub(r"[^a-z0-9_]", "", value)
@@ -194,6 +257,8 @@ def main() -> None:
         target_column = ""
     else:
         target_column = ask("Target column name", "target")
+
+    problem_profile = run_problem_framing_wizard(task)
 
     default_output_dir = STARTER_ROOT.parent / package_name
     while True:
@@ -272,6 +337,7 @@ def main() -> None:
 
     create_dirs(output_dir, package_name, preset, include_docs)
     create_config(output_dir, values, force=force)
+    create_problem_profile(output_dir, problem_profile, force=force)
     create_readme(output_dir, values, force=force)
     create_package_files(output_dir, values, force=force)
     create_optional_files(output_dir, package_name, values, optional_options, force=force)
