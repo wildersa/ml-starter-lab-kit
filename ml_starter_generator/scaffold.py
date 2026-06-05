@@ -125,6 +125,7 @@ def create_optional_files(
         "notebook_factory": package_path / "notebook_factory.py",
         "model_report": reports_path / "model-report.md",
         "experiment_log": reports_path / "experiment-log.md",
+        "advisor": package_path / "advisor.py",
     }
 
     template_names = {
@@ -137,6 +138,7 @@ def create_optional_files(
         "notebook_factory": "notebook_factory.py",
         "model_report": "model_report.md",
         "experiment_log": "experiment_log.md",
+        "advisor": "advisor.py",
     }
 
     for key, enabled in options.items():

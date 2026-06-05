@@ -17,5 +17,7 @@ jobs:
           python-version: '3.12'
       - name: Compile check
         run: python -m py_compile create_ml_starter.py
+      - name: Install dependencies
+        run: pip install pandas numpy scikit-learn
       - name: Run tests
         run: python -m unittest discover -s tests

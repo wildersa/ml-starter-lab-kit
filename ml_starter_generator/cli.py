@@ -122,6 +122,7 @@ def get_options_by_profile(profile: str) -> dict[str, bool]:
         "notebook_factory": False,
         "model_report": False,
         "experiment_log": False,
+        "advisor": False,
     }
 
     if profile == "minimal":
@@ -132,6 +133,7 @@ def get_options_by_profile(profile: str) -> dict[str, bool]:
         options["preprocessing"] = True
         options["metrics"] = True
         options["visualization"] = True
+        options["advisor"] = True
         return options
 
     if profile == "full":
@@ -237,9 +239,15 @@ def main() -> None:
             "notebook_factory": ask_yes_no("Include notebook factory?", False),
             "model_report": ask_yes_no("Include model report template?", False),
             "experiment_log": ask_yes_no("Include experiment log template?", False),
+            "advisor": ask_yes_no("Include explainable Dataset Advisor?", False),
         }
     else:
         optional_options = get_options_by_profile(profile)
+
+    if optional_options.get("advisor") and not include_ml_basics:
+        print("\nNOTE: Dataset Advisor requires basic ML dependencies (pandas, scikit-learn).")
+        if ask_yes_no("Enable basic ML dependencies now?", True):
+            include_ml_basics = True
 
     force = ask_yes_no("Overwrite existing files if there is a conflict?", False)
 
@@ -249,6 +257,8 @@ def main() -> None:
     elif python_version == "3.14":
         python_requires = ">=3.14,<3.15"
 
+    advisor_cmd = f"python -m {package_name}.advisor" if optional_options.get("advisor") else ""
+
     values = {
         "PROJECT_NAME": project_name,
         "PACKAGE_NAME": package_name,
@@ -257,6 +267,7 @@ def main() -> None:
         "DATASET_PATH": dataset_path,
         "TARGET_COLUMN": target_column,
         "PYTHON_REQUIRES": python_requires,
+        "ADVISOR_COMMAND": advisor_cmd,
     }
 
     create_dirs(output_dir, package_name, preset, include_docs)
