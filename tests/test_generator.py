@@ -5,7 +5,7 @@ import tempfile
 from pathlib import Path
 import json
 
-import create_ml_starter
+from ml_starter_generator.cli import normalize_package_name
 from tests.helpers import run_generator
 
 class TestGenerator(unittest.TestCase):
@@ -112,8 +112,8 @@ class TestGenerator(unittest.TestCase):
             self.assertNotIn("numpy =", content)
 
     def test_normalize_package_name(self):
-        self.assertEqual(create_ml_starter.normalize_package_name("My Project"), "my_project")
-        self.assertEqual(create_ml_starter.normalize_package_name("123-Project!"), "ml_123_project")
+        self.assertEqual(normalize_package_name("My Project"), "my_project")
+        self.assertEqual(normalize_package_name("123-Project!"), "ml_123_project")
 
     def test_python_profiles(self):
         # Test Safe Profile (3.12)

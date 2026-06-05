@@ -1,6 +1,6 @@
 import io
 from unittest.mock import patch
-import create_ml_starter
+from ml_starter_generator.cli import main
 
 def run_generator(
     project_name="test_project",
@@ -49,7 +49,7 @@ def run_generator(
     inputs.extend(optionals)
     inputs.append(force)
 
-    with patch("create_ml_starter.input", side_effect=inputs):
+    with patch("ml_starter_generator.cli.input", side_effect=inputs):
         with patch("sys.stdout", new=io.StringIO()) as fake_out:
-            create_ml_starter.main()
+            main()
             return fake_out.getvalue()
