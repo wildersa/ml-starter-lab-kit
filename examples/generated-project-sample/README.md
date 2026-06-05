@@ -81,7 +81,7 @@ python -c "import torch; print(f'Torch {torch.__version__} available. CUDA: {tor
 ## Suggested commands
 
 ```bash
-python -m src.sample_ml_project.data
-python -m src.sample_ml_project.train
-python -m src.sample_ml_project.evaluate
+python -m sample_ml_project.data
+python -m sample_ml_project.train
+python -m sample_ml_project.evaluate
 ```
