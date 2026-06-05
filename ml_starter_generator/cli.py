@@ -18,13 +18,17 @@ from .scaffold import (
 
 def ask(prompt: str, default: str | None = None) -> str:
     suffix = f" [{default}]" if default else ""
-    value = input(f"{prompt}{suffix}: ").strip()
+    full_prompt = f"{prompt}{suffix}: "
+    print(full_prompt, end="", flush=True)
+    value = input().strip()
     return value or (default or "")
 
 
 def ask_yes_no(prompt: str, default: bool = True) -> bool:
     default_label = "Y/n" if default else "y/N"
-    value = input(f"{prompt} [{default_label}]: ").strip().lower()
+    full_prompt = f"{prompt} [{default_label}]: "
+    print(full_prompt, end="", flush=True)
+    value = input().strip().lower()
 
     if not value:
         return default
@@ -87,6 +91,55 @@ def choose_torch_variant() -> str:
         if choice in mapping.values():
             return choice
         print("Invalid option.")
+
+
+def choose_optional_profile() -> str:
+    print()
+    print("Optional Template Profile:")
+    print("1. minimal     - no optional templates")
+    print("2. recommended - eda, preprocessing, metrics, visualization")
+    print("3. full        - all optional templates")
+    print("4. custom      - select templates individually")
+
+    while True:
+        choice = ask("Choose an option", "2")
+        if choice in {"1", "2", "3", "4"}:
+            mapping = {"1": "minimal", "2": "recommended", "3": "full", "4": "custom"}
+            return mapping[choice]
+        if choice in {"minimal", "recommended", "full", "custom"}:
+            return choice
+        print("Invalid option.")
+
+
+def get_options_by_profile(profile: str) -> dict[str, bool]:
+    options = {
+        "eda": False,
+        "preprocessing": False,
+        "metrics": False,
+        "optimization": False,
+        "feature_measurement": False,
+        "visualization": False,
+        "notebook_factory": False,
+        "model_report": False,
+        "experiment_log": False,
+    }
+
+    if profile == "minimal":
+        return options
+
+    if profile == "recommended":
+        options["eda"] = True
+        options["preprocessing"] = True
+        options["metrics"] = True
+        options["visualization"] = True
+        return options
+
+    if profile == "full":
+        for key in options:
+            options[key] = True
+        return options
+
+    return options
 
 
 def normalize_package_name(value: str) -> str:
@@ -168,21 +221,25 @@ def main() -> None:
 
     if include_pyproject:
         python_version = choose_python_profile()
-        include_ml_basics = ask_yes_no("Include basic ML dependencies (pandas, scikit-learn)?", False)
+        include_ml_basics = ask_yes_no("Include basic ML dependencies (pandas, numpy, scikit-learn, matplotlib, seaborn)?", False)
         torch_variant = choose_torch_variant()
 
     print("\nOptional files (templates):")
-    optional_options = {
-        "eda": ask_yes_no("Include EDA support?", False),
-        "preprocessing": ask_yes_no("Include preprocessing support?", False),
-        "metrics": ask_yes_no("Include custom metrics?", False),
-        "optimization": ask_yes_no("Include optimization scaffolding?", False),
-        "feature_measurement": ask_yes_no("Include feature measurement?", False),
-        "visualization": ask_yes_no("Include visualization support?", False),
-        "notebook_factory": ask_yes_no("Include notebook factory?", False),
-        "model_report": ask_yes_no("Include model report template?", False),
-        "experiment_log": ask_yes_no("Include experiment log template?", False),
-    }
+    profile = choose_optional_profile()
+    if profile == "custom":
+        optional_options = {
+            "eda": ask_yes_no("Include EDA support?", False),
+            "preprocessing": ask_yes_no("Include preprocessing support?", False),
+            "metrics": ask_yes_no("Include custom metrics?", False),
+            "optimization": ask_yes_no("Include optimization scaffolding?", False),
+            "feature_measurement": ask_yes_no("Include feature measurement?", False),
+            "visualization": ask_yes_no("Include visualization support?", False),
+            "notebook_factory": ask_yes_no("Include notebook factory?", False),
+            "model_report": ask_yes_no("Include model report template?", False),
+            "experiment_log": ask_yes_no("Include experiment log template?", False),
+        }
+    else:
+        optional_options = get_options_by_profile(profile)
 
     force = ask_yes_no("Overwrite existing files if there is a conflict?", False)
 

@@ -235,5 +235,95 @@ class TestGenerator(unittest.TestCase):
             self.assertIn("python -m cmd_pkg.evaluate", content)
             self.assertNotIn("python -m src.cmd_pkg.data", content)
 
+    def test_minimal_profile(self):
+        run_generator(
+            project_name="minimal_proj",
+            package_name="minimal_pkg",
+            task="1",
+            output_dir=self.test_dir,
+            optional_profile="1"
+        )
+
+        pkg_path = self.test_dir / "src/minimal_pkg"
+        self.assertFalse((pkg_path / "eda.py").exists())
+        self.assertFalse((pkg_path / "preprocessing.py").exists())
+        self.assertFalse((pkg_path / "visualization.py").exists())
+
+    def test_full_profile(self):
+        run_generator(
+            project_name="full_proj",
+            package_name="full_pkg",
+            task="1",
+            output_dir=self.test_dir,
+            optional_profile="3"
+        )
+
+        pkg_path = self.test_dir / "src/full_pkg"
+        reports_path = self.test_dir / "reports"
+        self.assertTrue((pkg_path / "eda.py").exists())
+        self.assertTrue((pkg_path / "preprocessing.py").exists())
+        self.assertTrue((pkg_path / "metrics.py").exists())
+        self.assertTrue((pkg_path / "optimization.py").exists())
+        self.assertTrue((pkg_path / "feature_measurement.py").exists())
+        self.assertTrue((pkg_path / "visualization.py").exists())
+        self.assertTrue((pkg_path / "notebook_factory.py").exists())
+        self.assertTrue((reports_path / "model-report.md").exists())
+        self.assertTrue((reports_path / "experiment-log.md").exists())
+
+    def test_custom_profile(self):
+        # Custom profile, selecting only eda and metrics
+        optionals = ["y", "n", "y", "n", "n", "n", "n", "n", "n"]
+        run_generator(
+            project_name="custom_proj",
+            package_name="custom_pkg",
+            task="1",
+            output_dir=self.test_dir,
+            optional_profile="4",
+            optionals=optionals
+        )
+
+        pkg_path = self.test_dir / "src/custom_pkg"
+        self.assertTrue((pkg_path / "eda.py").exists())
+        self.assertTrue((pkg_path / "metrics.py").exists())
+        self.assertFalse((pkg_path / "preprocessing.py").exists())
+        self.assertFalse((pkg_path / "visualization.py").exists())
+
+    def test_recommended_profile(self):
+        run_generator(
+            project_name="rec_proj",
+            package_name="rec_pkg",
+            task="1",
+            output_dir=self.test_dir,
+            optional_profile="2"
+        )
+
+        pkg_path = self.test_dir / "src/rec_pkg"
+        reports_path = self.test_dir / "reports"
+
+        # Should generate
+        self.assertTrue((pkg_path / "eda.py").exists())
+        self.assertTrue((pkg_path / "preprocessing.py").exists())
+        self.assertTrue((pkg_path / "metrics.py").exists())
+        self.assertTrue((pkg_path / "visualization.py").exists())
+
+        # Should NOT generate
+        self.assertFalse((pkg_path / "optimization.py").exists())
+        self.assertFalse((pkg_path / "feature_measurement.py").exists())
+        self.assertFalse((pkg_path / "notebook_factory.py").exists())
+        self.assertFalse((reports_path / "model-report.md").exists())
+        self.assertFalse((reports_path / "experiment-log.md").exists())
+
+    def test_ml_dependency_prompt_text(self):
+        output = run_generator(
+            project_name="ml_prompt_proj",
+            package_name="ml_prompt_pkg",
+            task="1",
+            output_dir=self.test_dir,
+            include_ml_basics="y"
+        )
+
+        expected_text = "Include basic ML dependencies (pandas, numpy, scikit-learn, matplotlib, seaborn)?"
+        self.assertIn(expected_text, output)
+
 if __name__ == "__main__":
     unittest.main()
