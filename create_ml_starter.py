@@ -30,70 +30,70 @@ def ask(prompt: str, default: str | None = None) -> str:
 
 
 def ask_yes_no(prompt: str, default: bool = True) -> bool:
-    default_label = "S/n" if default else "s/N"
+    default_label = "Y/n" if default else "y/N"
     value = input(f"{prompt} [{default_label}]: ").strip().lower()
 
     if not value:
         return default
 
-    return value in {"s", "sim", "y", "yes"}
+    return value in {"y", "yes"}
 
 
 def choose_task() -> str:
     print()
-    print("Tipo de projeto (ML Task):")
-    print("1. generic       - estrutura genérica de ML")
-    print("2. supervised    - classificação/regressão")
+    print("Project Type (ML Task):")
+    print("1. generic       - generic ML structure")
+    print("2. supervised    - classification/regression")
     print("3. unsupervised  - PCA/K-Means/clustering")
-    print("4. timeseries    - séries temporais/LSTM")
-    print("5. vision        - classificação/detecção de imagens")
+    print("4. timeseries    - time series/LSTM")
+    print("5. vision        - image classification/detection")
 
     while True:
-        choice = ask("Escolha uma opção", "2")
+        choice = ask("Choose an option", "2")
         if choice in TASKS:
             return TASKS[choice]
         if choice in TASKS.values():
             return choice
-        print("Opção inválida.")
+        print("Invalid option.")
 
 
 def choose_preset() -> str:
     print()
-    print("Preset do projeto (Contexto):")
-    print("1. none          - sem preset específico")
-    print("2. datathon      - estrutura expandida para Datathon (Fase 5)")
+    print("Project Preset (Context):")
+    print("1. none          - no specific preset")
+    print("2. datathon      - expanded structure for Datathon (Phase 5)")
 
     while True:
-        choice = ask("Escolha uma opção", "1")
+        choice = ask("Choose an option", "1")
         if choice in PRESETS:
             return PRESETS[choice]
         if choice in PRESETS.values():
             return choice
-        print("Opção inválida.")
+        print("Invalid option.")
 
 
 def choose_python_profile() -> str:
     print()
-    print("Perfil Python:")
-    print("1. safe   - Python 3.12 (estável)")
-    print("2. modern - Python 3.14 (experimental/recente)")
+    print("Python Profile:")
+    print("1. safe   - Python 3.12 (stable)")
+    print("2. modern - Python 3.14 (experimental/recent)")
 
     while True:
-        choice = ask("Escolha uma opção", "1")
+        choice = ask("Choose an option", "1")
         if choice == "1" or choice == "safe":
             return "3.12"
         if choice == "2" or choice == "modern":
             return "3.14"
-        print("Opção inválida.")
+        print("Invalid option.")
 
 
 def choose_torch_variant() -> str:
     print()
-    print("Suporte a PyTorch:")
-    print("1. none     - Não incluir Torch")
-    print("2. cpu      - Torch para CPU")
-    print("3. cuda126  - Torch para CUDA 12.6")
-    print("4. cuda128  - Torch para CUDA 12.8")
+    print("PyTorch Support:")
+    print("1. none     - Do not include Torch")
+    print("2. cpu      - Torch for CPU")
+    print("3. cuda126  - Torch for CUDA 12.6")
+    print("4. cuda128  - Torch for CUDA 12.8")
 
     mapping = {
         "1": "none",
@@ -103,12 +103,12 @@ def choose_torch_variant() -> str:
     }
 
     while True:
-        choice = ask("Escolha uma opção", "1")
+        choice = ask("Choose an option", "1")
         if choice in mapping:
             return mapping[choice]
         if choice in mapping.values():
             return choice
-        print("Opção inválida.")
+        print("Invalid option.")
 
 
 def normalize_package_name(value: str) -> str:
@@ -150,6 +150,7 @@ def write_text(path: Path, content: str, *, force: bool) -> bool:
 
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content.lstrip(), encoding="utf-8")
+
     return True
 
 
@@ -281,9 +282,9 @@ def create_config(root: Path, values: dict[str, str], *, force: bool) -> None:
     if preset == "datathon":
         config["datathon"] = {
             "arms": [
-                "sem_oferta",
-                "educacao_financeira",
-                "simulador_credito"
+                "no_offer",
+                "financial_education",
+                "credit_simulator"
             ],
             "policy_version": "policy-demo-v0",
             "explore_rate": 0.05,
@@ -306,85 +307,84 @@ def create_readme(root: Path, values: dict[str, str], *, force: bool) -> None:
 # {{PROJECT_NAME}}
 
 This is a generated Machine Learning project, not the starter tool itself.
-Este é um projeto de Machine Learning gerado, não a própria ferramenta starter.
 
-## Tipo de projeto
+## Project type
 
 `{{TASK}}`
 
-## Estrutura
+## Structure
 
 ```text
-configs/             configurações em JSON
-data/raw/            dados originais
-data/processed/      dados tratados
-notebooks/           exploração e análise
-src/{{PACKAGE_NAME}}/ código principal
-models/              modelos treinados
-reports/             métricas, figuras e relatórios
-tests/               testes mínimos
+configs/             JSON configurations
+data/raw/            original data
+data/processed/      processed data
+notebooks/           exploration and analysis
+src/{{PACKAGE_NAME}}/ main code
+models/              trained models
+reports/             metrics, figures and reports
+tests/               minimum tests
 ```
 
-## Ambiente e Requisitos
+## Environment and Requirements
 
-Este projeto utiliza arquivos de requisitos para gerenciar o ambiente local.
+This project uses requirements files to manage the local environment.
 
 ```bash
-# Criar ambiente virtual
+# Create virtual environment
 python -m venv .venv
 
-# Ativar ambiente (Linux/macOS)
+# Activate environment (Linux/macOS)
 source .venv/bin/activate
 
-# Ativar ambiente (Windows)
+# Activate environment (Windows)
 .venv\\Scripts\\activate
 
-# Instalar dependências básicas e o próprio pacote em modo editável
+# Install basic dependencies and the package itself in editable mode
 pip install -r requirements.txt
 
-# Para desenvolvimento e testes
+# For development and testing
 pip install -r requirements-dev.txt
 
-# Para notebooks
+# For notebooks
 pip install -r requirements-notebook.txt
 ```
 
-Se o suporte a ML ou Torch foi selecionado (e os arquivos foram gerados), instale também:
+If ML or Torch support was selected (and files were generated), also install:
 
 ```bash
-# ML básico (se requirements-ml.txt existir)
+# Basic ML (if requirements-ml.txt exists)
 pip install -r requirements-ml.txt
 
-# PyTorch (se requirements-torch-*.txt existir)
+# PyTorch (if requirements-torch-*.txt exists)
 pip install -r requirements-torch-*.txt
 ```
 
-> **Nota sobre CUDA**: Instalações CUDA podem exigir o index de wheel correto do PyTorch e compatibilidade de driver local.
-> Verifique em: [pytorch.org](https://pytorch.org/get-started/locally/)
+> **Note on CUDA**: CUDA installations may require the correct PyTorch wheel index and local driver compatibility.
+> Check at: [pytorch.org](https://pytorch.org/get-started/locally/)
 
-### Validação de ambiente
+### Environment validation
 
 ```bash
-# Validar se o pacote está instalado corretamente
-python -c "import {{PACKAGE_NAME}}; print('Pacote {{PACKAGE_NAME}} pronto')"
+# Validate if the package is installed correctly
+python -c "import {{PACKAGE_NAME}}; print('Package {{PACKAGE_NAME}} ready')"
 
-# Validar PyTorch e CUDA (se instalado)
-python -c "import torch; print(f'Torch {torch.__version__} disponível. CUDA: {torch.cuda.is_available()}')"
+# Validate PyTorch and CUDA (if installed)
+python -c "import torch; print(f'Torch {torch.__version__} available. CUDA: {torch.cuda.is_available()}')"
 ```
 
-## Fluxo sugerido
+## Suggested flow
 
 ```text
-1. Coloque o dataset em data/raw/
-2. Ajuste configs/config.json
-3. Faça a EDA no notebook
-4. Edite src/{{PACKAGE_NAME}}/features.py
-5. Treine o modelo
-6. Avalie os resultados
-7. Documente limitações e próximos passos
+1. Place the dataset in data/raw/
+2. Adjust configs/config.json
+3. Perform EDA in the notebook
+4. Edit src/{{PACKAGE_NAME}}/features.py
+5. Train the model
+6. Evaluate results
+7. Document limitations and next steps
 ```
 
-## Comandos sugeridos
+## Suggested commands
 
 ```bash
 python -m src.{{PACKAGE_NAME}}.data
@@ -400,7 +400,7 @@ def create_package_files(root: Path, values: dict[str, str], *, force: bool) -> 
     base = root / "src" / package
 
     files = {
-        "__init__.py": "# Pacote principal do projeto.\n",
+        "__init__.py": "# Main package of the project.\n",
         "config.py": '''
 from __future__ import annotations
 
@@ -417,7 +417,7 @@ def load_config(path: str | Path = "configs/config.json") -> dict[str, Any]:
     config_path = project_root() / path
 
     if not config_path.exists():
-        raise FileNotFoundError(f"Config não encontrado: {config_path}")
+        raise FileNotFoundError(f"Config not found: {config_path}")
 
     return json.loads(config_path.read_text(encoding="utf-8"))
 ''',
@@ -434,7 +434,7 @@ def load_csv(path: str | Path) -> list[dict[str, str]]:
     file_path = project_root() / path
 
     if not file_path.exists():
-        raise FileNotFoundError(f"Dataset não encontrado: {file_path}")
+        raise FileNotFoundError(f"Dataset not found: {file_path}")
 
     with file_path.open("r", encoding="utf-8-sig", newline="") as file:
         return list(csv.DictReader(file))
@@ -442,7 +442,7 @@ def load_csv(path: str | Path) -> list[dict[str, str]]:
 
 def save_csv(rows: list[dict[str, object]], path: str | Path) -> None:
     if not rows:
-        raise ValueError("Nenhuma linha para salvar.")
+        raise ValueError("No rows to save.")
 
     file_path = project_root() / path
     file_path.parent.mkdir(parents=True, exist_ok=True)
@@ -461,13 +461,13 @@ def main() -> None:
     processed_path = config["data"]["processed_path"]
 
     rows = load_csv(raw_path)
-    print(f"Linhas carregadas: {len(rows)}")
+    print(f"Rows loaded: {len(rows)}")
 
     if rows:
-        print(f"Colunas: {list(rows[0].keys())}")
+        print(f"Columns: {list(rows[0].keys())}")
 
     save_csv(rows, processed_path)
-    print(f"Arquivo processado salvo em: {processed_path}")
+    print(f"Processed file saved at: {processed_path}")
 
 
 if __name__ == "__main__":
@@ -680,11 +680,11 @@ from .features import apply_configured_features
 
 def train_baseline_classifier(rows: list[dict[str, object]], target_column: str) -> dict[str, object]:
     if not target_column:
-        raise ValueError("target_column não configurado.")
+        raise ValueError("target_column not configured.")
 
     values = [row.get(target_column) for row in rows if row.get(target_column) not in (None, "")]
     if not values:
-        raise ValueError(f"Nenhum valor encontrado para target: {target_column}")
+        raise ValueError(f"No values found for target: {target_column}")
 
     most_common = Counter(values).most_common(1)[0][0]
 
@@ -715,18 +715,18 @@ def main() -> None:
     elif task == "unsupervised":
         model = {
             "model_type": "unsupervised_placeholder",
-            "note": "Adicione PCA/K-Means com scikit-learn aqui, se o projeto usar scikit-learn."
+            "note": "Add PCA/K-Means with scikit-learn here, if the project uses scikit-learn."
         }
     elif task == "timeseries":
         model = {
             "model_type": "timeseries_placeholder",
-            "note": "Adicione LSTM/Keras ou outro modelo temporal aqui, se o projeto usar deep learning."
+            "note": "Add LSTM/Keras or another temporal model here, if the project uses deep learning."
         }
     else:
-        raise ValueError(f"Task não suportada: {task}")
+        raise ValueError(f"Task not supported: {task}")
 
     save_model(model)
-    print("Modelo salvo em models/model.json")
+    print("Model saved at models/model.json")
     print(json.dumps(model, indent=2, ensure_ascii=False))
 
 
@@ -747,7 +747,7 @@ def load_model(path: str = "models/model.json") -> dict[str, object]:
     model_path = project_root() / path
 
     if not model_path.exists():
-        raise FileNotFoundError("Modelo não encontrado. Rode train.py primeiro.")
+        raise FileNotFoundError("Model not found. Run train.py first.")
 
     return json.loads(model_path.read_text(encoding="utf-8"))
 
@@ -777,7 +777,7 @@ def main() -> None:
         metrics = evaluate_majority_baseline(rows, model)
     else:
         metrics = {
-            "note": "Avaliação ainda não implementada para este tipo de modelo.",
+            "note": "Evaluation not yet implemented for this model type.",
             "model_type": model.get("model_type"),
         }
 
@@ -785,7 +785,7 @@ def main() -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(metrics, indent=2, ensure_ascii=False), encoding="utf-8")
 
-    print("Métricas salvas em reports/metrics.json")
+    print("Metrics saved at reports/metrics.json")
     print(json.dumps(metrics, indent=2, ensure_ascii=False))
 
 
@@ -803,7 +803,7 @@ def load_model(path: str = "models/model.json") -> dict[str, object]:
     model_path = project_root() / path
 
     if not model_path.exists():
-        raise FileNotFoundError("Modelo não encontrado. Rode train.py primeiro.")
+        raise FileNotFoundError("Model not found. Run train.py first.")
 
     return json.loads(model_path.read_text(encoding="utf-8"))
 
@@ -815,13 +815,13 @@ def predict_one(input_row: dict[str, object]) -> dict[str, object]:
         return {
             "prediction": model["prediction"],
             "model_type": model["model_type"],
-            "reason": "baseline de classe majoritária",
+            "reason": "majority class baseline",
         }
 
     return {
         "prediction": None,
         "model_type": model.get("model_type"),
-        "reason": "predict ainda não implementado para este modelo",
+        "reason": "predict not yet implemented for this model",
     }
 
 
@@ -872,16 +872,16 @@ def create_notebook_placeholder(root: Path, values: dict[str, str], *, force: bo
 def create_docs(root: Path, values: dict[str, str], *, force: bool) -> None:
     docs = {
         "docs/data-dictionary.md": '''
-# Dicionário de Dados
+# Data Dictionary
 
-| Coluna | Tipo | Descrição | Uso no modelo | Observações |
+| Column | Type | Description | Model Usage | Notes |
 |---|---|---|---|---|
 | TODO | TODO | TODO | TODO | TODO |
 ''',
         "reports/modeling-notes.md": '''
-# Notas de Modelagem
+# Modeling Notes
 
-## Problema
+## Problem
 
 TODO
 
@@ -889,15 +889,15 @@ TODO
 
 TODO
 
-## Features calculadas
+## Calculated Features
 
 TODO
 
-## Métricas
+## Metrics
 
 TODO
 
-## Limitações
+## Limitations
 
 TODO
 ''',
@@ -915,50 +915,50 @@ data/processed/*
 !data/processed/.gitkeep
 ''',
         ".env.example": '''
-# Exemplo de variáveis de ambiente
-# Não coloque segredos reais aqui.
+# Environment variables example
+# Do not put real secrets here.
 ''',
     }
 
     if values.get("PRESET") == "datathon":
         docs.update({
             "data/kaggle/README.md": '''
-# Base Kaggle
+# Kaggle Dataset
 
-Preencha:
+Fill in:
 
-- Link da base:
-- Versão:
-- Licença:
-- Colunas usadas:
-- Colunas descartadas:
-- Risco de vazamento temporal:
-- Justificativa da escolha:
+- Dataset link:
+- Version:
+- License:
+- Columns used:
+- Columns dropped:
+- Temporal leakage risk:
+- Choice justification:
 ''',
             "reports/data-generation.md": '''
-# Geração de Dados Derivados
+# Derived Data Generation
 
-## Objetivo
+## Objective
 
-Descrever como os dados sintéticos foram criados.
+Describe how synthetic data was created.
 
-## Arquivos esperados
+## Expected files
 
 - `data/synthetic_enrichment/offer_catalog.sample.csv`
 - `data/synthetic_enrichment/offer_events.sample.csv`
 - `data/synthetic_enrichment/delayed_rewards.sample.csv`
 - `data/golden_set/evaluation_cases.jsonl`
 
-## Hipóteses
+## Hypotheses
 
 TODO
 
-## Limitações
+## Limitations
 
 TODO
 ''',
             "docs/algorithmic-strategy.md": '''
-# Estratégia Algorítmica
+# Algorithmic Strategy
 
 ## Baseline
 
@@ -981,20 +981,20 @@ TODO
 TODO
 ''',
             "docs/architecture-azure.md": '''
-# Arquitetura Azure
+# Azure Architecture
 
 ```mermaid
 flowchart LR
-    U[Usuário/Avaliador] --> API[API ou CLI de decisão]
-    API --> POL[Política adaptativa]
-    POL --> DATA[Dados processados + enriquecimento sintético]
-    API --> LOG[Log auditável]
+    U[User/Evaluator] --> API[Decision API or CLI]
+    API --> POL[Adaptive Policy]
+    POL --> DATA[Processed Data + Synthetic Enrichment]
+    API --> LOG[Auditable Log]
     LOG --> OBS[Azure Monitor / App Insights / Log Analytics]
-    POL --> MLOPS[Retreino, aprovação e promoção]
+    POL --> MLOPS[Retraining, Approval, and Promotion]
     SEC[Entra ID / Key Vault / Managed Identity] --> API
 ```
 
-## Serviços escolhidos
+## Selected services
 
 TODO
 
@@ -1002,7 +1002,7 @@ TODO
 
 TODO
 
-## Escala e redução
+## Scale and reduction
 
 TODO
 
@@ -1013,7 +1013,7 @@ TODO
             "docs/model-card.md": '''
 # Model Card
 
-## Nome e versão
+## Name and version
 
 TODO
 
@@ -1025,26 +1025,26 @@ TODO
 
 TODO
 
-## Dados
+## Data
 
 TODO
 
-## Métricas
+## Metrics
 
 TODO
 
-## Riscos e limitações
+## Risks and limitations
 
 TODO
 ''',
             "docs/system-card.md": '''
 # System Card
 
-## Escopo do sistema
+## System scope
 
 TODO
 
-## Fluxo de decisão
+## Decision flow
 
 TODO
 
@@ -1052,53 +1052,53 @@ TODO
 
 TODO
 
-## Riscos
+## Risks
 
 - reward hacking;
-- manipulação de contexto;
-- viés de exposição;
-- uso indevido do assistente;
-- recomendação financeira autônoma indevida.
+- context manipulation;
+- exposure bias;
+- improper assistant use;
+- improper autonomous financial recommendation.
 
-## Monitoramento
+## Monitoring
 
 TODO
 ''',
             "docs/lgpd-plan.md": '''
-# Plano LGPD
+# GDPR/LGPD Plan
 
-## Finalidade
-
-TODO
-
-## Base legal
+## Purpose
 
 TODO
 
-## Minimização
+## Legal basis
 
 TODO
 
-## Retenção
+## Minimization
 
 TODO
 
-## Logs e telemetria
+## Retention
 
 TODO
 
-## Incidentes
+## Logs and telemetry
+
+TODO
+
+## Incidents
 
 TODO
 ''',
             "docs/demo-day-pitch.md": '''
-# Roteiro Demo Day
+# Demo Day Script
 
-## Problema
+## Problem
 
 TODO
 
-## Abordagem
+## Approach
 
 TODO
 
@@ -1106,55 +1106,55 @@ TODO
 
 TODO
 
-## Evidências
+## Evidence
 
 TODO
 
-## Riscos e governança
+## Risks and governance
 
 TODO
 
-## Impacto e FinOps
+## Impact and FinOps
 
 TODO
 ''',
             "infra/azure/deployment-plan.md": '''
-# Plano de Deploy Azure
+# Azure Deployment Plan
 
-## Ambiente local
-
-TODO
-
-## Arquitetura-alvo
+## Local environment
 
 TODO
 
-## Serviços Azure
+## Target architecture
 
 TODO
 
-## Segurança
+## Azure Services
 
 TODO
 
-## Observabilidade
+## Security
 
 TODO
 
-## Custos
+## Observability
+
+TODO
+
+## Costs
 
 TODO
 ''',
             "data/synthetic_enrichment/offer_catalog.sample.csv": '''
 arm_id,arm_name,channel,description
-sem_oferta,Sem oferta,app,Não exibir oferta
-educacao_financeira,Educação financeira,app,Conteúdo educativo
-simulador_credito,Simulador de crédito,web,CTA para simulação
+no_offer,No offer,app,Do not display offer
+financial_education,Financial education,app,Educational content
+credit_simulator,Credit simulator,web,CTA for simulation
 ''',
             "data/synthetic_enrichment/offer_events.sample.csv": '''
 event_id,subject_key,channel,segment,chosen_arm,reward
-evt_001,user_001,app,novo,educacao_financeira,1
-evt_002,user_002,web,recorrente,sem_oferta,0
+evt_001,user_001,app,new,financial_education,1
+evt_002,user_002,web,recurrent,no_offer,0
 ''',
             "data/synthetic_enrichment/delayed_rewards.sample.csv": '''
 event_id,reward_type,reward_value,observed_after_days
@@ -1162,7 +1162,7 @@ evt_001,click,1,0
 evt_001,conversion,0,7
 ''',
             "data/golden_set/evaluation_cases.jsonl": '''
-{"case_id":"case_001","context":{"segment":"novo","channel":"app"},"expected_behavior":"selecionar braço elegível","pass_fail":"deve registrar decisão com versão de política"}
+{"case_id":"case_001","context":{"segment":"new","channel":"app"},"expected_behavior":"select eligible arm","pass_fail":"must record decision with policy version"}
 ''',
         })
 
@@ -1243,18 +1243,18 @@ def create_optional_files(
 
 def print_summary(root: Path, values: dict[str, str]) -> None:
     print()
-    print("Starter-kit criado.")
-    print(f"Destino: {root.resolve()}")
-    print(f"Projeto: {values['PROJECT_NAME']}")
-    print(f"Pacote: {values['PACKAGE_NAME']}")
-    print(f"Tipo: {values['TASK']}")
+    print("Starter-kit created.")
+    print(f"Destination: {root.resolve()}")
+    print(f"Project: {values['PROJECT_NAME']}")
+    print(f"Package: {values['PACKAGE_NAME']}")
+    print(f"Type: {values['TASK']}")
     print(f"Preset: {values.get('PRESET', 'none')}")
     print()
-    print("Próximos passos:")
-    print("1. Ajuste configs/config.json")
-    print("2. Coloque seu dataset em data/raw/")
-    print("3. Edite src/<pacote>/features.py")
-    print("4. Rode:")
+    print("Next steps:")
+    print("1. Adjust configs/config.json")
+    print("2. Place your dataset in data/raw/")
+    print("3. Edit src/<package>/features.py")
+    print("4. Run:")
     print(f"   python -m src.{values['PACKAGE_NAME']}.data")
     print(f"   python -m src.{values['PACKAGE_NAME']}.train")
     print(f"   python -m src.{values['PACKAGE_NAME']}.evaluate")
@@ -1265,23 +1265,23 @@ def main() -> None:
     print("======================")
 
     default_project = Path.cwd().name
-    project_name = ask("Nome do projeto", default_project)
+    project_name = ask("Project name", default_project)
     package_name = normalize_package_name(
-        ask("Nome do pacote Python", normalize_package_name(project_name))
+        ask("Python package name", normalize_package_name(project_name))
     )
     task = choose_task()
     preset = choose_preset()
 
-    dataset_path = ask("Caminho do dataset", "data/raw/dataset.csv")
+    dataset_path = ask("Dataset path", "data/raw/dataset.csv")
 
     if task == "unsupervised":
         target_column = ""
     else:
-        target_column = ask("Nome da coluna target", "target")
+        target_column = ask("Target column name", "target")
 
     default_output_dir = STARTER_ROOT.parent / package_name
     while True:
-        output_dir = Path(ask("Diretório onde criar a estrutura", str(default_output_dir))).resolve()
+        output_dir = Path(ask("Directory to create the structure", str(default_output_dir))).resolve()
 
         is_inside = False
         try:
@@ -1291,15 +1291,15 @@ def main() -> None:
             is_inside = False
 
         if is_inside:
-            print("\nAVISO: O diretório de destino está dentro do repositório do starter kit.")
+            print("\nWARNING: The target directory is inside the starter kit repository.")
             print("Warning: The selected output directory is inside the starter repository.")
-            if ask_yes_no("Deseja continuar mesmo assim? / Do you want to continue anyway?", default=False):
+            if ask_yes_no("Do you want to continue anyway?", default=False):
                 break
         else:
             break
 
-    include_docs = ask_yes_no("Criar arquivos de documentação?", True)
-    include_pyproject = ask_yes_no("Criar pyproject.toml e arquivos de ambiente?", True)
+    include_docs = ask_yes_no("Create documentation files?", True)
+    include_pyproject = ask_yes_no("Create pyproject.toml and environment files?", True)
 
     python_version = "3.11"
     torch_variant = "none"
@@ -1307,23 +1307,23 @@ def main() -> None:
 
     if include_pyproject:
         python_version = choose_python_profile()
-        include_ml_basics = ask_yes_no("Incluir dependências básicas de ML (pandas, scikit-learn)?", False)
+        include_ml_basics = ask_yes_no("Include basic ML dependencies (pandas, scikit-learn)?", False)
         torch_variant = choose_torch_variant()
 
-    print("\nArquivos opcionais (templates):")
+    print("\nOptional files (templates):")
     optional_options = {
-        "eda": ask_yes_no("Incluir suporte a EDA?", False),
-        "preprocessing": ask_yes_no("Incluir suporte a pré-processamento?", False),
-        "metrics": ask_yes_no("Incluir métricas personalizadas?", False),
-        "optimization": ask_yes_no("Incluir scaffolding de otimização?", False),
-        "feature_measurement": ask_yes_no("Incluir medição de features?", False),
-        "visualization": ask_yes_no("Incluir suporte a visualização?", False),
-        "notebook_factory": ask_yes_no("Incluir fábrica de notebooks?", False),
-        "model_report": ask_yes_no("Incluir template de relatório do modelo?", False),
-        "experiment_log": ask_yes_no("Incluir template de log de experimentos?", False),
+        "eda": ask_yes_no("Include EDA support?", False),
+        "preprocessing": ask_yes_no("Include preprocessing support?", False),
+        "metrics": ask_yes_no("Include custom metrics?", False),
+        "optimization": ask_yes_no("Include optimization scaffolding?", False),
+        "feature_measurement": ask_yes_no("Include feature measurement?", False),
+        "visualization": ask_yes_no("Include visualization support?", False),
+        "notebook_factory": ask_yes_no("Include notebook factory?", False),
+        "model_report": ask_yes_no("Include model report template?", False),
+        "experiment_log": ask_yes_no("Include experiment log template?", False),
     }
 
-    force = ask_yes_no("Sobrescrever arquivos existentes se houver conflito?", False)
+    force = ask_yes_no("Overwrite existing files if there is a conflict?", False)
 
     python_requires = f">={python_version}"
     if python_version == "3.12":

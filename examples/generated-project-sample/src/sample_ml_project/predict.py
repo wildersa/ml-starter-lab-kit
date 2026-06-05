@@ -8,7 +8,7 @@ def load_model(path: str = "models/model.json") -> dict[str, object]:
     model_path = project_root() / path
 
     if not model_path.exists():
-        raise FileNotFoundError("Modelo não encontrado. Rode train.py primeiro.")
+        raise FileNotFoundError("Model not found. Run train.py first.")
 
     return json.loads(model_path.read_text(encoding="utf-8"))
 
@@ -20,13 +20,13 @@ def predict_one(input_row: dict[str, object]) -> dict[str, object]:
         return {
             "prediction": model["prediction"],
             "model_type": model["model_type"],
-            "reason": "baseline de classe majoritária",
+            "reason": "majority class baseline",
         }
 
     return {
         "prediction": None,
         "model_type": model.get("model_type"),
-        "reason": "predict ainda não implementado para este modelo",
+        "reason": "predict not yet implemented for this model",
     }
 
 

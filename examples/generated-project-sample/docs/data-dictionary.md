@@ -1,5 +1,5 @@
-# Dicionário de Dados
+# Data Dictionary
 
-| Coluna | Tipo | Descrição | Uso no modelo | Observações |
+| Column | Type | Description | Model Usage | Notes |
 |---|---|---|---|---|
 | TODO | TODO | TODO | TODO | TODO |
