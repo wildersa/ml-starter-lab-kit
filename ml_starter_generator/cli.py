@@ -18,13 +18,17 @@ from .scaffold import (
 
 def ask(prompt: str, default: str | None = None) -> str:
     suffix = f" [{default}]" if default else ""
-    value = input(f"{prompt}{suffix}: ").strip()
+    full_prompt = f"{prompt}{suffix}: "
+    print(full_prompt, end="", flush=True)
+    value = input().strip()
     return value or (default or "")
 
 
 def ask_yes_no(prompt: str, default: bool = True) -> bool:
     default_label = "Y/n" if default else "y/N"
-    value = input(f"{prompt} [{default_label}]: ").strip().lower()
+    full_prompt = f"{prompt} [{default_label}]: "
+    print(full_prompt, end="", flush=True)
+    value = input().strip().lower()
 
     if not value:
         return default

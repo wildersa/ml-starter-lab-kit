@@ -288,5 +288,42 @@ class TestGenerator(unittest.TestCase):
         self.assertFalse((pkg_path / "preprocessing.py").exists())
         self.assertFalse((pkg_path / "visualization.py").exists())
 
+    def test_recommended_profile(self):
+        run_generator(
+            project_name="rec_proj",
+            package_name="rec_pkg",
+            task="1",
+            output_dir=self.test_dir,
+            optional_profile="2"
+        )
+
+        pkg_path = self.test_dir / "src/rec_pkg"
+        reports_path = self.test_dir / "reports"
+
+        # Should generate
+        self.assertTrue((pkg_path / "eda.py").exists())
+        self.assertTrue((pkg_path / "preprocessing.py").exists())
+        self.assertTrue((pkg_path / "metrics.py").exists())
+        self.assertTrue((pkg_path / "visualization.py").exists())
+
+        # Should NOT generate
+        self.assertFalse((pkg_path / "optimization.py").exists())
+        self.assertFalse((pkg_path / "feature_measurement.py").exists())
+        self.assertFalse((pkg_path / "notebook_factory.py").exists())
+        self.assertFalse((reports_path / "model-report.md").exists())
+        self.assertFalse((reports_path / "experiment-log.md").exists())
+
+    def test_ml_dependency_prompt_text(self):
+        output = run_generator(
+            project_name="ml_prompt_proj",
+            package_name="ml_prompt_pkg",
+            task="1",
+            output_dir=self.test_dir,
+            include_ml_basics="y"
+        )
+
+        expected_text = "Include basic ML dependencies (pandas, numpy, scikit-learn, matplotlib, seaborn)?"
+        self.assertIn(expected_text, output)
+
 if __name__ == "__main__":
     unittest.main()
