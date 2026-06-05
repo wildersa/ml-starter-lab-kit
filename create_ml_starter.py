@@ -17,12 +17,6 @@ TASKS = {
 }
 
 
-PRESETS = {
-    "1": "none",
-    "2": "datathon",
-}
-
-
 def ask(prompt: str, default: str | None = None) -> str:
     suffix = f" [{default}]" if default else ""
     value = input(f"{prompt}{suffix}: ").strip()
@@ -53,21 +47,6 @@ def choose_task() -> str:
         if choice in TASKS:
             return TASKS[choice]
         if choice in TASKS.values():
-            return choice
-        print("Invalid option.")
-
-
-def choose_preset() -> str:
-    print()
-    print("Project Preset (Context):")
-    print("1. none          - no specific preset")
-    print("2. datathon      - expanded structure for Datathon (Phase 5)")
-
-    while True:
-        choice = ask("Choose an option", "1")
-        if choice in PRESETS:
-            return PRESETS[choice]
-        if choice in PRESETS.values():
             return choice
         print("Invalid option.")
 
@@ -177,16 +156,6 @@ def create_dirs(root: Path, package_name: str, preset: str, include_docs: bool) 
     if include_docs:
         dirs.append("docs")
 
-    if preset == "datathon":
-        dirs.extend([
-            "data/kaggle",
-            "data/synthetic_enrichment",
-            "data/golden_set",
-            "infra/azure",
-            "docs",
-            "reports",
-        ])
-
     for directory in dirs:
         touch_gitkeep(root / directory)
 
@@ -277,22 +246,6 @@ def create_config(root: Path, values: dict[str, str], *, force: bool) -> None:
             "window_size": 30,
             "horizon": 7,
             "groupby": None
-        }
-
-    if preset == "datathon":
-        config["datathon"] = {
-            "arms": [
-                "no_offer",
-                "financial_education",
-                "credit_simulator"
-            ],
-            "policy_version": "policy-demo-v0",
-            "explore_rate": 0.05,
-            "reward_columns": [
-                "click",
-                "started_journey",
-                "conversion"
-            ]
         }
 
     write_text(
@@ -920,252 +873,6 @@ data/processed/*
 ''',
     }
 
-    if values.get("PRESET") == "datathon":
-        docs.update({
-            "data/kaggle/README.md": '''
-# Kaggle Dataset
-
-Fill in:
-
-- Dataset link:
-- Version:
-- License:
-- Columns used:
-- Columns dropped:
-- Temporal leakage risk:
-- Choice justification:
-''',
-            "reports/data-generation.md": '''
-# Derived Data Generation
-
-## Objective
-
-Describe how synthetic data was created.
-
-## Expected files
-
-- `data/synthetic_enrichment/offer_catalog.sample.csv`
-- `data/synthetic_enrichment/offer_events.sample.csv`
-- `data/synthetic_enrichment/delayed_rewards.sample.csv`
-- `data/golden_set/evaluation_cases.jsonl`
-
-## Hypotheses
-
-TODO
-
-## Limitations
-
-TODO
-''',
-            "docs/algorithmic-strategy.md": '''
-# Algorithmic Strategy
-
-## Baseline
-
-TODO
-
-## Thompson Sampling
-
-TODO
-
-## UCB / LinUCB / Nilos-UCB
-
-TODO
-
-## Cold-start
-
-TODO
-
-## Delayed rewards
-
-TODO
-''',
-            "docs/architecture-azure.md": '''
-# Azure Architecture
-
-```mermaid
-flowchart LR
-    U[User/Evaluator] --> API[Decision API or CLI]
-    API --> POL[Adaptive Policy]
-    POL --> DATA[Processed Data + Synthetic Enrichment]
-    API --> LOG[Auditable Log]
-    LOG --> OBS[Azure Monitor / App Insights / Log Analytics]
-    POL --> MLOPS[Retraining, Approval, and Promotion]
-    SEC[Entra ID / Key Vault / Managed Identity] --> API
-```
-
-## Selected services
-
-TODO
-
-## Trade-offs
-
-TODO
-
-## Scale and reduction
-
-TODO
-
-## FinOps
-
-TODO
-''',
-            "docs/model-card.md": '''
-# Model Card
-
-## Name and version
-
-TODO
-
-## Intended use
-
-TODO
-
-## Out-of-scope use
-
-TODO
-
-## Data
-
-TODO
-
-## Metrics
-
-TODO
-
-## Risks and limitations
-
-TODO
-''',
-            "docs/system-card.md": '''
-# System Card
-
-## System scope
-
-TODO
-
-## Decision flow
-
-TODO
-
-## Guardrails
-
-TODO
-
-## Risks
-
-- reward hacking;
-- context manipulation;
-- exposure bias;
-- improper assistant use;
-- improper autonomous financial recommendation.
-
-## Monitoring
-
-TODO
-''',
-            "docs/lgpd-plan.md": '''
-# GDPR/LGPD Plan
-
-## Purpose
-
-TODO
-
-## Legal basis
-
-TODO
-
-## Minimization
-
-TODO
-
-## Retention
-
-TODO
-
-## Logs and telemetry
-
-TODO
-
-## Incidents
-
-TODO
-''',
-            "docs/demo-day-pitch.md": '''
-# Demo Day Script
-
-## Problem
-
-TODO
-
-## Approach
-
-TODO
-
-## Demo
-
-TODO
-
-## Evidence
-
-TODO
-
-## Risks and governance
-
-TODO
-
-## Impact and FinOps
-
-TODO
-''',
-            "infra/azure/deployment-plan.md": '''
-# Azure Deployment Plan
-
-## Local environment
-
-TODO
-
-## Target architecture
-
-TODO
-
-## Azure Services
-
-TODO
-
-## Security
-
-TODO
-
-## Observability
-
-TODO
-
-## Costs
-
-TODO
-''',
-            "data/synthetic_enrichment/offer_catalog.sample.csv": '''
-arm_id,arm_name,channel,description
-no_offer,No offer,app,Do not display offer
-financial_education,Financial education,app,Educational content
-credit_simulator,Credit simulator,web,CTA for simulation
-''',
-            "data/synthetic_enrichment/offer_events.sample.csv": '''
-event_id,subject_key,channel,segment,chosen_arm,reward
-evt_001,user_001,app,new,financial_education,1
-evt_002,user_002,web,recurrent,no_offer,0
-''',
-            "data/synthetic_enrichment/delayed_rewards.sample.csv": '''
-event_id,reward_type,reward_value,observed_after_days
-evt_001,click,1,0
-evt_001,conversion,0,7
-''',
-            "data/golden_set/evaluation_cases.jsonl": '''
-{"case_id":"case_001","context":{"segment":"new","channel":"app"},"expected_behavior":"select eligible arm","pass_fail":"must record decision with policy version"}
-''',
-        })
-
     for rel, content in docs.items():
         write_text(root / rel, content, force=force)
 
@@ -1248,7 +955,6 @@ def print_summary(root: Path, values: dict[str, str]) -> None:
     print(f"Project: {values['PROJECT_NAME']}")
     print(f"Package: {values['PACKAGE_NAME']}")
     print(f"Type: {values['TASK']}")
-    print(f"Preset: {values.get('PRESET', 'none')}")
     print()
     print("Next steps:")
     print("1. Adjust configs/config.json")
@@ -1270,7 +976,7 @@ def main() -> None:
         ask("Python package name", normalize_package_name(project_name))
     )
     task = choose_task()
-    preset = choose_preset()
+    preset = "none"
 
     dataset_path = ask("Dataset path", "data/raw/dataset.csv")
 

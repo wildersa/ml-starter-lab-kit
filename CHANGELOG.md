@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Replace `datathon` project type with real ML project type/preset separation.
+- Remove the `datathon` preset and all its associated specialized scaffolding (dirs, config blocks, and docs).
+- Simplify the generator by removing the preset selection step, defaulting to a standard structure.
+- Replace `datathon` project type with real ML project type/preset separation (deprecated in favor of full removal).
 - Add `vision` as a first-class project type.
 - Add `preset` concept to separate ML task from delivery context.
 - Add Python environment profiles (safe 3.12, modern 3.14).

@@ -35,25 +35,3 @@ package: tech_challenge_phase4
 
 Then add Keras/TensorFlow only if you are going to use LSTM.
 
-## Phase 5 / Datathon
-
-Choose:
-
-```text
-task: supervised (or other real ML type)
-preset: datathon
-package: datathon_offerexp
-```
-
-It also creates:
-
-```text
-docs/architecture-azure.md
-docs/model-card.md
-docs/system-card.md
-docs/lgpd-plan.md
-docs/algorithmic-strategy.md
-data/synthetic_enrichment/
-data/golden_set/
-infra/azure/
-```
