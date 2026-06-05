@@ -229,19 +229,25 @@ class DatasetAdvisor:
             if "interpretability" in priority:
                 recommendations.append({
                     "model": "Logistic Regression / Decision Tree",
-                    "why": f"You prioritized {priority}. These models are highly interpretable and provide a clear baseline.",
+                    "user_intent": f"Prioritize {priority}",
+                    "data_finding": "Tabular classification task",
+                    "why": "These models are highly interpretable and provide a clear baseline for categorical predictions.",
                     "search": "LogisticRegression sklearn, DecisionTreeClassifier interpretability"
                 })
             elif "imbalanced" in priority:
                 recommendations.append({
                     "model": "Random Forest / HistGradientBoosting (with class_weight='balanced')",
-                    "why": f"You prioritized {priority}. Tree-based ensembles handle non-linear relationships well and support class weighting.",
+                    "user_intent": f"Handle {priority}",
+                    "data_finding": "Target imbalance expected or detected",
+                    "why": "Tree-based ensembles handle non-linear relationships well and natively support class weighting to focus on the minority class.",
                     "search": "sklearn Random Forest class_weight, handling imbalanced data"
                 })
             else:
                 recommendations.append({
                     "model": "Random Forest / Gradient Boosting",
-                    "why": "Tree-based ensembles are strong general-purpose performers for tabular classification.",
+                    "user_intent": f"Goal: {goal}",
+                    "data_finding": "General tabular classification",
+                    "why": "Tree-based ensembles are strong general-purpose performers for tabular classification with minimal scaling required.",
                     "search": "RandomForestClassifier vs HistGradientBoostingClassifier"
                 })
 
@@ -249,39 +255,51 @@ class DatasetAdvisor:
             if "interpretability" in priority:
                 recommendations.append({
                     "model": "Linear Regression / Ridge / Lasso",
-                    "why": f"You prioritized {priority}. Linear models show clear feature coefficients.",
+                    "user_intent": f"Prioritize {priority}",
+                    "data_finding": "Tabular regression task",
+                    "why": "Linear models show clear feature coefficients, making it easy to see which variables drive the outcome.",
                     "search": "LinearRegression sklearn, Ridge regression tutorial"
                 })
             else:
                 recommendations.append({
                     "model": "Random Forest / Gradient Boosting",
-                    "why": "Tree-based ensembles are effective at capturing non-linear patterns in regression.",
+                    "user_intent": f"Goal: {goal}",
+                    "data_finding": "General tabular regression",
+                    "why": "Tree-based ensembles are effective at capturing non-linear patterns in regression without complex feature engineering.",
                     "search": "RandomForestRegressor vs HistGradientBoostingRegressor"
                 })
 
         elif is_timeseries:
             recommendations.append({
                 "model": "Naive Seasonal / Exponential Smoothing",
-                "why": "Always start with a naive baseline for time series to measure the value added by complex models.",
+                "user_intent": f"Forecast future values",
+                "data_finding": "Time series task detected",
+                "why": "Always start with a naive baseline for time series to measure the value added by complex models. Often hard to beat!",
                 "search": "Time series naive baseline, ExponentialSmoothing statsmodels"
             })
             recommendations.append({
                 "model": "Prophet / ARIMA / Random Forest (with lag features)",
-                "why": "Prophet is great for seasonality; ARIMA for trend; Random Forest is a strong tabular alternative if you engineer lag features.",
+                "user_intent": f"Goal: {goal}",
+                "data_finding": "Sequential data patterns",
+                "why": "Prophet handles seasonality well; ARIMA is a statistical standard; Random Forest is a strong tabular alternative if you engineer lag features.",
                 "search": "facebook prophet tutorial, ARIMA vs Prophet, time series lag features"
             })
 
         elif is_unsupervised:
             recommendations.append({
                 "model": "K-Means / HDBSCAN",
-                "why": "K-Means is the standard baseline; HDBSCAN is better if clusters have varying densities.",
+                "user_intent": f"Group similar records",
+                "data_finding": "Clustering task",
+                "why": "K-Means is the standard baseline; HDBSCAN is better if you expect clusters of different shapes and densities.",
                 "search": "KMeans sklearn, HDBSCAN clustering tutorial"
             })
 
         elif is_vision_text:
             recommendations.append({
                 "model": "Pre-trained CNN (Vision) / Transformer (Text)",
-                "why": "For complex data like images or text, transfer learning with pre-trained models is the modern standard.",
+                "user_intent": f"Goal: {goal}",
+                "data_finding": "Unstructured data (images/text)",
+                "why": "For complex data like images or text, transfer learning with pre-trained models is the modern standard for performance.",
                 "search": "pytorch transfer learning vision, huggingface transformers getting started"
             })
 
@@ -289,29 +307,37 @@ class DatasetAdvisor:
         if size == "small" or len(self.df) < 100:
             recommendations.append({
                 "model": "Cross-validation + Simple Models",
-                "why": f"With a {size} dataset, complex models are prone to overfitting. Use StratifiedKFold and prefer simpler baselines.",
+                "user_intent": f"Dataset size: {size}",
+                "data_finding": f"Dataset has {len(self.df)} rows",
+                "why": "With small datasets, complex models are prone to overfitting. Use StratifiedKFold and prefer simpler baselines to ensure generalization.",
                 "search": "machine learning small dataset strategy, StratifiedKFold cross-validation"
             })
 
         # Error cost adjustments
         if "false negative" in error_cost:
             recommendations.append({
-                "model": "Adjust Decision Threshold",
-                "why": "Since false negatives are more costly, you should evaluate the model using Recall or PR-AUC and consider lowering the decision threshold.",
+                "model": "Recall-optimized Evaluation",
+                "user_intent": f"Costly error: {error_cost}",
+                "data_finding": "Intent to minimize missed cases",
+                "why": "Since false negatives are more costly, you should evaluate using Recall or PR-AUC and consider lowering the model's decision threshold.",
                 "search": "precision recall trade-off, precision_recall_curve sklearn"
             })
         elif "false positive" in error_cost:
             recommendations.append({
-                "model": "Adjust Decision Threshold",
-                "why": "Since false positives are more costly, you should prioritize Precision and consider raising the decision threshold.",
+                "model": "Precision-optimized Evaluation",
+                "user_intent": f"Costly error: {error_cost}",
+                "data_finding": "Intent to minimize false alarms",
+                "why": "Since false positives are more costly, you should prioritize Precision and consider raising the model's decision threshold.",
                 "search": "optimizing for precision sklearn, confusion matrix false positives"
             })
 
         # Final Baseline suggestion
         if prefer_baseline:
             recommendations.append({
-                "model": "DummyClassifier / DummyRegressor",
-                "why": "You preferred a simple baseline first. Use these to establish the minimum performance any 'real' model must beat.",
+                "model": "Dummy Models (Baseline)",
+                "user_intent": "Prefer simple baseline first",
+                "data_finding": "Initial experiment setup",
+                "why": "Use DummyClassifier or DummyRegressor to establish the minimum performance any 'real' model must beat.",
                 "search": "DummyClassifier sklearn, DummyRegressor baseline"
             })
 
@@ -320,7 +346,9 @@ class DatasetAdvisor:
             report_section += "Based on your problem framing and initial data analysis:\n\n"
             for rec in recommendations:
                 report_section += f"### {rec['model']}\n"
-                report_section += f"- **Why**: {rec['why']}\n"
+                report_section += f"- **User intent**: {rec['user_intent']}\n"
+                report_section += f"- **Data finding**: {rec['data_finding']}\n"
+                report_section += f"- **Why suggested**: {rec['why']}\n"
                 report_section += f"- **Search terms**: `{rec['search']}`\n\n"
 
             self.report_sections.append(report_section)

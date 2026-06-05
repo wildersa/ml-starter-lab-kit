@@ -141,9 +141,9 @@ class TestProblemFraming(unittest.TestCase):
 
         self.assertIn("## Suggested Starting Models", content)
         self.assertIn("Random Forest / HistGradientBoosting (with class_weight='balanced')", content)
-        self.assertIn("Adjust Decision Threshold", content)
+        self.assertIn("Recall-optimized Evaluation", content)
         self.assertIn("Cross-validation + Simple Models", content)
-        self.assertIn("DummyClassifier / DummyRegressor", content)
+        self.assertIn("Dummy Models (Baseline)", content)
 
         # Check JSON output
         json_path = output_dir / "configs/suggested_pipeline.json"
