@@ -3,11 +3,10 @@ import os
 import shutil
 import tempfile
 from pathlib import Path
-from unittest.mock import patch
-import io
 import json
 
 import create_ml_starter
+from tests.helpers import run_generator
 
 class TestGenerator(unittest.TestCase):
     def setUp(self):
@@ -18,27 +17,15 @@ class TestGenerator(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.test_dir)
 
-    @patch('create_ml_starter.input')
-    def test_create_supervised_project(self, mock_input):
-        # 1. generic, 2. supervised, 3. unsupervised, 4. timeseries, 5. vision
-        mock_input.side_effect = [
-            self.project_name, # Project Name
-            "", # Package Name (default)
-            "2", # Task: supervised
-            "data/raw/train.csv", # Dataset path
-            "target", # Target column
-            str(self.test_dir), # Output dir
-            "y", # include docs
-            "y", # include pyproject
-            "1", # Python profile: safe (3.12)
-            "y", # include ml basics
-            "1", # Torch variant: none
-            "n", "n", "n", "n", "n", "n", "n", "n", "n", # Opcionais (9 nãos)
-            "y", # force
-        ]
-
-        with patch('sys.stdout', new=io.StringIO()):
-            create_ml_starter.main()
+    def test_create_supervised_project(self):
+        run_generator(
+            project_name=self.project_name,
+            package_name="",
+            task="2",
+            dataset_path="data/raw/train.csv",
+            target_column="target",
+            output_dir=self.test_dir
+        )
 
         self.assertTrue((self.test_dir / "README.md").exists())
         self.assertTrue((self.test_dir / "src" / self.package_name / "train.py").exists())
@@ -60,57 +47,27 @@ class TestGenerator(unittest.TestCase):
             self.assertIn(self.project_name, str(nb_content))
             self.assertIn(self.package_name, str(nb_content))
 
-    @patch('create_ml_starter.input')
-    def test_create_generic_project(self, mock_input):
-        mock_input.side_effect = [
-            "generic_proj", # Project Name
-            "generic_pkg", # Package Name
-            "1", # Task: generic
-            "data/raw/data.csv", # Dataset path
-            "target", # Target column
-            str(self.test_dir), # Output dir
-            "y", # include docs
-            "y", # include pyproject
-            "1", # Python profile: safe (3.12)
-            "y", # include ml basics
-            "1", # Torch variant: none
-            "n", "n", "n", "n", "n", "n", "n", "n", "n", # Opcionais (9 nãos)
-            "y", # force
-        ]
-
-        with patch('sys.stdout', new=io.StringIO()):
-            create_ml_starter.main()
+    def test_create_generic_project(self):
+        run_generator(
+            project_name="generic_proj",
+            package_name="generic_pkg",
+            task="1",
+            dataset_path="data/raw/data.csv",
+            output_dir=self.test_dir
+        )
 
         self.assertTrue((self.test_dir / "src/generic_pkg/train.py").exists())
 
-    @patch('create_ml_starter.input')
-    def test_create_project_with_optional_files(self, mock_input):
-        mock_input.side_effect = [
-            "opt_proj", # Project Name
-            "opt_pkg", # Package Name
-            "2", # Task: supervised
-            "data/raw/train.csv", # Dataset path
-            "target", # Target column
-            str(self.test_dir), # Output dir
-            "y", # include docs
-            "y", # include pyproject
-            "1", # Python profile: safe (3.12)
-            "y", # include ml basics
-            "1", # Torch variant: none
-            "y", # eda
-            "y", # preprocessing
-            "y", # metrics
-            "y", # optimization
-            "y", # feature_measurement
-            "y", # visualization
-            "y", # notebook_factory
-            "y", # model_report
-            "y", # experiment_log
-            "y", # force
-        ]
-
-        with patch('sys.stdout', new=io.StringIO()):
-            create_ml_starter.main()
+    def test_create_project_with_optional_files(self):
+        run_generator(
+            project_name="opt_proj",
+            package_name="opt_pkg",
+            task="2",
+            dataset_path="data/raw/train.csv",
+            target_column="target",
+            output_dir=self.test_dir,
+            optionals=["y"] * 9
+        )
 
         pkg_path = self.test_dir / "src/opt_pkg"
         reports_path = self.test_dir / "reports"
@@ -135,34 +92,21 @@ class TestGenerator(unittest.TestCase):
             content = f.read()
             self.assertIn("# Model Report — opt_proj", content)
 
-    @patch('create_ml_starter.input')
-    def test_no_third_party_dependencies(self, mock_input):
-        mock_input.side_effect = [
-            "no_deps_proj", # Project Name
-            "no_deps_pkg", # Package Name
-            "1", # Task: generic
-            "data/raw/data.csv", # Dataset path
-            "target", # Target column
-            str(self.test_dir), # Output dir
-            "y", # include docs
-            "y", # include pyproject
-            "1", # Python profile: safe (3.12)
-            "n", # include ml basics: NO
-            "1", # Torch variant: none
-            "n", "n", "n", "n", "n", "n", "n", "n", "n", # Opcionais
-            "y", # force
-        ]
-
-        with patch('sys.stdout', new=io.StringIO()):
-            create_ml_starter.main()
+    def test_no_third_party_dependencies(self):
+        run_generator(
+            project_name="no_deps_proj",
+            package_name="no_deps_pkg",
+            task="1",
+            dataset_path="data/raw/data.csv",
+            output_dir=self.test_dir,
+            include_ml_basics="n"
+        )
 
         pyproject_path = self.test_dir / "pyproject.toml"
         self.assertTrue(pyproject_path.exists())
 
         with open(pyproject_path) as f:
             content = f.read()
-            # Should not have dependencies in [project] section
-            # The current template has a comment mentioning pandas, but no dependencies key.
             self.assertNotIn("dependencies =", content)
             self.assertNotIn("scikit-learn =", content)
             self.assertNotIn("numpy =", content)
@@ -171,16 +115,16 @@ class TestGenerator(unittest.TestCase):
         self.assertEqual(create_ml_starter.normalize_package_name("My Project"), "my_project")
         self.assertEqual(create_ml_starter.normalize_package_name("123-Project!"), "ml_123_project")
 
-    @patch('create_ml_starter.input')
-    def test_python_profiles(self, mock_input):
+    def test_python_profiles(self):
         # Test Safe Profile (3.12)
-        mock_input.side_effect = [
-            "safe_proj", "safe_pkg", "1", "data/raw/data.csv", "target",
-            str(self.test_dir), "y", "y", "1", "n", "1",
-            "n", "n", "n", "n", "n", "n", "n", "n", "n", "y"
-        ]
-        with patch('sys.stdout', new=io.StringIO()):
-            create_ml_starter.main()
+        run_generator(
+            project_name="safe_proj",
+            package_name="safe_pkg",
+            task="1",
+            output_dir=self.test_dir,
+            python_profile="1",
+            include_ml_basics="n"
+        )
 
         with open(self.test_dir / "pyproject.toml") as f:
             content = f.read()
@@ -190,28 +134,29 @@ class TestGenerator(unittest.TestCase):
         os.makedirs(self.test_dir)
 
         # Test Modern Profile (3.14)
-        mock_input.side_effect = [
-            "modern_proj", "modern_pkg", "1", "data/raw/data.csv", "target",
-            str(self.test_dir), "y", "y", "2", "n", "1",
-            "n", "n", "n", "n", "n", "n", "n", "n", "n", "y"
-        ]
-        with patch('sys.stdout', new=io.StringIO()):
-            create_ml_starter.main()
+        run_generator(
+            project_name="modern_proj",
+            package_name="modern_pkg",
+            task="1",
+            output_dir=self.test_dir,
+            python_profile="2",
+            include_ml_basics="n"
+        )
 
         with open(self.test_dir / "pyproject.toml") as f:
             content = f.read()
             self.assertIn('requires-python = ">=3.14,<3.15"', content)
 
-    @patch('create_ml_starter.input')
-    def test_torch_generation(self, mock_input):
+    def test_torch_generation(self):
         # Test Torch CPU
-        mock_input.side_effect = [
-            "torch_cpu", "torch_cpu", "1", "data/raw/data.csv", "target",
-            str(self.test_dir), "y", "y", "1", "n", "2",
-            "n", "n", "n", "n", "n", "n", "n", "n", "n", "y"
-        ]
-        with patch('sys.stdout', new=io.StringIO()):
-            create_ml_starter.main()
+        run_generator(
+            project_name="torch_cpu",
+            package_name="torch_cpu",
+            task="1",
+            output_dir=self.test_dir,
+            include_ml_basics="n",
+            torch_variant="2"
+        )
 
         self.assertTrue((self.test_dir / "requirements-torch-cpu.txt").exists())
         self.assertFalse((self.test_dir / "requirements-torch-cuda126.txt").exists())
@@ -220,27 +165,29 @@ class TestGenerator(unittest.TestCase):
         os.makedirs(self.test_dir)
 
         # Test Torch CUDA 12.8
-        mock_input.side_effect = [
-            "torch_cuda", "torch_cuda", "1", "data/raw/data.csv", "target",
-            str(self.test_dir), "y", "y", "1", "n", "4",
-            "n", "n", "n", "n", "n", "n", "n", "n", "n", "y"
-        ]
-        with patch('sys.stdout', new=io.StringIO()):
-            create_ml_starter.main()
+        run_generator(
+            project_name="torch_cuda",
+            package_name="torch_cuda",
+            task="1",
+            output_dir=self.test_dir,
+            include_ml_basics="n",
+            torch_variant="4"
+        )
 
         self.assertTrue((self.test_dir / "requirements-torch-cu128.txt").exists())
         with open(self.test_dir / "requirements-torch-cu128.txt") as f:
             self.assertIn("CUDA 12.8", f.read())
 
-    @patch('create_ml_starter.input')
-    def test_create_vision_project(self, mock_input):
-        mock_input.side_effect = [
-            "vision_proj", "vision_pkg", "5", "data/raw/images.csv", "label",
-            str(self.test_dir), "y", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "y"
-        ]
-
-        with patch('sys.stdout', new=io.StringIO()):
-            create_ml_starter.main()
+    def test_create_vision_project(self):
+        run_generator(
+            project_name="vision_proj",
+            package_name="vision_pkg",
+            task="5",
+            dataset_path="data/raw/images.csv",
+            target_column="label",
+            output_dir=self.test_dir,
+            include_pyproject="n"
+        )
 
         with open(self.test_dir / "configs/config.json") as f:
             config = json.load(f)

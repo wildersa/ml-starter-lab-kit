@@ -1,10 +1,10 @@
 import unittest
 from pathlib import Path
 from unittest.mock import patch
-import io
 import shutil
 import tempfile
 import create_ml_starter
+from tests.helpers import run_generator
 
 class TestOutputLogic(unittest.TestCase):
     def setUp(self):
@@ -28,38 +28,23 @@ class TestOutputLogic(unittest.TestCase):
             self.assertEqual(actual_default, expected_default)
             self.assertEqual(actual_default.parent, self.starter_root.parent)
 
-    @patch('create_ml_starter.input')
-    def test_starter_root_detection(self, mock_input):
+    def test_starter_root_detection(self):
         with patch('create_ml_starter.STARTER_ROOT', self.starter_root):
             # Test path inside starter root
             inside_path = self.starter_root / "some_subdir"
             outside_path = self.test_dir / "outside"
 
-            # Mock inputs for the sequence in main()
-            mock_input.side_effect = [
-                "My Project",      # project_name
-                "my_project",      # package_name
-                "2",               # task (supervised)
-                "data.csv",        # dataset_path
-                "target",          # target_column
-                str(inside_path),  # output_dir (inside)
-                "n",               # Do you want to continue anyway? (No)
-                str(outside_path), # output_dir (outside)
-                "y",               # include docs
-                "y",               # include pyproject
-                "1",               # Python profile (safe 3.12)
-                "y",               # ML basics
-                "1",               # Torch variant (none)
-                "n", "n", "n", "n", "n", "n", "n", "n", "n", # optionals (9)
-                "y"                # force
-            ]
+            output = run_generator(
+                project_name="My Project",
+                package_name="my_project",
+                task="2",
+                dataset_path="data.csv",
+                target_column="target",
+                output_dir_sequence=[str(inside_path), "n", str(outside_path)]
+            )
 
-            with patch('sys.stdout', new=io.StringIO()) as fake_out:
-                create_ml_starter.main()
-
-                output = fake_out.getvalue()
-                self.assertIn("Warning: The selected output directory is inside the starter repository.", output)
-                self.assertTrue((outside_path / "README.md").exists())
+            self.assertIn("Warning: The selected output directory is inside the starter repository.", output)
+            self.assertTrue((outside_path / "README.md").exists())
 
     def test_readme_content(self):
         values = {
