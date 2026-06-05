@@ -122,6 +122,7 @@ def get_options_by_profile(profile: str) -> dict[str, bool]:
         "notebook_factory": False,
         "model_report": False,
         "experiment_log": False,
+        "advisor": False,
     }
 
     if profile == "minimal":
@@ -132,6 +133,7 @@ def get_options_by_profile(profile: str) -> dict[str, bool]:
         options["preprocessing"] = True
         options["metrics"] = True
         options["visualization"] = True
+        options["advisor"] = True
         return options
 
     if profile == "full":
@@ -237,6 +239,7 @@ def main() -> None:
             "notebook_factory": ask_yes_no("Include notebook factory?", False),
             "model_report": ask_yes_no("Include model report template?", False),
             "experiment_log": ask_yes_no("Include experiment log template?", False),
+            "advisor": ask_yes_no("Include explainable Dataset Advisor?", False),
         }
     else:
         optional_options = get_options_by_profile(profile)

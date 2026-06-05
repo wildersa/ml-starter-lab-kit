@@ -20,7 +20,7 @@ def run_generator(
     output_dir_sequence=None
 ):
     if optionals is None:
-        optionals = ["n"] * 9
+        optionals = ["n"] * 10
 
     inputs = [
         project_name,
