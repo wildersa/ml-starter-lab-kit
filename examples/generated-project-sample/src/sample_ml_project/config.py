@@ -13,6 +13,6 @@ def load_config(path: str | Path = "configs/config.json") -> dict[str, Any]:
     config_path = project_root() / path
 
     if not config_path.exists():
-        raise FileNotFoundError(f"Config não encontrado: {config_path}")
+        raise FileNotFoundError(f"Config not found: {config_path}")
 
     return json.loads(config_path.read_text(encoding="utf-8"))

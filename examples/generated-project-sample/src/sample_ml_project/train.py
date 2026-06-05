@@ -11,11 +11,11 @@ from .features import apply_configured_features
 
 def train_baseline_classifier(rows: list[dict[str, object]], target_column: str) -> dict[str, object]:
     if not target_column:
-        raise ValueError("target_column não configurado.")
+        raise ValueError("target_column not configured.")
 
     values = [row.get(target_column) for row in rows if row.get(target_column) not in (None, "")]
     if not values:
-        raise ValueError(f"Nenhum valor encontrado para target: {target_column}")
+        raise ValueError(f"No values found for target: {target_column}")
 
     most_common = Counter(values).most_common(1)[0][0]
 
@@ -46,18 +46,18 @@ def main() -> None:
     elif task == "unsupervised":
         model = {
             "model_type": "unsupervised_placeholder",
-            "note": "Adicione PCA/K-Means com scikit-learn aqui, se o projeto usar scikit-learn."
+            "note": "Add PCA/K-Means with scikit-learn here, if the project uses scikit-learn."
         }
     elif task == "timeseries":
         model = {
             "model_type": "timeseries_placeholder",
-            "note": "Adicione LSTM/Keras ou outro modelo temporal aqui, se o projeto usar deep learning."
+            "note": "Add LSTM/Keras or another temporal model here, if the project uses deep learning."
         }
     else:
-        raise ValueError(f"Task não suportada: {task}")
+        raise ValueError(f"Task not supported: {task}")
 
     save_model(model)
-    print("Modelo salvo em models/model.json")
+    print("Model saved at models/model.json")
     print(json.dumps(model, indent=2, ensure_ascii=False))
 
 

@@ -1,6 +1,6 @@
-# Notas de Modelagem
+# Modeling Notes
 
-## Problema
+## Problem
 
 TODO
 
@@ -8,14 +8,14 @@ TODO
 
 TODO
 
-## Features calculadas
+## Calculated Features
 
 TODO
 
-## Métricas
+## Metrics
 
 TODO
 
-## Limitações
+## Limitations
 
 TODO

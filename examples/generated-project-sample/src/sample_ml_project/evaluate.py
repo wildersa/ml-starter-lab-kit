@@ -11,7 +11,7 @@ def load_model(path: str = "models/model.json") -> dict[str, object]:
     model_path = project_root() / path
 
     if not model_path.exists():
-        raise FileNotFoundError("Modelo não encontrado. Rode train.py primeiro.")
+        raise FileNotFoundError("Model not found. Run train.py first.")
 
     return json.loads(model_path.read_text(encoding="utf-8"))
 
@@ -41,7 +41,7 @@ def main() -> None:
         metrics = evaluate_majority_baseline(rows, model)
     else:
         metrics = {
-            "note": "Avaliação ainda não implementada para este tipo de modelo.",
+            "note": "Evaluation not yet implemented for this model type.",
             "model_type": model.get("model_type"),
         }
 
@@ -49,7 +49,7 @@ def main() -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(metrics, indent=2, ensure_ascii=False), encoding="utf-8")
 
-    print("Métricas salvas em reports/metrics.json")
+    print("Metrics saved at reports/metrics.json")
     print(json.dumps(metrics, indent=2, ensure_ascii=False))
 
 

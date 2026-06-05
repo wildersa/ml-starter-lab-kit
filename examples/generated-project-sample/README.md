@@ -1,85 +1,84 @@
 # sample_ml_project
 
 This is a generated Machine Learning project, not the starter tool itself.
-Este é um projeto de Machine Learning gerado, não a própria ferramenta starter.
 
-## Tipo de projeto
+## Project type
 
 `supervised`
 
-## Estrutura
+## Structure
 
 ```text
-configs/             configurações em JSON
-data/raw/            dados originais
-data/processed/      dados tratados
-notebooks/           exploração e análise
-src/sample_ml_project/ código principal
-models/              modelos treinados
-reports/             métricas, figuras e relatórios
-tests/               testes mínimos
+configs/             JSON configurations
+data/raw/            original data
+data/processed/      processed data
+notebooks/           exploration and analysis
+src/sample_ml_project/ main code
+models/              trained models
+reports/             metrics, figures and reports
+tests/               minimum tests
 ```
 
-## Ambiente e Requisitos
+## Environment and Requirements
 
-Este projeto utiliza arquivos de requisitos para gerenciar o ambiente local.
+This project uses requirements files to manage the local environment.
 
 ```bash
-# Criar ambiente virtual
+# Create virtual environment
 python -m venv .venv
 
-# Ativar ambiente (Linux/macOS)
+# Activate environment (Linux/macOS)
 source .venv/bin/activate
 
-# Ativar ambiente (Windows)
+# Activate environment (Windows)
 .venv\Scripts\activate
 
-# Instalar dependências básicas e o próprio pacote em modo editável
+# Install basic dependencies and the package itself in editable mode
 pip install -r requirements.txt
 
-# Para desenvolvimento e testes
+# For development and testing
 pip install -r requirements-dev.txt
 
-# Para notebooks
+# For notebooks
 pip install -r requirements-notebook.txt
 ```
 
-Se o suporte a ML ou Torch foi selecionado (e os arquivos foram gerados), instale também:
+If ML or Torch support was selected (and files were generated), also install:
 
 ```bash
-# ML básico (se requirements-ml.txt existir)
+# Basic ML (if requirements-ml.txt exists)
 pip install -r requirements-ml.txt
 
-# PyTorch (se requirements-torch-*.txt existir)
+# PyTorch (if requirements-torch-*.txt exists)
 pip install -r requirements-torch-*.txt
 ```
 
-> **Nota sobre CUDA**: Instalações CUDA podem exigir o index de wheel correto do PyTorch e compatibilidade de driver local.
-> Verifique em: [pytorch.org](https://pytorch.org/get-started/locally/)
+> **Note on CUDA**: CUDA installations may require the correct PyTorch wheel index and local driver compatibility.
+> Check at: [pytorch.org](https://pytorch.org/get-started/locally/)
 
-### Validação de ambiente
+### Environment validation
 
 ```bash
-# Validar se o pacote está instalado corretamente
-python -c "import sample_ml_project; print('Pacote sample_ml_project pronto')"
+# Validate if the package is installed correctly
+python -c "import sample_ml_project; print('Package sample_ml_project ready')"
 
-# Validar PyTorch e CUDA (se instalado)
-python -c "import torch; print(f'Torch {torch.__version__} disponível. CUDA: {torch.cuda.is_available()}')"
+# Validate PyTorch and CUDA (if installed)
+python -c "import torch; print(f'Torch {torch.__version__} available. CUDA: {torch.cuda.is_available()}')"
 ```
 
-## Fluxo sugerido
+## Suggested flow
 
 ```text
-1. Coloque o dataset em data/raw/
-2. Ajuste configs/config.json
-3. Faça a EDA no notebook
-4. Edite src/sample_ml_project/features.py
-5. Treine o modelo
-6. Avalie os resultados
-7. Documente limitações e próximos passos
+1. Place the dataset in data/raw/
+2. Adjust configs/config.json
+3. Perform EDA in the notebook
+4. Edit src/sample_ml_project/features.py
+5. Train the model
+6. Evaluate results
+7. Document limitations and next steps
 ```
 
-## Comandos sugeridos
+## Suggested commands
 
 ```bash
 python -m src.sample_ml_project.data

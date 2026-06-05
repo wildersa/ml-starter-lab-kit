@@ -1,1 +1,1 @@
-# Pacote principal do projeto.
+# Main package of the project.

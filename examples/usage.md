@@ -1,22 +1,22 @@
-# Exemplos de uso
+# Usage examples
 
-## Modo interativo
+## Interactive mode
 
 ```bash
 python create_ml_starter.py
 ```
 
-## Fase 3
+## Phase 3
 
-Escolha:
+Choose:
 
 ```text
 task: supervised
-package: tech_challenge_fase3
-target: sua_coluna_target
+package: tech_challenge_phase3
+target: your_target_column
 ```
 
-Depois, se precisar, adicione no seu projeto:
+Then, if needed, add to your project:
 
 ```text
 pandas
@@ -24,28 +24,28 @@ scikit-learn
 xgboost
 ```
 
-## Fase 4
+## Phase 4
 
-Escolha:
+Choose:
 
 ```text
 task: timeseries
-package: tech_challenge_fase4
+package: tech_challenge_phase4
 ```
 
-Depois adicione Keras/TensorFlow somente se for usar LSTM.
+Then add Keras/TensorFlow only if you are going to use LSTM.
 
-## Fase 5 / Datathon
+## Phase 5 / Datathon
 
-Escolha:
+Choose:
 
 ```text
-task: supervised (ou outro tipo real de ML)
+task: supervised (or other real ML type)
 preset: datathon
 package: datathon_offerexp
 ```
 
-Ele cria também:
+It also creates:
 
 ```text
 docs/architecture-azure.md

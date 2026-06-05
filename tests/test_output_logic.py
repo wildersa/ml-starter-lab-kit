@@ -77,7 +77,7 @@ class TestOutputLogic(unittest.TestCase):
         content = readme_path.read_text()
 
         self.assertIn("This is a generated Machine Learning project, not the starter tool itself.", content)
-        self.assertIn("Este é um projeto de Machine Learning gerado, não a própria ferramenta starter.", content)
+        self.assertNotIn("Este é um projeto de Machine Learning gerado, não a própria ferramenta starter.", content)
 
 if __name__ == "__main__":
     unittest.main()
