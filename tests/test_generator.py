@@ -200,5 +200,40 @@ class TestGenerator(unittest.TestCase):
             self.assertIn('"vision"', content)
             self.assertNotIn('"datathon"', content)
 
+    def test_pyproject_src_layout(self):
+        run_generator(
+            project_name="src_layout_proj",
+            package_name="src_layout_pkg",
+            task="1",
+            output_dir=self.test_dir,
+            include_ml_basics="n"
+        )
+
+        pyproject_path = self.test_dir / "pyproject.toml"
+        with open(pyproject_path) as f:
+            content = f.read()
+            self.assertIn("[build-system]", content)
+            self.assertIn('requires = ["setuptools>=61.0"]', content)
+            self.assertIn('[tool.setuptools.packages.find]', content)
+            self.assertIn('where = ["src"]', content)
+            self.assertIn('pythonpath = ["src"]', content)
+
+    def test_readme_suggested_commands(self):
+        run_generator(
+            project_name="cmd_proj",
+            package_name="cmd_pkg",
+            task="1",
+            output_dir=self.test_dir,
+            include_ml_basics="n"
+        )
+
+        readme_path = self.test_dir / "README.md"
+        with open(readme_path) as f:
+            content = f.read()
+            self.assertIn("python -m cmd_pkg.data", content)
+            self.assertIn("python -m cmd_pkg.train", content)
+            self.assertIn("python -m cmd_pkg.evaluate", content)
+            self.assertNotIn("python -m src.cmd_pkg.data", content)
+
 if __name__ == "__main__":
     unittest.main()

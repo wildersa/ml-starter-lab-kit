@@ -81,7 +81,7 @@ python -c "import torch; print(f'Torch {torch.__version__} available. CUDA: {tor
 ## Suggested commands
 
 ```bash
-python -m src.{{PACKAGE_NAME}}.data
-python -m src.{{PACKAGE_NAME}}.train
-python -m src.{{PACKAGE_NAME}}.evaluate
+python -m {{PACKAGE_NAME}}.data
+python -m {{PACKAGE_NAME}}.train
+python -m {{PACKAGE_NAME}}.evaluate
 ```
