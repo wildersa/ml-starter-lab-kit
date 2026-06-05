@@ -16,7 +16,7 @@ def load_template(name: str, values: dict[str, str], folder: str = "common") -> 
         template_path = STARTER_ROOT / "templates" / folder / f"{name}.tpl"
 
     if not template_path.exists():
-        return f"# Template {name} not found.\n"
+        raise FileNotFoundError(f"Template not found: {template_path}")
 
     content = template_path.read_text(encoding="utf-8")
     return render(content, values)
