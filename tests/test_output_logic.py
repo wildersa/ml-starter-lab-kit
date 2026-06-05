@@ -3,7 +3,7 @@ from pathlib import Path
 from unittest.mock import patch
 import shutil
 import tempfile
-import create_ml_starter
+from ml_starter_generator import scaffold
 from tests.helpers import run_generator
 
 class TestOutputLogic(unittest.TestCase):
@@ -17,19 +17,18 @@ class TestOutputLogic(unittest.TestCase):
         shutil.rmtree(self.test_dir)
 
     def test_default_sibling_directory(self):
-        # We need to patch STARTER_ROOT in the module
-        with patch('create_ml_starter.STARTER_ROOT', self.starter_root):
+        # We need to patch STARTER_ROOT in the constants module
+        from ml_starter_generator import constants
+        with patch('ml_starter_generator.constants.STARTER_ROOT', self.starter_root):
             package_name = "my_ml_project"
             expected_default = self.starter_root.parent / package_name
 
-            # In create_ml_starter.py:
-            # default_output_dir = STARTER_ROOT.parent / package_name
-            actual_default = create_ml_starter.STARTER_ROOT.parent / package_name
+            # default_output_dir in cli.main is STARTER_ROOT.parent / package_name
+            actual_default = constants.STARTER_ROOT.parent / package_name
             self.assertEqual(actual_default, expected_default)
-            self.assertEqual(actual_default.parent, self.starter_root.parent)
 
     def test_starter_root_detection(self):
-        with patch('create_ml_starter.STARTER_ROOT', self.starter_root):
+        with patch('ml_starter_generator.cli.STARTER_ROOT', self.starter_root):
             # Test path inside starter root
             inside_path = self.starter_root / "some_subdir"
             outside_path = self.test_dir / "outside"
@@ -55,7 +54,7 @@ class TestOutputLogic(unittest.TestCase):
         output_dir = self.test_dir / "output"
         output_dir.mkdir()
 
-        create_ml_starter.create_readme(output_dir, values, force=True)
+        scaffold.create_readme(output_dir, values, force=True)
 
         readme_path = output_dir / "README.md"
         content = readme_path.read_text()
