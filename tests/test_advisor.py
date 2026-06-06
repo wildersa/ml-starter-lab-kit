@@ -116,5 +116,21 @@ class TestAdvisor(unittest.TestCase):
         self.assertIn("Imbalanced target", report_content)
         self.assertIn("High numeric correlation", report_content)
 
+        # Verify summary and top next steps in report
+        self.assertIn("## Summary", report_content)
+        self.assertIn("## Top next steps", report_content)
+        self.assertIn("Dataset shape", report_content)
+        self.assertIn("Target column", report_content)
+
+        # Verify JSON metadata
+        import json
+        with open(json_path, "r", encoding="utf-8") as f:
+            results = json.load(f)
+            self.assertIn("summary", results)
+            self.assertIn("next_steps", results)
+            self.assertEqual(results["summary"]["dataset_shape"], [50, 7])
+            self.assertEqual(results["summary"]["target_column"], "target")
+            self.assertGreater(len(results["next_steps"]), 0)
+
 if __name__ == "__main__":
     unittest.main()
