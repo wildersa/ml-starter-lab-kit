@@ -18,6 +18,251 @@ from .scaffold import (
     create_env_files,
 )
 
+TRANSLATIONS = {
+    "en": {
+        "language_name": "English",
+        "choose_language": "Choose language",
+        "project_basics": "Project basics",
+        "project_name": "Project name",
+        "package_name": "Python package name",
+        "choose_task": "Project Type (ML Task)",
+        "task_generic": "generic ML structure",
+        "task_supervised": "classification/regression",
+        "task_unsupervised": "PCA/K-Means/clustering",
+        "task_timeseries": "time series/LSTM",
+        "task_vision": "image classification/detection",
+        "choose_option": "Choose an option",
+        "invalid_option": "Invalid option.",
+        "dataset_target": "Dataset and target",
+        "supervised_panel_title": "Supervised Learning",
+        "supervised_panel_text": "In supervised learning, you need a 'target' column (what you want to predict)\nand 'features' (the data used to make the prediction).",
+        "unsupervised_panel_title": "Unsupervised Learning",
+        "unsupervised_panel_text": "Unsupervised learning finds patterns in data without a specific target column.",
+        "dataset_path": "Dataset path",
+        "target_column": "Target column name",
+        "problem_framing": "Problem framing",
+        "problem_framing_panel_title": "Problem Framing",
+        "problem_framing_panel_text": "This optional wizard helps configure the starter kit to your specific goals.",
+        "press_enter_defaults": "Press Enter to use defaults.",
+        "goal_question": "1. Main goal?",
+        "goal_label": "Goal",
+        "goal_predict_category": "predict a category",
+        "goal_predict_number": "predict a number",
+        "goal_group_records": "group similar records",
+        "goal_forecast_values": "forecast future values",
+        "goal_work_images_text": "work with images/text",
+        "priority_question": "2. What matters most?",
+        "priority_label": "Priority",
+        "priority_interpretability": "interpretability",
+        "priority_performance": "predictive performance",
+        "priority_speed": "speed/simplicity",
+        "priority_imbalanced": "handling imbalanced classes",
+        "priority_learning": "learning/experimentation",
+        "error_cost_question": "3. Which error is more costly?",
+        "error_cost_label": "Error cost",
+        "error_cost_fp": "false positive",
+        "error_cost_fn": "false negative",
+        "error_cost_both": "both similar",
+        "error_cost_not_sure": "not sure",
+        "size_question": "4. Expected dataset size?",
+        "size_label": "Size",
+        "size_small": "small",
+        "size_medium": "medium",
+        "size_large": "large",
+        "size_not_sure": "not sure",
+        "baseline_question": "5. Prefer simple baseline first?",
+        "domain_note_question": "6. Any domain note? (optional)",
+        "environment": "Environment",
+        "create_env_files": "Create pyproject.toml and environment files?",
+        "python_profile": "Python Profile",
+        "profile_safe": "Python 3.12 (stable)",
+        "profile_modern": "Python 3.14 (experimental/recent)",
+        "ml_basics": "Include basic ML dependencies (pandas, numpy, scikit-learn, matplotlib, seaborn)?",
+        "torch_support": "PyTorch Support",
+        "torch_none": "none",
+        "torch_cpu": "cpu",
+        "torch_cuda126": "cuda 12.6",
+        "torch_cuda128": "cuda 12.8",
+        "optional_tools": "Optional tools",
+        "create_docs": "Create documentation files?",
+        "optional_files_templates": "Optional files (templates):",
+        "optional_profile": "Optional Template Profile",
+        "profile_minimal": "minimal",
+        "profile_recommended": "recommended",
+        "profile_full": "full",
+        "profile_custom": "custom",
+        "include_eda": "Include EDA support?",
+        "include_preprocessing": "Include preprocessing support?",
+        "include_metrics": "Include custom metrics?",
+        "include_optimization": "Include optimization scaffolding?",
+        "include_feature_measurement": "Include feature measurement?",
+        "include_visualization": "Include visualization support?",
+        "include_notebook_factory": "Include notebook factory?",
+        "include_model_report": "Include model report template?",
+        "include_experiment_log": "Include experiment log template?",
+        "include_advisor": "Include explainable Dataset Advisor?",
+        "dependency_note_title": "Dependency Note",
+        "dependency_note_text": "Dataset Advisor requires basic ML dependencies (pandas, scikit-learn).",
+        "enable_ml_basics": "Enable basic ML dependencies now?",
+        "output_location": "Output location",
+        "dir_current": "Current directory",
+        "dir_nested": "New folder in current directory",
+        "dir_sibling": "Sibling folder (recommended)",
+        "dir_custom": "Custom path",
+        "enter_custom_path": "Enter custom path",
+        "warn_inside_repo": "The selected output directory is inside the starter repository.",
+        "continue_anyway": "Do you want to continue anyway?",
+        "overwrite_files": "Overwrite existing files if there is a conflict?",
+        "final_summary": "Final summary",
+        "summary_project_name": "Project name",
+        "summary_package_name": "Package name",
+        "summary_task": "ML Task",
+        "summary_dataset_path": "Dataset path",
+        "summary_target_column": "Target column",
+        "summary_python_version": "Python version",
+        "summary_torch_variant": "PyTorch variant",
+        "summary_ml_basics": "Include ML basics",
+        "summary_output_dir": "Output directory",
+        "summary_overwrite": "Overwrite files",
+        "create_project_files": "Create project files?",
+        "aborted": "Aborted.",
+        "success_msg": "Starter-kit created successfully!",
+        "destination": "Destination",
+        "next_steps": "Next steps",
+        "next_step_1": "1. Place your dataset at",
+        "next_step_2": "2. Review and adjust metadata in",
+        "next_step_3": "3. Define your features in",
+        "next_step_4": "4. Run the pipeline",
+        "next_step_4_data": "Step 1 (Data)",
+        "next_step_4_train": "Step 2 (Train)",
+        "next_step_4_eval": "Step 3 (Evaluate)",
+        "next_step_advisor": "Dataset Advice",
+        "yes": "yes",
+        "no": "no",
+    },
+    "pt-BR": {
+        "language_name": "Português do Brasil",
+        "choose_language": "Escolha o idioma",
+        "project_basics": "Informações básicas",
+        "project_name": "Nome do projeto",
+        "package_name": "Nome do pacote Python",
+        "choose_task": "Tipo de Projeto (Tarefa de ML)",
+        "task_generic": "estrutura genérica de ML",
+        "task_supervised": "classificação/regressão",
+        "task_unsupervised": "PCA/K-Means/agrupamento",
+        "task_timeseries": "séries temporais/LSTM",
+        "task_vision": "classificação de imagem/detecção",
+        "choose_option": "Escolha uma opção",
+        "invalid_option": "Opção inválida.",
+        "dataset_target": "Dataset e alvo (target)",
+        "supervised_panel_title": "Aprendizado Supervisionado",
+        "supervised_panel_text": "No aprendizado supervisionado, você precisa de uma coluna 'alvo' (o que deseja prever)\ne 'features' (os dados usados para fazer a previsão).",
+        "unsupervised_panel_title": "Aprendizado Não Supervisionado",
+        "unsupervised_panel_text": "O aprendizado não supervisionado encontra padrões nos dados sem uma coluna alvo específica.",
+        "dataset_path": "Caminho do dataset",
+        "target_column": "Nome da coluna alvo",
+        "problem_framing": "Definição do problema",
+        "problem_framing_panel_title": "Definição do Problema",
+        "problem_framing_panel_text": "Este assistente opcional ajuda a configurar o kit inicial para seus objetivos específicos.",
+        "press_enter_defaults": "Pressione Enter para usar os padrões.",
+        "goal_question": "1. Qual o objetivo principal?",
+        "goal_label": "Objetivo",
+        "goal_predict_category": "prever uma categoria",
+        "goal_predict_number": "prever um número",
+        "goal_group_records": "agrupar registros semelhantes",
+        "goal_forecast_values": "prever valores futuros",
+        "goal_work_images_text": "trabalhar com imagens/texto",
+        "priority_question": "2. O que é mais importante?",
+        "priority_label": "Prioridade",
+        "priority_interpretability": "interpretabilidade",
+        "priority_performance": "desempenho preditivo",
+        "priority_speed": "velocidade/simplicidade",
+        "priority_imbalanced": "lidar com classes desbalanceadas",
+        "priority_learning": "aprendizado/experimentação",
+        "error_cost_question": "3. Qual erro é mais caro?",
+        "error_cost_label": "Custo do erro",
+        "error_cost_fp": "falso positivo",
+        "error_cost_fn": "falso negativo",
+        "error_cost_both": "ambos similares",
+        "error_cost_not_sure": "não tenho certeza",
+        "size_question": "4. Tamanho esperado do dataset?",
+        "size_label": "Tamanho",
+        "size_small": "pequeno",
+        "size_medium": "médio",
+        "size_large": "grande",
+        "size_not_sure": "não tenho certeza",
+        "baseline_question": "5. Prefere um baseline simples primeiro?",
+        "domain_note_question": "6. Alguma nota sobre o domínio? (opcional)",
+        "environment": "Ambiente",
+        "create_env_files": "Criar pyproject.toml e arquivos de ambiente?",
+        "python_profile": "Perfil de Python",
+        "profile_safe": "Python 3.12 (estável)",
+        "profile_modern": "Python 3.14 (experimental/recente)",
+        "ml_basics": "Incluir dependências básicas de ML (pandas, numpy, scikit-learn, matplotlib, seaborn)?",
+        "torch_support": "Suporte a PyTorch",
+        "torch_none": "nenhum",
+        "torch_cpu": "cpu",
+        "torch_cuda126": "cuda 12.6",
+        "torch_cuda128": "cuda 12.8",
+        "optional_tools": "Ferramentas opcionais",
+        "create_docs": "Criar arquivos de documentação?",
+        "optional_files_templates": "Arquivos opcionais (templates):",
+        "optional_profile": "Perfil de Templates Opcionais",
+        "profile_minimal": "mínimo",
+        "profile_recommended": "recomendado",
+        "profile_full": "completo",
+        "profile_custom": "personalizado",
+        "include_eda": "Incluir suporte a EDA?",
+        "include_preprocessing": "Incluir suporte a pré-processamento?",
+        "include_metrics": "Incluir métricas customizadas?",
+        "include_optimization": "Incluir estrutura de otimização?",
+        "include_feature_measurement": "Incluir medição de features?",
+        "include_visualization": "Incluir suporte a visualização?",
+        "include_notebook_factory": "Incluir fábrica de notebooks?",
+        "include_model_report": "Incluir template de relatório de modelo?",
+        "include_experiment_log": "Incluir template de log de experimentos?",
+        "include_advisor": "Incluir Dataset Advisor explicável?",
+        "dependency_note_title": "Nota de Dependência",
+        "dependency_note_text": "O Dataset Advisor requer dependências básicas de ML (pandas, scikit-learn).",
+        "enable_ml_basics": "Ativar dependências básicas de ML agora?",
+        "output_location": "Local de saída",
+        "dir_current": "Diretório atual",
+        "dir_nested": "Nova pasta no diretório atual",
+        "dir_sibling": "Pasta irmã (recomendado)",
+        "dir_custom": "Caminho personalizado",
+        "enter_custom_path": "Digite o caminho personalizado",
+        "warn_inside_repo": "O diretório de saída selecionado está dentro do repositório do starter.",
+        "continue_anyway": "Deseja continuar assim mesmo?",
+        "overwrite_files": "Sobrescrever arquivos existentes em caso de conflito?",
+        "final_summary": "Resumo final",
+        "summary_project_name": "Nome do projeto",
+        "summary_package_name": "Nome do pacote",
+        "summary_task": "Tarefa de ML",
+        "summary_dataset_path": "Caminho do dataset",
+        "summary_target_column": "Coluna alvo",
+        "summary_python_version": "Versão do Python",
+        "summary_torch_variant": "Variante do PyTorch",
+        "summary_ml_basics": "Incluir ML básico",
+        "summary_output_dir": "Diretório de saída",
+        "summary_overwrite": "Sobrescrever arquivos",
+        "create_project_files": "Criar arquivos do projeto?",
+        "aborted": "Abortado.",
+        "success_msg": "Starter-kit criado com sucesso!",
+        "destination": "Destino",
+        "next_steps": "Próximos passos",
+        "next_step_1": "1. Coloque seu dataset em",
+        "next_step_2": "2. Revise e ajuste metadados em",
+        "next_step_3": "3. Defina suas features em",
+        "next_step_4": "4. Execute o pipeline",
+        "next_step_4_data": "Passo 1 (Dados)",
+        "next_step_4_train": "Passo 2 (Treino)",
+        "next_step_4_eval": "Passo 3 (Avaliação)",
+        "next_step_advisor": "Conselhos sobre o Dataset",
+        "yes": "sim",
+        "no": "não",
+    }
+}
+
 class UI:
     """Helper for terminal UI, colors, and sections."""
     BLUE = '\033[94m'
@@ -76,8 +321,14 @@ def ask(prompt: str, default: str | None = None) -> str:
     return value or (default or "")
 
 
-def ask_yes_no(prompt: str, default: bool = True) -> bool:
-    default_label = "Y/n" if default else "y/N"
+def ask_yes_no(prompt: str, default: bool = True, lang: str = "en") -> bool:
+    y_label = "Y" if default else "y"
+    n_label = "n" if default else "N"
+
+    if lang == "pt-BR":
+        y_label = "S" if default else "s"
+
+    default_label = f"{y_label}/{n_label}"
     colored_label = UI.color(default_label, UI.CYAN)
     full_prompt = f"{prompt} [{colored_label}]: "
     print(full_prompt, end="", flush=True)
@@ -86,49 +337,66 @@ def ask_yes_no(prompt: str, default: bool = True) -> bool:
     if not value:
         return default
 
+    if lang == "pt-BR":
+        return value in {"s", "sim", "y", "yes"}
+
     return value in {"y", "yes"}
 
 
-def choose_task() -> str:
+def choose_language() -> str:
     print()
-    print("Project Type (ML Task):")
-    print("1. generic       - generic ML structure")
-    print("2. supervised    - classification/regression")
-    print("3. unsupervised  - PCA/K-Means/clustering")
-    print("4. timeseries    - time series/LSTM")
-    print("5. vision        - image classification/detection")
+    print("1. English")
+    print("2. Português do Brasil")
 
     while True:
-        choice = ask("Choose an option", "2")
+        choice = ask("Choose language / Escolha o idioma", "1")
+        if choice == "1" or choice.lower() == "en":
+            return "en"
+        if choice == "2" or choice.lower() == "pt-br":
+            return "pt-BR"
+        print("Invalid option / Opção inválida.")
+
+
+def choose_task(t: dict[str, str]) -> str:
+    print()
+    print(f"{t['choose_task']}:")
+    print(f"1. generic       - {t['task_generic']}")
+    print(f"2. supervised    - {t['task_supervised']}")
+    print(f"3. unsupervised  - {t['task_unsupervised']}")
+    print(f"4. timeseries    - {t['task_timeseries']}")
+    print(f"5. vision        - {t['task_vision']}")
+
+    while True:
+        choice = ask(t['choose_option'], "2")
         if choice in TASKS:
             return TASKS[choice]
         if choice in TASKS.values():
             return choice
-        print("Invalid option.")
+        print(t['invalid_option'])
 
 
-def choose_python_profile() -> str:
+def choose_python_profile(t: dict[str, str]) -> str:
     print()
-    print("Python Profile:")
-    print("1. safe   - Python 3.12 (stable)")
-    print("2. modern - Python 3.14 (experimental/recent)")
+    print(f"{t['python_profile']}:")
+    print(f"1. safe   - {t['profile_safe']}")
+    print(f"2. modern - {t['profile_modern']}")
 
     while True:
-        choice = ask("Choose an option", "1")
+        choice = ask(t['choose_option'], "1")
         if choice == "1" or choice == "safe":
             return "3.12"
         if choice == "2" or choice == "modern":
             return "3.14"
-        print("Invalid option.")
+        print(t['invalid_option'])
 
 
-def choose_torch_variant() -> str:
+def choose_torch_variant(t: dict[str, str]) -> str:
     print()
-    print("PyTorch Support:")
-    print("1. none     - Do not include Torch")
-    print("2. cpu      - Torch for CPU")
-    print("3. cuda126  - Torch for CUDA 12.6")
-    print("4. cuda128  - Torch for CUDA 12.8")
+    print(f"{t['torch_support']}:")
+    print(f"1. none     - {t['torch_none']}")
+    print(f"2. cpu      - {t['torch_cpu']}")
+    print(f"3. cuda126  - {t['torch_cuda126']}")
+    print(f"4. cuda128  - {t['torch_cuda128']}")
 
     mapping = {
         "1": "none",
@@ -138,30 +406,30 @@ def choose_torch_variant() -> str:
     }
 
     while True:
-        choice = ask("Choose an option", "1")
+        choice = ask(t['choose_option'], "1")
         if choice in mapping:
             return mapping[choice]
         if choice in mapping.values():
             return choice
-        print("Invalid option.")
+        print(t['invalid_option'])
 
 
-def choose_optional_profile() -> str:
+def choose_optional_profile(t: dict[str, str]) -> str:
     print()
-    print("Optional Template Profile:")
-    print("1. minimal     - no optional templates")
-    print("2. recommended - eda, preprocessing, metrics, visualization")
-    print("3. full        - all optional templates")
-    print("4. custom      - select templates individually")
+    print(f"{t['optional_profile']}:")
+    print(f"1. minimal     - {t['profile_minimal']}")
+    print(f"2. recommended - {t['profile_recommended']}")
+    print(f"3. full        - {t['profile_full']}")
+    print(f"4. custom      - {t['profile_custom']}")
 
     while True:
-        choice = ask("Choose an option", "2")
+        choice = ask(t['choose_option'], "2")
         if choice in {"1", "2", "3", "4"}:
             mapping = {"1": "minimal", "2": "recommended", "3": "full", "4": "custom"}
             return mapping[choice]
         if choice in {"minimal", "recommended", "full", "custom"}:
             return choice
-        print("Invalid option.")
+        print(t['invalid_option'])
 
 
 def get_options_by_profile(profile: str) -> dict[str, bool]:
@@ -197,57 +465,57 @@ def get_options_by_profile(profile: str) -> dict[str, bool]:
     return options
 
 
-def run_problem_framing_wizard(task: str) -> dict[str, str]:
-    UI.panel("Problem Framing", "This optional wizard helps configure the starter kit to your specific goals.")
-    print("Press Enter to use defaults.")
+def run_problem_framing_wizard(task: str, t: dict[str, str], lang: str) -> dict[str, str]:
+    UI.panel(t['problem_framing_panel_title'], t['problem_framing_panel_text'])
+    print(t['press_enter_defaults'])
 
     # 1. Main goal?
-    print("\n1. Main goal?")
+    print(f"\n{t['goal_question']}")
     goals = {
-        "supervised": "predict a category",
-        "unsupervised": "group similar records",
-        "timeseries": "forecast future values",
-        "vision": "work with images/text",
-        "generic": "predict a category"
+        "supervised": t["goal_predict_category"],
+        "unsupervised": t["goal_group_records"],
+        "timeseries": t["goal_forecast_values"],
+        "vision": t["goal_work_images_text"],
+        "generic": t["goal_predict_category"]
     }
-    default_goal = goals.get(task, "predict a category")
-    print(f"   - predict a category")
-    print(f"   - predict a number")
-    print(f"   - group similar records")
-    print(f"   - forecast future values")
-    print(f"   - work with images/text")
-    goal = ask("Goal", default_goal)
+    default_goal = goals.get(task, t["goal_predict_category"])
+    print(f"   - {t['goal_predict_category']}")
+    print(f"   - {t['goal_predict_number']}")
+    print(f"   - {t['goal_group_records']}")
+    print(f"   - {t['goal_forecast_values']}")
+    print(f"   - {t['goal_work_images_text']}")
+    goal = ask(t["goal_label"], default_goal)
 
     # 2. What matters most?
-    print("\n2. What matters most?")
-    print("   - interpretability")
-    print("   - predictive performance")
-    print("   - speed/simplicity")
-    print("   - handling imbalanced classes")
-    print("   - learning/experimentation")
-    priority = ask("Priority", "learning/experimentation")
+    print(f"\n{t['priority_question']}")
+    print(f"   - {t['priority_interpretability']}")
+    print(f"   - {t['priority_performance']}")
+    print(f"   - {t['priority_speed']}")
+    print(f"   - {t['priority_imbalanced']}")
+    print(f"   - {t['priority_learning']}")
+    priority = ask(t["priority_label"], t["priority_learning"])
 
     # 3. Which error is more costly?
-    print("\n3. Which error is more costly?")
-    print("   - false positive")
-    print("   - false negative")
-    print("   - both similar")
-    print("   - not sure")
-    error_cost = ask("Error cost", "not sure")
+    print(f"\n{t['error_cost_question']}")
+    print(f"   - {t['error_cost_fp']}")
+    print(f"   - {t['error_cost_fn']}")
+    print(f"   - {t['error_cost_both']}")
+    print(f"   - {t['error_cost_not_sure']}")
+    error_cost = ask(t["error_cost_label"], t["error_cost_not_sure"])
 
     # 4. Expected dataset size?
-    print("\n4. Expected dataset size?")
-    print("   - small")
-    print("   - medium")
-    print("   - large")
-    print("   - not sure")
-    dataset_size = ask("Size", "not sure")
+    print(f"\n{t['size_question']}")
+    print(f"   - {t['size_small']}")
+    print(f"   - {t['size_medium']}")
+    print(f"   - {t['size_large']}")
+    print(f"   - {t['size_not_sure']}")
+    dataset_size = ask(t["size_label"], t["size_not_sure"])
 
     # 5. Prefer simple baseline first?
-    prefer_baseline = "yes" if ask_yes_no("\n5. Prefer simple baseline first?", True) else "no"
+    prefer_baseline = "yes" if ask_yes_no(f"\n{t['baseline_question']}", True, lang=lang) else "no"
 
     # 6. Any domain note?
-    domain_note = ask("\n6. Any domain note? (optional)", "")
+    domain_note = ask(f"\n{t['domain_note_question']}", "")
 
     return {
         "goal": goal,
@@ -255,7 +523,8 @@ def run_problem_framing_wizard(task: str) -> dict[str, str]:
         "error_cost": error_cost,
         "dataset_size": dataset_size,
         "prefer_baseline": prefer_baseline,
-        "domain_note": domain_note
+        "domain_note": domain_note,
+        "language": lang
     }
 
 
@@ -273,104 +542,104 @@ def normalize_package_name(value: str) -> str:
     return value
 
 
-def print_summary(root: Path, values: dict[str, str]) -> None:
-    UI.success("Starter-kit created successfully!")
-    print(f"Destination: {UI.color(str(root.resolve()), UI.CYAN)}")
+def print_summary(root: Path, values: dict[str, str], t: dict[str, str]) -> None:
+    UI.success(t["success_msg"])
+    print(f"{t['destination']}: {UI.color(str(root.resolve()), UI.CYAN)}")
     print()
-    UI.panel("Next steps",
-             f"1. Place your dataset at: {values['DATASET_PATH']}\n"
-             f"2. Review and adjust metadata in: configs/config.json\n"
-             f"3. Define your features in: src/{values['PACKAGE_NAME']}/features.py\n"
-             f"4. Run the pipeline:\n"
-             f"   - Step 1 (Data):     python -m {values['PACKAGE_NAME']}.data\n"
-             f"   - Step 2 (Train):    python -m {values['PACKAGE_NAME']}.train\n"
-             f"   - Step 3 (Evaluate): python -m {values['PACKAGE_NAME']}.evaluate")
+    UI.panel(t["next_steps"],
+             f"{t['next_step_1']}: {values['DATASET_PATH']}\n"
+             f"{t['next_step_2']}: configs/config.json\n"
+             f"{t['next_step_3']}: src/{values['PACKAGE_NAME']}/features.py\n"
+             f"{t['next_step_4']}:\n"
+             f"   - {t['next_step_4_data']}:     python -m {values['PACKAGE_NAME']}.data\n"
+             f"   - {t['next_step_4_train']}:    python -m {values['PACKAGE_NAME']}.train\n"
+             f"   - {t['next_step_4_eval']}: python -m {values['PACKAGE_NAME']}.evaluate")
 
     if values.get("ADVISOR_COMMAND"):
-        print(f"   - Dataset Advice:   {values['ADVISOR_COMMAND']}")
+        print(f"   - {t['next_step_advisor']}:   {values['ADVISOR_COMMAND']}")
 
 
 def main() -> None:
     print(UI.color("ML Starter Kit Builder", UI.BLUE + UI.BOLD))
     print(UI.color("======================", UI.BLUE + UI.BOLD))
 
-    UI.section("Project basics", 1)
+    lang = choose_language()
+    t = TRANSLATIONS[lang]
+
+    UI.section(t["project_basics"], 1)
     default_project = Path.cwd().name
-    project_name = ask("Project name", default_project)
+    project_name = ask(t["project_name"], default_project)
     package_name = normalize_package_name(
-        ask("Python package name", normalize_package_name(project_name))
+        ask(t["package_name"], normalize_package_name(project_name))
     )
-    task = choose_task()
+    task = choose_task(t)
     preset = "none"
 
-    UI.section("Dataset and target", 2)
+    UI.section(t["dataset_target"], 2)
     if task == "supervised":
-        UI.panel("Supervised Learning",
-                 "In supervised learning, you need a 'target' column (what you want to predict)\n"
-                 "and 'features' (the data used to make the prediction).")
+        UI.panel(t["supervised_panel_title"], t["supervised_panel_text"])
     elif task == "unsupervised":
-        UI.panel("Unsupervised Learning",
-                 "Unsupervised learning finds patterns in data without a specific target column.")
+        UI.panel(t["unsupervised_panel_title"], t["unsupervised_panel_text"])
 
-    dataset_path = ask("Dataset path", "data/raw/dataset.csv")
+    dataset_path = ask(t["dataset_path"], "data/raw/dataset.csv")
 
     if task == "unsupervised":
         target_column = ""
     else:
-        target_column = ask("Target column name", "target")
+        target_column = ask(t["target_column"], "target")
 
-    UI.section("Problem framing", 3)
-    problem_profile = run_problem_framing_wizard(task)
+    UI.section(t["problem_framing"], 3)
+    problem_profile = run_problem_framing_wizard(task, t, lang)
 
-    UI.section("Environment", 4)
-    include_pyproject = ask_yes_no("Create pyproject.toml and environment files?", True)
+    UI.section(t["environment"], 4)
+    include_pyproject = ask_yes_no(t["create_env_files"], True, lang=lang)
 
     python_version = "3.11"
     torch_variant = "none"
     include_ml_basics = False
 
     if include_pyproject:
-        python_version = choose_python_profile()
-        include_ml_basics = ask_yes_no("Include basic ML dependencies (pandas, numpy, scikit-learn, matplotlib, seaborn)?", False)
-        torch_variant = choose_torch_variant()
+        python_version = choose_python_profile(t)
+        include_ml_basics = ask_yes_no(t["ml_basics"], False, lang=lang)
+        torch_variant = choose_torch_variant(t)
 
-    UI.section("Optional tools", 5)
-    include_docs = ask_yes_no("Create documentation files?", True)
-    print("\nOptional files (templates):")
-    profile = choose_optional_profile()
+    UI.section(t["optional_tools"], 5)
+    include_docs = ask_yes_no(t["create_docs"], True, lang=lang)
+    print(f"\n{t['optional_files_templates']}")
+    profile = choose_optional_profile(t)
     if profile == "custom":
         optional_options = {
-            "eda": ask_yes_no("Include EDA support?", False),
-            "preprocessing": ask_yes_no("Include preprocessing support?", False),
-            "metrics": ask_yes_no("Include custom metrics?", False),
-            "optimization": ask_yes_no("Include optimization scaffolding?", False),
-            "feature_measurement": ask_yes_no("Include feature measurement?", False),
-            "visualization": ask_yes_no("Include visualization support?", False),
-            "notebook_factory": ask_yes_no("Include notebook factory?", False),
-            "model_report": ask_yes_no("Include model report template?", False),
-            "experiment_log": ask_yes_no("Include experiment log template?", False),
-            "advisor": ask_yes_no("Include explainable Dataset Advisor?", False),
+            "eda": ask_yes_no(t["include_eda"], False, lang=lang),
+            "preprocessing": ask_yes_no(t["include_preprocessing"], False, lang=lang),
+            "metrics": ask_yes_no(t["include_metrics"], False, lang=lang),
+            "optimization": ask_yes_no(t["include_optimization"], False, lang=lang),
+            "feature_measurement": ask_yes_no(t["include_feature_measurement"], False, lang=lang),
+            "visualization": ask_yes_no(t["include_visualization"], False, lang=lang),
+            "notebook_factory": ask_yes_no(t["include_notebook_factory"], False, lang=lang),
+            "model_report": ask_yes_no(t["include_model_report"], False, lang=lang),
+            "experiment_log": ask_yes_no(t["include_experiment_log"], False, lang=lang),
+            "advisor": ask_yes_no(t["include_advisor"], False, lang=lang),
         }
     else:
         optional_options = get_options_by_profile(profile)
 
     if optional_options.get("advisor") and not include_ml_basics:
-        UI.panel("Dependency Note", "Dataset Advisor requires basic ML dependencies (pandas, scikit-learn).")
-        if ask_yes_no("Enable basic ML dependencies now?", True):
+        UI.panel(t["dependency_note_title"], t["dependency_note_text"])
+        if ask_yes_no(t["enable_ml_basics"], True, lang=lang):
             include_ml_basics = True
 
-    UI.section("Output location", 6)
+    UI.section(t["output_location"], 6)
     sibling_dir = (STARTER_ROOT.parent / package_name).resolve()
     current_dir = Path.cwd().resolve()
     nested_dir = (current_dir / package_name).resolve()
 
-    print(f"1. Current directory: {current_dir}")
-    print(f"2. New folder in current directory: {nested_dir}")
-    print(f"3. Sibling folder (recommended): {sibling_dir}")
-    print(f"4. Custom path")
+    print(f"1. {t['dir_current']}: {current_dir}")
+    print(f"2. {t['dir_nested']}: {nested_dir}")
+    print(f"3. {t['dir_sibling']}: {sibling_dir}")
+    print(f"4. {t['dir_custom']}")
 
     while True:
-        choice = ask("Choose an option", "3")
+        choice = ask(t["choose_option"], "3")
         if choice == "1":
             output_dir = current_dir
         elif choice == "2":
@@ -378,9 +647,9 @@ def main() -> None:
         elif choice == "3":
             output_dir = sibling_dir
         elif choice == "4":
-            output_dir = Path(ask("Enter custom path")).resolve()
+            output_dir = Path(ask(t["enter_custom_path"])).resolve()
         else:
-            print("Invalid option.")
+            print(t["invalid_option"])
             continue
 
         is_inside = False
@@ -391,13 +660,13 @@ def main() -> None:
             is_inside = False
 
         if is_inside:
-            UI.warning("The selected output directory is inside the starter repository.")
-            if ask_yes_no("Do you want to continue anyway?", default=False):
+            UI.warning(t["warn_inside_repo"])
+            if ask_yes_no(t["continue_anyway"], default=False, lang=lang):
                 break
         else:
             break
 
-    force = ask_yes_no("Overwrite existing files if there is a conflict?", False)
+    force = ask_yes_no(t["overwrite_files"], False, lang=lang)
 
     python_requires = f">={python_version}"
     if python_version == "3.12":
@@ -416,24 +685,25 @@ def main() -> None:
         "TARGET_COLUMN": target_column,
         "PYTHON_REQUIRES": python_requires,
         "ADVISOR_COMMAND": advisor_cmd,
+        "LANGUAGE": lang,
     }
 
-    UI.section("Final summary", 7)
-    print(f"Project name:      {values['PROJECT_NAME']}")
-    print(f"Package name:      {values['PACKAGE_NAME']}")
-    print(f"ML Task:           {values['TASK']}")
-    print(f"Dataset path:      {values['DATASET_PATH']}")
+    UI.section(t["final_summary"], 7)
+    print(f"{t['summary_project_name']}:      {values['PROJECT_NAME']}")
+    print(f"{t['summary_package_name']}:      {values['PACKAGE_NAME']}")
+    print(f"{t['summary_task']}:           {values['TASK']}")
+    print(f"{t['summary_dataset_path']}:      {values['DATASET_PATH']}")
     if target_column:
-        print(f"Target column:     {values['TARGET_COLUMN']}")
-    print(f"Python version:    {python_version}")
-    print(f"PyTorch variant:   {torch_variant}")
-    print(f"Include ML basics: {'yes' if include_ml_basics else 'no'}")
-    print(f"Output directory:  {output_dir}")
-    print(f"Overwrite files:   {'yes' if force else 'no'}")
+        print(f"{t['summary_target_column']}:     {values['TARGET_COLUMN']}")
+    print(f"{t['summary_python_version']}:    {python_version}")
+    print(f"{t['summary_torch_variant']}:   {torch_variant}")
+    print(f"{t['summary_ml_basics']}: {t['yes'] if include_ml_basics else t['no']}")
+    print(f"{t['summary_output_dir']}:  {output_dir}")
+    print(f"{t['summary_overwrite']}:   {t['yes'] if force else t['no']}")
 
     print()
-    if not ask_yes_no("Create project files?", True):
-        print("Aborted.")
+    if not ask_yes_no(t["create_project_files"], True, lang=lang):
+        print(t["aborted"])
         return
 
     create_dirs(output_dir, package_name, preset, include_docs)
@@ -458,4 +728,4 @@ def main() -> None:
             force=force
         )
 
-    print_summary(output_dir, values)
+    print_summary(output_dir, values, t)

@@ -31,6 +31,93 @@ class DatasetAdvisor:
         self.df = df
         self.target_col = target_col
         self.problem_profile = problem_profile
+        self.lang = (problem_profile or {}).get("language", "en")
+        self.t = {
+            "en": {
+                "report_title": "Dataset Advisor Report",
+                "generated_for": "Generated for project",
+                "clean_dataset": "No major issues detected. Your dataset looks clean!",
+                "why_matters": "Why this matters",
+                "why_matters_text": "This helps improve model stability and performance by addressing specific data characteristics.",
+                "search_terms": "Search terms",
+                "found": "What I found",
+                "recommendation": "Recommendation",
+                "suggested_models": "Suggested Starting Models",
+                "based_on": "Based on your problem framing and initial data analysis",
+                "user_intent": "User intent",
+                "data_finding": "Data finding",
+                "why_suggested": "Why suggested",
+                "small_dataset_title": "Small dataset detected",
+                "small_dataset_found": "The dataset has only {n_rows} rows.",
+                "small_dataset_rec": "Use simple baselines and cross-validation to avoid overfitting. Deep learning or complex ensembles might not perform well here.",
+                "missing_values_title": "Missing values in '{col}'",
+                "missing_values_found": "Column '{col}' has {missing_count} missing values ({missing_pct:.1f}%).",
+                "missing_values_rec": "Use SimpleImputer(strategy='{strategy}') for this column.",
+                "outliers_title": "Outliers detected in '{col}'",
+                "outliers_found": "Found {len_outliers} potential outliers in '{col}' using IQR method.",
+                "outliers_rec": "Consider using RobustScaler or applying a log transformation if the distribution is highly skewed.",
+                "date_col_title": "Date-like column '{col}'",
+                "date_col_found": "Detected '{col}' as a date or time column.",
+                "date_col_rec": "Extract features like year, month, day of week, or hour to use this in a model.",
+                "text_col_title": "Potential text/ID column '{col}'",
+                "text_col_found": "'{col}' has very high cardinality ({nunique} unique values).",
+                "text_col_rec": "If this is an ID, drop it. If it's natural language, use TF-IDF or word embeddings.",
+                "high_card_title": "High cardinality categorical '{col}'",
+                "high_card_found": "'{col}' has {nunique} unique values.",
+                "high_card_rec": "One-hot encoding might create too many features. Consider target encoding, hashing, or grouping rare categories.",
+                "scale_diff_title": "Significant scale differences",
+                "scale_diff_found": "Numeric features have very different standard deviations.",
+                "scale_diff_rec": "Use StandardScaler or MinMaxScaler to ensure features contribute equally to the model, especially for linear models, SVMs, or KNN.",
+                "correlation_title": "High numeric correlation",
+                "correlation_found": "Highly correlated features detected: {to_drop}",
+                "correlation_rec": "Redundant features can sometimes hurt model interpretability or performance. Consider removing one of the pair or using PCA.",
+                "imbalance_title": "Imbalanced target",
+                "imbalance_found": "Target classes are imbalanced: {target_counts}",
+                "imbalance_rec": "Use stratified splitting and consider metrics like F1-score or PR-AUC instead of accuracy. You might also try class weighting.",
+            },
+            "pt-BR": {
+                "report_title": "Relatório do Dataset Advisor",
+                "generated_for": "Gerado para o projeto",
+                "clean_dataset": "Nenhum problema grave detectado. Seu dataset parece limpo!",
+                "why_matters": "Por que isso importa",
+                "why_matters_text": "Isso ajuda a melhorar a estabilidade e o desempenho do modelo ao lidar com características específicas dos dados.",
+                "search_terms": "Termos de busca",
+                "found": "O que eu encontrei",
+                "recommendation": "Recomendação",
+                "suggested_models": "Modelos Iniciais Sugeridos",
+                "based_on": "Com base na definição do seu problema e na análise inicial dos dados",
+                "user_intent": "Intenção do usuário",
+                "data_finding": "Descoberta nos dados",
+                "why_suggested": "Por que foi sugerido",
+                "small_dataset_title": "Dataset pequeno detectado",
+                "small_dataset_found": "O dataset tem apenas {n_rows} linhas.",
+                "small_dataset_rec": "Use baselines simples e validação cruzada para evitar overfitting. Deep learning ou ensembles complexos podem não funcionar bem aqui.",
+                "missing_values_title": "Valores ausentes em '{col}'",
+                "missing_values_found": "A coluna '{col}' tem {missing_count} valores ausentes ({missing_pct:.1f}%).",
+                "missing_values_rec": "Use SimpleImputer(strategy='{strategy}') para esta coluna.",
+                "outliers_title": "Outliers detectados em '{col}'",
+                "outliers_found": "Encontrados {len_outliers} potenciais outliers em '{col}' usando o método IQR.",
+                "outliers_rec": "Considere usar RobustScaler ou aplicar uma transformação logarítmica se a distribuição for altamente assimétrica.",
+                "date_col_title": "Coluna de data '{col}'",
+                "date_col_found": "Detectada '{col}' como uma coluna de data ou hora.",
+                "date_col_rec": "Extraia características como ano, mês, dia da semana ou hora para usar isso em um modelo.",
+                "text_col_title": "Potencial coluna de texto/ID '{col}'",
+                "text_col_found": "'{col}' tem cardinalidade muito alta ({nunique} valores únicos).",
+                "text_col_rec": "Se for um ID, remova-o. Se for linguagem natural, use TF-IDF ou word embeddings.",
+                "high_card_title": "Categoria com alta cardinalidade '{col}'",
+                "high_card_found": "'{col}' tem {nunique} valores únicos.",
+                "high_card_rec": "One-hot encoding pode criar muitas features. Considere target encoding, hashing ou agrupar categorias raras.",
+                "scale_diff_title": "Diferenças significativas de escala",
+                "scale_diff_found": "As características numéricas têm desvios padrão muito diferentes.",
+                "scale_diff_rec": "Use StandardScaler ou MinMaxScaler para garantir que as características contribuam igualmente para o modelo, especialmente para modelos lineares, SVMs ou KNN.",
+                "correlation_title": "Alta correlação numérica",
+                "correlation_found": "Características altamente correlacionadas detectadas: {to_drop}",
+                "correlation_rec": "Características redundantes às vezes podem prejudicar a interpretabilidade ou o desempenho do modelo. Considere remover uma do par ou usar PCA.",
+                "imbalance_title": "Alvo desbalanceado",
+                "imbalance_found": "As classes do alvo estão desbalanceadas: {target_counts}",
+                "imbalance_rec": "Use divisão estratificada e considere métricas como F1-score ou PR-AUC em vez de acurácia. Você também pode tentar ponderação de classes.",
+            }
+        }[self.lang]
         self.results = {
             "signals": [],
             "recommendations": [],
@@ -60,9 +147,9 @@ class DatasetAdvisor:
         # Small dataset risk
         if n_rows < 100:
             self._add_signal(
-                "Small dataset detected",
-                f"The dataset has only {n_rows} rows.",
-                "Use simple baselines and cross-validation to avoid overfitting. Deep learning or complex ensembles might not perform well here.",
+                self.t["small_dataset_title"],
+                self.t["small_dataset_found"].format(n_rows=n_rows),
+                self.t["small_dataset_rec"],
                 "Small dataset machine learning, Cross-validation strategies, Overfitting prevention"
             )
 
@@ -79,9 +166,9 @@ class DatasetAdvisor:
             if missing_count > 0:
                 strategy = "median" if pd.api.types.is_numeric_dtype(series) else "most_frequent"
                 self._add_signal(
-                    f"Missing values in '{col}'",
-                    f"Column '{col}' has {missing_count} missing values ({missing_pct:.1f}%).",
-                    f"Use SimpleImputer(strategy='{strategy}') for this column.",
+                    self.t["missing_values_title"].format(col=col),
+                    self.t["missing_values_found"].format(col=col, missing_count=missing_count, missing_pct=missing_pct),
+                    self.t["missing_values_rec"].format(strategy=strategy),
                     f"Handling missing data sklearn, SimpleImputer strategy {strategy}"
                 )
 
@@ -101,18 +188,18 @@ class DatasetAdvisor:
                 outliers = series[(series < (q1 - 1.5 * iqr)) | (series > (q3 + 1.5 * iqr))]
                 if len(outliers) > 0:
                     self._add_signal(
-                        f"Outliers detected in '{col}'",
-                        f"Found {len(outliers)} potential outliers in '{col}' using IQR method.",
-                        "Consider using RobustScaler or applying a log transformation if the distribution is highly skewed.",
+                        self.t["outliers_title"].format(col=col),
+                        self.t["outliers_found"].format(col=col, len_outliers=len(outliers)),
+                        self.t["outliers_rec"],
                         "Machine learning outlier detection, RobustScaler vs StandardScaler"
                     )
 
             elif self._is_date_like(series):
                 self.results["columns"]["date"].append(col)
                 self._add_signal(
-                    f"Date-like column '{col}'",
-                    f"Detected '{col}' as a date or time column.",
-                    "Extract features like year, month, day of week, or hour to use this in a model.",
+                    self.t["date_col_title"].format(col=col),
+                    self.t["date_col_found"].format(col=col),
+                    self.t["date_col_rec"],
                     "Feature engineering for datetime columns, pandas dt accessor"
                 )
             else:
@@ -121,9 +208,9 @@ class DatasetAdvisor:
                 if nunique / n_rows >= 0.8 and n_rows > 20:
                     self.results["columns"]["text"].append(col)
                     self._add_signal(
-                        f"Potential text/ID column '{col}'",
-                        f"'{col}' has very high cardinality ({nunique} unique values).",
-                        "If this is an ID, drop it. If it's natural language, use TF-IDF or word embeddings.",
+                        self.t["text_col_title"].format(col=col),
+                        self.t["text_col_found"].format(col=col, nunique=nunique),
+                        self.t["text_col_rec"],
                         "High cardinality features, TF-IDF vectorization"
                     )
                 else:
@@ -133,9 +220,9 @@ class DatasetAdvisor:
                     else:
                         self.results["columns"]["high_cardinality"].append(col)
                         self._add_signal(
-                            f"High cardinality categorical '{col}'",
-                            f"'{col}' has {nunique} unique values.",
-                            "One-hot encoding might create too many features. Consider target encoding, hashing, or grouping rare categories.",
+                            self.t["high_card_title"].format(col=col),
+                            self.t["high_card_found"].format(col=col, nunique=nunique),
+                            self.t["high_card_rec"],
                             "Encoding high cardinality categorical features"
                         )
 
@@ -145,9 +232,9 @@ class DatasetAdvisor:
             std_devs = num_df.std()
             if std_devs.max() / (std_devs.min() + 1e-6) > 10:
                 self._add_signal(
-                    "Significant scale differences",
-                    "Numeric features have very different standard deviations.",
-                    "Use StandardScaler or MinMaxScaler to ensure features contribute equally to the model, especially for linear models, SVMs, or KNN.",
+                    self.t["scale_diff_title"],
+                    self.t["scale_diff_found"],
+                    self.t["scale_diff_rec"],
                     "Feature scaling importance, Scikit-learn StandardScaler"
                 )
 
@@ -158,9 +245,9 @@ class DatasetAdvisor:
             to_drop = [column for column in upper.columns if any(upper[column] > 0.9)]
             if to_drop:
                 self._add_signal(
-                    "High numeric correlation",
-                    f"Highly correlated features detected: {to_drop}",
-                    "Redundant features can sometimes hurt model interpretability or performance. Consider removing one of the pair or using PCA.",
+                    self.t["correlation_title"],
+                    self.t["correlation_found"].format(to_drop=to_drop),
+                    self.t["correlation_rec"],
                     "Multicollinearity in machine learning, Feature selection correlation"
                 )
 
@@ -169,9 +256,9 @@ class DatasetAdvisor:
             target_counts = self.df[self.target_col].value_counts(normalize=True)
             if target_counts.min() < 0.2:
                 self._add_signal(
-                    "Imbalanced target",
-                    f"Target classes are imbalanced: {target_counts.to_dict()}",
-                    "Use stratified splitting and consider metrics like F1-score or PR-AUC instead of accuracy. You might also try class weighting.",
+                    self.t["imbalance_title"],
+                    self.t["imbalance_found"].format(target_counts=target_counts.to_dict()),
+                    self.t["imbalance_rec"],
                     "Imbalanced classification techniques, StratifiedKFold, SMOTE"
                 )
 
@@ -342,14 +429,14 @@ class DatasetAdvisor:
             })
 
         if recommendations:
-            report_section = "\n## Suggested Starting Models\n"
-            report_section += "Based on your problem framing and initial data analysis:\n\n"
+            report_section = f"\n## {self.t['suggested_models']}\n"
+            report_section += f"{self.t['based_on']}:\n\n"
             for rec in recommendations:
                 report_section += f"### {rec['model']}\n"
-                report_section += f"- **User intent**: {rec['user_intent']}\n"
-                report_section += f"- **Data finding**: {rec['data_finding']}\n"
-                report_section += f"- **Why suggested**: {rec['why']}\n"
-                report_section += f"- **Search terms**: `{rec['search']}`\n\n"
+                report_section += f"- **{self.t['user_intent']}**: {rec['user_intent']}\n"
+                report_section += f"- **{self.t['data_finding']}**: {rec['data_finding']}\n"
+                report_section += f"- **{self.t['why_suggested']}**: {rec['why']}\n"
+                report_section += f"- **{self.t['search_terms']}**: `{rec['search']}`\n\n"
 
             self.report_sections.append(report_section)
             self.results["model_recommendations"] = recommendations
@@ -363,17 +450,17 @@ class DatasetAdvisor:
         })
         self.report_sections.append(f"""
 ### {title}
-- **What I found**: {found}
-- **Recommendation**: {recommendation}
-- **Why this matters**: This helps improve model stability and performance by addressing specific data characteristics.
-- **Search terms**: `{search_terms}`
+- **{self.t['found']}**: {found}
+- **{self.t['recommendation']}**: {recommendation}
+- **{self.t['why_matters']}**: {self.t['why_matters_text']}
+- **{self.t['search_terms']}**: `{search_terms}`
 """)
 
     def write_reports(self):
         report_path = project_root() / "reports/dataset-advice.md"
-        content = f"# Dataset Advisor Report\n\nGenerated for project: {{PROJECT_NAME}}\n\n"
+        content = f"# {self.t['report_title']}\n\n{self.t['generated_for']}: {{PROJECT_NAME}}\n\n"
         if not self.results["signals"]:
-            content += "No major issues detected. Your dataset looks clean!\n"
+            content += f"{self.t['clean_dataset']}\n"
         else:
             content += "".join(self.report_sections)
 

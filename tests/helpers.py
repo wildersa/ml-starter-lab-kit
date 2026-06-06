@@ -3,6 +3,7 @@ from unittest.mock import patch
 from ml_starter_generator.cli import main
 
 def run_generator(
+    language="1",
     project_name="test_project",
     package_name="",
     task="2",
@@ -29,6 +30,7 @@ def run_generator(
         optionals = ["n"] * 10
 
     inputs = [
+        language,
         project_name,
         package_name,
         task,
