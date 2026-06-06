@@ -144,5 +144,26 @@ class TestDemoDocs(unittest.TestCase):
         readme_content = (self.test_dir / "README.md").read_text()
         self.assertNotIn("docs/demo-scenario.md", readme_content)
 
+    def test_terminal_summary_references_demo_doc(self):
+        # P0.8: onboarding references doc in terminal summary
+        output = run_generator(
+            project_name="demo_proj",
+            task="supervised",
+            include_demo="y",
+            output_dir=self.test_dir
+        )
+        self.assertIn("docs/demo-scenario.md", output)
+
+        # Checking non-demo
+        shutil.rmtree(self.test_dir)
+        self.test_dir.mkdir()
+        output = run_generator(
+            project_name="no_demo_proj",
+            task="supervised",
+            include_demo="n",
+            output_dir=self.test_dir
+        )
+        self.assertNotIn("docs/demo-scenario.md", output)
+
 if __name__ == "__main__":
     unittest.main()
