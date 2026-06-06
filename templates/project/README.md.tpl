@@ -88,36 +88,49 @@ Review and edit `configs/config.json`:
 - `data.processed_path`: Where cleaned data goes.
 - `target.column`: The name of your target column.
 
-### 3. Run the Dataset Advisor
-If generated, the Advisor analyzes your data and suggests next steps:
+### 3. Run the Project Guide
+Validate if your dataset and configuration are ready for the pipeline:
+```bash
+python -m {{PACKAGE_NAME}}.guide
+```
+The guide checks if the CSV exists and if the target column is correctly identified.
+
+### 4. Run the Dataset Advisor
+If enabled, the Advisor performs a deeper heuristic analysis of your data to suggest modeling strategies:
 ```bash
 {{ADVISOR_COMMAND}}
 ```
 It creates `reports/dataset-advice.md` and a starting `src/{{PACKAGE_NAME}}/suggested_pipeline.py`.
 
-### 4. Feature Engineering
+Note: The **Project Guide** is a readiness/validation check, while the **Dataset Advisor** provides explainable modeling suggestions.
+
+### 5. Feature Engineering
 Edit `src/{{PACKAGE_NAME}}/features.py` to add calculated features.
 
-### 5. Training and Baselines
+### 6. Training and Baselines
 The generated `src/{{PACKAGE_NAME}}/train.py` is a **simple baseline**, not a final model. It establishes a minimum performance to beat.
 
 ## Suggested flow
 
 1. Place the dataset in `data/raw/`
 2. Adjust `configs/config.json`
-3. Perform EDA in the notebook
-4. Edit `src/{{PACKAGE_NAME}}/features.py`
-5. Train the model (baseline)
-6. Evaluate results
-7. Document limitations and next steps
+3. Run `python -m {{PACKAGE_NAME}}.guide` to validate readiness
+4. Perform EDA in the notebook
+5. Edit `src/{{PACKAGE_NAME}}/features.py`
+6. Train the model (baseline)
+7. Evaluate results
+8. Document limitations and next steps
 
 ## Suggested commands
 
 ```bash
+# Validate readiness
+python -m {{PACKAGE_NAME}}.guide
+
 # Process data
 python -m {{PACKAGE_NAME}}.data
 
-# (Optional) Get advice
+# (Optional) Get modeling advice
 {{ADVISOR_COMMAND}}
 
 # Train baseline

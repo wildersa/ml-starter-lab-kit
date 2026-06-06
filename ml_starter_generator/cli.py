@@ -141,7 +141,8 @@ TRANSLATIONS = {
         "next_step_4_data": "Step 1 (Data)",
         "next_step_4_train": "Step 2 (Train)",
         "next_step_4_eval": "Step 3 (Evaluate)",
-        "next_step_advisor": "Dataset Advice",
+        "next_step_guide": "Run the Project Guide (readiness check)",
+        "next_step_advisor": "Dataset Advice (modeling suggestions)",
         "yes": "yes",
         "no": "no",
     },
@@ -267,7 +268,8 @@ TRANSLATIONS = {
         "next_step_4_data": "Passo 1 (Dados)",
         "next_step_4_train": "Passo 2 (Treino)",
         "next_step_4_eval": "Passo 3 (Avaliação)",
-        "next_step_advisor": "Conselhos sobre o Dataset",
+        "next_step_guide": "Execute o Guia do Projeto (valida prontidão)",
+        "next_step_advisor": "Conselhos sobre o Dataset (sugestões de modelagem)",
         "yes": "sim",
         "no": "não",
     }
@@ -591,9 +593,10 @@ def print_summary(root: Path, values: dict[str, str], t: dict[str, str], include
     steps.append(f"{next_idx}. {t['next_step_1']}: {values['DATASET_PATH']}")
     steps.append(f"{next_idx+1}. {t['next_step_2']}: configs/config.json")
     steps.append(f"{next_idx+2}. {t['next_step_3']}: src/{values['PACKAGE_NAME']}/features.py")
+    steps.append(f"{next_idx+3}. {t['next_step_guide']}: python -m {values['PACKAGE_NAME']}.guide")
 
-    # 4. Pipeline
-    run_idx = next_idx + 3
+    # 5. Pipeline
+    run_idx = next_idx + 4
     steps.append(f"{run_idx}. {t['next_step_4']}:")
     steps.append(f"   - {t['next_step_4_data']}:     python -m {values['PACKAGE_NAME']}.data")
     steps.append(f"   - {t['next_step_4_train']}:    python -m {values['PACKAGE_NAME']}.train")
