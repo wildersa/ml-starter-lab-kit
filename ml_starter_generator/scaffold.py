@@ -25,7 +25,9 @@ def create_dirs(root: Path, package_name: str, preset: str, include_docs: bool) 
 
 
 def create_readme(root: Path, values: dict[str, str], *, force: bool) -> None:
-    content = load_template("README.md", values, folder="project")
+    lang = values.get("LANGUAGE", "en")
+    template_name = "README.md" if lang == "en" else f"README.{lang}.md"
+    content = load_template(template_name, values, folder="project")
     write_text(root / "README.md", content, force=force)
 
 

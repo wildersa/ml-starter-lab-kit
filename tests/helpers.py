@@ -23,12 +23,14 @@ def run_generator(
     problem_baseline=None,
     problem_note=None,
     force="y",
-    output_dir_sequence=None
+    output_dir_sequence=None,
+    language="1"
 ):
     if optionals is None:
         optionals = ["n"] * 10
 
     inputs = [
+        language,
         project_name,
         package_name,
         task,
