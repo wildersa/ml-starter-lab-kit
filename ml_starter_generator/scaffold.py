@@ -46,6 +46,7 @@ def create_package_files(root: Path, values: dict[str, str], *, force: bool) -> 
         "train.py": load_template("train.py", values, folder="project/package"),
         "evaluate.py": load_template("evaluate.py", values, folder="project/package"),
         "predict.py": load_template("predict.py", values, folder="project/package"),
+        "guide.py": load_template("guide.py", values, folder="project/package"),
     }
 
     for rel, content in files.items():
