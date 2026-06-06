@@ -8,9 +8,29 @@ def create_config(
     root: Path,
     values: dict[str, str],
     *,
-    force: bool
+    force: bool,
+    problem_profile: dict[str, str] | None = None
 ) -> None:
     task = values["TASK"]
+    raw_path = values["DATASET_PATH"]
+    target_column = values["TARGET_COLUMN"]
+
+    if values.get("INCLUDE_DEMO") == "true":
+        raw_path = "data/raw/demo_dataset.csv"
+        if task == "supervised":
+            goal = (problem_profile or {}).get("goal", "").lower()
+            if "number" in goal or "número" in goal:
+                target_column = "price"
+            else:
+                target_column = "subscribed"
+        elif task == "unsupervised":
+            target_column = ""
+        elif task == "timeseries":
+            target_column = "sales"
+        elif task == "vision":
+            target_column = "label"
+        elif task == "generic":
+            target_column = "target"
 
     config: dict[str, object] = {
         "project": {
@@ -19,11 +39,11 @@ def create_config(
             "task": task
         },
         "data": {
-            "raw_path": values["DATASET_PATH"],
+            "raw_path": raw_path,
             "processed_path": "data/processed/modeling_table.csv"
         },
         "target": {
-            "column": values["TARGET_COLUMN"]
+            "column": target_column
         },
         "split": {
             "test_size": 0.2,

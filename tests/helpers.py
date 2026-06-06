@@ -9,6 +9,7 @@ def run_generator(
     task="2",
     dataset_path="data/raw/dataset.csv",
     target_column="target",
+    include_demo="n",
     output_dir=None,
     include_docs="y",
     include_pyproject="y",
@@ -42,6 +43,8 @@ def run_generator(
     is_unsupervised = (task == "3" or task == "unsupervised")
     if not is_unsupervised:
         inputs.append(target_column)
+
+    inputs.append(include_demo)
 
     # Problem Framing Wizard inputs
     inputs.append(problem_goal if problem_goal is not None else "")
