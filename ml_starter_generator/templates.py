@@ -23,10 +23,13 @@ def render(content: str, values: dict[str, str]) -> str:
         inner_content = match.group(3)
 
         if values.get(key) == target_value:
-            return inner_content.strip("\n")
+            return inner_content
         return ""
 
     content = pattern.sub(evaluate_condition, content)
+
+    # 3. Handle leftover empty lines from conditional blocks
+    content = re.sub(r'\n\s*\n\s*\n', '\n\n', content)
 
     return content
 

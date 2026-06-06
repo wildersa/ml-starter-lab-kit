@@ -147,6 +147,7 @@ TRANSLATIONS = {
         "next_step_4_eval": "Step 3 (Evaluate)",
         "next_step_guide": "Run the Project Guide (readiness check)",
         "next_step_advisor": "Dataset Advice (modeling suggestions)",
+        "next_step_demo": "Check the demo scenario and data dictionary in docs/demo-scenario.md",
         "summary_mlflow": "MLflow Tracking",
         "yes": "yes",
         "no": "no",
@@ -278,6 +279,7 @@ TRANSLATIONS = {
         "next_step_4_eval": "Passo 3 (Avaliação)",
         "next_step_guide": "Execute o Guia do Projeto (valida prontidão)",
         "next_step_advisor": "Conselhos sobre o Dataset (sugestões de modelagem)",
+        "next_step_demo": "Consulte o cenário de demo e o dicionário de dados em docs/demo-scenario.md",
         "summary_mlflow": "Rastreamento MLflow",
         "yes": "sim",
         "no": "não",
@@ -600,6 +602,9 @@ def print_summary(root: Path, values: dict[str, str], t: dict[str, str], include
 
     # 3. Data/Config
     steps.append(f"{next_idx}. {t['next_step_1']}: {values['DATASET_PATH']}")
+    if values.get("INCLUDE_DEMO") == "true":
+        steps.append(f"   - {t['next_step_demo']}")
+
     steps.append(f"{next_idx+1}. {t['next_step_2']}: configs/config.json")
     steps.append(f"{next_idx+2}. {t['next_step_3']}: src/{values['PACKAGE_NAME']}/features.py")
     steps.append(f"{next_idx+3}. {t['next_step_guide']}: python -m {values['PACKAGE_NAME']}.guide")
@@ -738,10 +743,21 @@ def main() -> None:
 
     advisor_cmd = f"python -m {package_name}.advisor" if optional_options.get("advisor") else ""
 
+    demo_subtype = task
+    if task == "supervised":
+        goal_lower = problem_profile.get("goal", "").lower()
+        # The Problem Framing Wizard might use translated goals.
+        # We need to check both English and Portuguese identifiers.
+        if any(keyword in goal_lower for keyword in ["number", "número", "2"]):
+            demo_subtype = "regression"
+        else:
+            demo_subtype = "classification"
+
     values = {
         "PROJECT_NAME": project_name,
         "PACKAGE_NAME": package_name,
         "TASK": task,
+        "DEMO_SUBTYPE": demo_subtype,
         "PRESET": preset,
         "DATASET_PATH": dataset_path,
         "TARGET_COLUMN": target_column,

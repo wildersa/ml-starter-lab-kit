@@ -73,6 +73,10 @@ python -c "import torch; print(f'Torch {torch.__version__} disponível. CUDA: {t
 
 ### 1. Prepare seus dados
 Coloque seu dataset em `data/raw/dataset.csv` (ou no caminho que você configurou).
+{% if INCLUDE_DEMO == "true" %}
+**Dataset de Demonstração**: Este projeto inclui um conjunto de dados sintéticos para aprendizado.
+Consulte `docs/demo-scenario.md` para ver o cenário e o dicionário de dados.
+{% endif %}
 
 **Conceitos de Aprendizado Supervisionado:**
 - **Alvo (Target)**: A coluna que você deseja prever. A maioria dos projetos tem **um** alvo principal.

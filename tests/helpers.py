@@ -47,6 +47,10 @@ def run_generator(
     inputs.append(include_demo)
 
     # Problem Framing Wizard inputs
+    if problem_goal is None:
+        if task == "2" or task == "supervised":
+            problem_goal = "1" # default to classification
+
     inputs.append(problem_goal if problem_goal is not None else "")
     inputs.append(problem_priority if problem_priority is not None else "")
     inputs.append(problem_error_cost if problem_error_cost is not None else "")
