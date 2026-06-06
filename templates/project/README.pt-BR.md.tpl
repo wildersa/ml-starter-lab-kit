@@ -66,23 +66,63 @@ python -c "import {{PACKAGE_NAME}}; print('Pacote {{PACKAGE_NAME}} pronto')"
 python -c "import torch; print(f'Torch {torch.__version__} disponível. CUDA: {torch.cuda.is_available()}')"
 ```
 
+## Primeiros Passos
+
+### 1. Prepare seus dados
+Coloque seu dataset em `data/raw/dataset.csv` (ou no caminho que você configurou).
+
+**Conceitos de Aprendizado Supervisionado:**
+- **Alvo (Target)**: A coluna que você deseja prever. A maioria dos projetos tem **um** alvo principal.
+- **Features**: As colunas usadas para fazer a previsão. Você pode ter **muitas** colunas de features. As colunas existentes no CSV já são candidatas a features.
+
+Exemplo de `dataset.csv`:
+```csv
+feature_1,feature_2,feature_3,target_column
+1.2,0,red,0
+2.1,1,blue,1
+```
+
+### 2. Configure o projeto
+Revise e edite `configs/config.json`:
+- `data.raw_path`: O caminho dos seus dados de entrada.
+- `data.processed_path`: Onde os dados limpos serão salvos.
+- `target.column`: O nome da sua coluna alvo.
+
+### 3. Execute o Dataset Advisor
+Se gerado, o Advisor analisa seus dados e sugere os próximos passos:
+```bash
+{{ADVISOR_COMMAND}}
+```
+Ele cria o relatório `reports/dataset-advice.md` e um ponto de partida em `src/{{PACKAGE_NAME}}/suggested_pipeline.py`.
+
+### 4. Engenharia de Features
+Edite `src/{{PACKAGE_NAME}}/features.py` para adicionar features calculadas.
+
+### 5. Treinamento e Baselines
+O arquivo `src/{{PACKAGE_NAME}}/train.py` gerado é um **baseline simples**, não um modelo final. Ele estabelece um desempenho mínimo a ser superado.
+
 ## Fluxo sugerido
 
-```text
-1. Coloque o dataset em data/raw/
-2. Ajuste configs/config.json
+1. Coloque o dataset em `data/raw/`
+2. Ajuste `configs/config.json`
 3. Realize a EDA no notebook
-4. Edite src/{{PACKAGE_NAME}}/features.py
-5. Treine o modelo
+4. Edite `src/{{PACKAGE_NAME}}/features.py`
+5. Treine o modelo (baseline)
 6. Avalie os resultados
 7. Documente limitações e próximos passos
-```
 
 ## Comandos sugeridos
 
 ```bash
+# Processar dados
 python -m {{PACKAGE_NAME}}.data
+
+# (Opcional) Obter conselhos
 {{ADVISOR_COMMAND}}
+
+# Treinar baseline
 python -m {{PACKAGE_NAME}}.train
+
+# Avaliar
 python -m {{PACKAGE_NAME}}.evaluate
 ```
