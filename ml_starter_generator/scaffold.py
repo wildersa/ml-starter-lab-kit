@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from .io import write_text, touch_gitkeep
 from .templates import load_template
+from .demo_data import get_demo_data
 
 def create_dirs(root: Path, package_name: str, preset: str, include_docs: bool) -> None:
     dirs = [
@@ -155,3 +156,24 @@ def create_optional_files(
         if enabled and key in mapping:
             content = load_template(template_names[key], values)
             write_text(mapping[key], content, force=force)
+
+
+def create_demo_data(
+    root: Path,
+    values: dict[str, str],
+    problem_profile: dict[str, str],
+    *,
+    force: bool
+) -> None:
+    if values.get("INCLUDE_DEMO") != "true":
+        return
+
+    task = values["TASK"]
+    goal = problem_profile.get("goal", "")
+    content = get_demo_data(task, goal)
+
+    write_text(
+        root / "data/raw/demo_dataset.csv",
+        content,
+        force=force
+    )

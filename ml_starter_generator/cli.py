@@ -12,6 +12,7 @@ from .scaffold import (
     create_package_files,
     create_optional_files,
     create_tests,
+    create_demo_data,
     create_notebook_placeholder,
     create_docs,
     create_pyproject,
@@ -40,6 +41,7 @@ TRANSLATIONS = {
         "unsupervised_panel_text": "Unsupervised learning finds patterns in data without a specific target column.",
         "dataset_path": "Dataset path",
         "target_column": "Target column name",
+        "include_demo": "Include demo dataset?",
         "problem_framing": "Problem framing",
         "problem_framing_panel_title": "Problem Framing",
         "problem_framing_panel_text": "This optional wizard helps configure the starter kit to your specific goals.",
@@ -120,6 +122,7 @@ TRANSLATIONS = {
         "summary_task": "ML Task",
         "summary_dataset_path": "Dataset path",
         "summary_target_column": "Target column",
+        "summary_include_demo": "Include demo dataset",
         "summary_python_version": "Python version",
         "summary_torch_variant": "PyTorch variant",
         "summary_ml_basics": "Include ML basics",
@@ -169,6 +172,7 @@ TRANSLATIONS = {
         "unsupervised_panel_text": "O aprendizado não supervisionado encontra padrões nos dados sem uma coluna alvo específica.",
         "dataset_path": "Caminho do dataset",
         "target_column": "Nome da coluna alvo",
+        "include_demo": "Incluir dataset de demonstração?",
         "problem_framing": "Definição do problema",
         "problem_framing_panel_title": "Definição do Problema",
         "problem_framing_panel_text": "Este assistente opcional ajuda a configurar o kit inicial para seus objetivos específicos.",
@@ -249,6 +253,7 @@ TRANSLATIONS = {
         "summary_task": "Tarefa de ML",
         "summary_dataset_path": "Caminho do dataset",
         "summary_target_column": "Coluna alvo",
+        "summary_include_demo": "Incluir dataset de demo",
         "summary_python_version": "Versão do Python",
         "summary_torch_variant": "Variante do PyTorch",
         "summary_ml_basics": "Incluir ML básico",
@@ -641,6 +646,8 @@ def main() -> None:
     else:
         target_column = ask(t["target_column"], "target")
 
+    include_demo = ask_yes_no(t["include_demo"], False, lang=lang)
+
     UI.section(t["problem_framing"], 3)
     problem_profile = run_problem_framing_wizard(task, t, lang)
 
@@ -738,6 +745,7 @@ def main() -> None:
         "PRESET": preset,
         "DATASET_PATH": dataset_path,
         "TARGET_COLUMN": target_column,
+        "INCLUDE_DEMO": "true" if include_demo else "false",
         "PYTHON_REQUIRES": python_requires,
         "ADVISOR_COMMAND": advisor_cmd,
         "LANGUAGE": lang,
@@ -751,6 +759,7 @@ def main() -> None:
     print(f"{t['summary_dataset_path']}:      {values['DATASET_PATH']}")
     if target_column:
         print(f"{t['summary_target_column']}:     {values['TARGET_COLUMN']}")
+    print(f"{t['summary_include_demo']}:      {t['yes'] if include_demo else t['no']}")
     print(f"{t['summary_python_version']}:    {python_version}")
     print(f"{t['summary_torch_variant']}:   {torch_variant}")
     print(f"{t['summary_ml_basics']}: {t['yes'] if include_ml_basics else t['no']}")
@@ -764,13 +773,14 @@ def main() -> None:
         return
 
     create_dirs(output_dir, package_name, preset, include_docs)
-    create_config(output_dir, values, force=force)
+    create_config(output_dir, values, force=force, problem_profile=problem_profile)
     create_problem_profile(output_dir, problem_profile, force=force)
     create_readme(output_dir, values, force=force)
     create_package_files(output_dir, values, force=force)
     create_optional_files(output_dir, package_name, values, optional_options, force=force)
     create_tests(output_dir, values, force=force)
     create_notebook_placeholder(output_dir, values, force=force)
+    create_demo_data(output_dir, values, problem_profile, force=force)
 
     if include_docs:
         create_docs(output_dir, values, force=force)
