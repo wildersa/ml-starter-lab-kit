@@ -31,3 +31,4 @@ A documentação é intencionalmente curta. Ela deve ajudar a começar um projet
 ## Uso do projeto
 
 - [Layout do starter e do projeto gerado](usage/project-layout.pt-BR.md)
+- [Estratégia de visualização de experimentos](experiment-visualization.md)
