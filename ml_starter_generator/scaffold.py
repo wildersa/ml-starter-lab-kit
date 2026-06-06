@@ -90,6 +90,7 @@ def create_env_files(
     values: dict[str, str],
     include_ml_basics: bool,
     torch_variant: str,
+    include_mlflow: bool = False,
     *,
     force: bool,
 ) -> None:
@@ -104,6 +105,9 @@ def create_env_files(
 
     if torch_variant != "none":
         files_to_create.append(f"requirements-torch-{torch_variant}.txt")
+
+    if include_mlflow:
+        files_to_create.append("requirements-mlflow.txt")
 
     for filename in files_to_create:
         content = load_template(filename, values, folder="env")

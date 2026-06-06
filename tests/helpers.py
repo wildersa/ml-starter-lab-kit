@@ -14,6 +14,7 @@ def run_generator(
     include_pyproject="y",
     python_profile="1",
     include_ml_basics="y",
+    include_mlflow="n",
     torch_variant="1",
     optional_profile="4",
     optionals=None,
@@ -55,6 +56,7 @@ def run_generator(
     if include_pyproject.lower() in ["y", "yes", ""]:
         inputs.append(python_profile)
         inputs.append(include_ml_basics)
+        inputs.append(include_mlflow)
         inputs.append(torch_variant)
 
     # Optional tools

@@ -83,6 +83,7 @@ TRANSLATIONS = {
         "torch_cpu": "cpu",
         "torch_cuda126": "cuda 12.6",
         "torch_cuda128": "cuda 12.8",
+        "mlflow_tracking": "Enable MLflow experiment tracking?",
         "optional_tools": "Optional tools",
         "create_docs": "Create documentation files?",
         "optional_files_templates": "Optional files (templates):",
@@ -143,6 +144,7 @@ TRANSLATIONS = {
         "next_step_4_eval": "Step 3 (Evaluate)",
         "next_step_guide": "Run the Project Guide (readiness check)",
         "next_step_advisor": "Dataset Advice (modeling suggestions)",
+        "summary_mlflow": "MLflow Tracking",
         "yes": "yes",
         "no": "no",
     },
@@ -210,6 +212,7 @@ TRANSLATIONS = {
         "torch_cpu": "cpu",
         "torch_cuda126": "cuda 12.6",
         "torch_cuda128": "cuda 12.8",
+        "mlflow_tracking": "Habilitar rastreamento de experimentos com MLflow?",
         "optional_tools": "Ferramentas opcionais",
         "create_docs": "Criar arquivos de documentação?",
         "optional_files_templates": "Arquivos opcionais (templates):",
@@ -270,6 +273,7 @@ TRANSLATIONS = {
         "next_step_4_eval": "Passo 3 (Avaliação)",
         "next_step_guide": "Execute o Guia do Projeto (valida prontidão)",
         "next_step_advisor": "Conselhos sobre o Dataset (sugestões de modelagem)",
+        "summary_mlflow": "Rastreamento MLflow",
         "yes": "sim",
         "no": "não",
     }
@@ -646,10 +650,12 @@ def main() -> None:
     python_version = "3.11"
     torch_variant = "none"
     include_ml_basics = False
+    include_mlflow = False
 
     if include_pyproject:
         python_version = choose_python_profile(t)
         include_ml_basics = ask_yes_no(t["ml_basics"], False, lang=lang)
+        include_mlflow = ask_yes_no(t["mlflow_tracking"], False, lang=lang)
         torch_variant = choose_torch_variant(t)
 
     UI.section(t["optional_tools"], 5)
@@ -735,6 +741,7 @@ def main() -> None:
         "PYTHON_REQUIRES": python_requires,
         "ADVISOR_COMMAND": advisor_cmd,
         "LANGUAGE": lang,
+        "ENABLE_MLFLOW": "true" if include_mlflow else "false",
     }
 
     UI.section(t["final_summary"], 7)
@@ -747,6 +754,7 @@ def main() -> None:
     print(f"{t['summary_python_version']}:    {python_version}")
     print(f"{t['summary_torch_variant']}:   {torch_variant}")
     print(f"{t['summary_ml_basics']}: {t['yes'] if include_ml_basics else t['no']}")
+    print(f"{t['summary_mlflow']}:       {t['yes'] if include_mlflow else t['no']}")
     print(f"{t['summary_output_dir']}:  {output_dir}")
     print(f"{t['summary_overwrite']}:   {t['yes'] if force else t['no']}")
 
@@ -774,6 +782,7 @@ def main() -> None:
             values,
             include_ml_basics,
             torch_variant,
+            include_mlflow,
             force=force
         )
 

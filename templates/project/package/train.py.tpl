@@ -60,6 +60,32 @@ def main() -> None:
     print("Model saved at models/model.json")
     print(json.dumps(model, indent=2, ensure_ascii=False))
 
+    # MLflow Tracking
+    if config.get("tracking", {}).get("enabled_mlflow"):
+        try:
+            import mlflow
+
+            with mlflow.start_run(run_name="baseline_training"):
+                mlflow.log_param("task", task)
+                mlflow.log_param("target_column", target_column)
+                mlflow.log_param("model_type", model.get("model_type"))
+                mlflow.log_param("dataset_path", config["data"]["raw_path"])
+
+                # Log model artifact
+                model_path = project_root() / "models/model.json"
+                if model_path.exists():
+                    mlflow.log_artifact(str(model_path))
+
+                print("MLflow: tracking complete.")
+        except ImportError:
+            print("\n" + "="*50)
+            print("MLflow is enabled in config but not installed.")
+            print("Please install it using:")
+            print("  pip install -r requirements-mlflow.txt")
+            print("="*50 + "\n")
+        except Exception as e:
+            print(f"MLflow tracking failed: {e}")
+
 
 if __name__ == "__main__":
     main()

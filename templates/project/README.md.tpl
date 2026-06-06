@@ -43,7 +43,7 @@ pip install -r requirements-dev.txt
 pip install -r requirements-notebook.txt
 ```
 
-If ML or Torch support was selected (and files were generated), also install:
+If ML, Torch, or MLflow support was selected (and files were generated), also install:
 
 ```bash
 # Basic ML (if requirements-ml.txt exists)
@@ -51,6 +51,9 @@ pip install -r requirements-ml.txt
 
 # PyTorch (if requirements-torch-*.txt exists)
 pip install -r requirements-torch-*.txt
+
+# MLflow Tracking (if requirements-mlflow.txt exists)
+pip install -r requirements-mlflow.txt
 ```
 
 > **Note on CUDA**: CUDA installations may require the correct PyTorch wheel index and local driver compatibility.
@@ -86,7 +89,7 @@ feature_1,feature_2,feature_3,target_column
 Review and edit `configs/config.json`:
 - `data.raw_path`: Your input data path.
 - `data.processed_path`: Where cleaned data goes.
-- `target.column`: The name of your target column.
+- `target.column`: Your target column name.
 
 ### 3. Run the Project Guide
 Validate if your dataset and configuration are ready for the pipeline:
@@ -139,3 +142,14 @@ python -m {{PACKAGE_NAME}}.train
 # Evaluate
 python -m {{PACKAGE_NAME}}.evaluate
 ```
+{% if ENABLE_MLFLOW == "true" %}
+## Experiment Tracking (MLflow)
+
+You can view your runs by starting the local server:
+
+```bash
+mlflow server --port 5000
+```
+
+Then open your browser at [http://localhost:5000](http://localhost:5000).
+{% endif %}

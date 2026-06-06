@@ -45,12 +45,38 @@ def main() -> None:
             "model_type": model.get("model_type"),
         }
 
-    output = project_root() / "reports/metrics.json"
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(metrics, indent=2, ensure_ascii=False), encoding="utf-8")
+    output_path = project_root() / "reports/metrics.json"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(json.dumps(metrics, indent=2, ensure_ascii=False), encoding="utf-8")
 
     print("Metrics saved at reports/metrics.json")
     print(json.dumps(metrics, indent=2, ensure_ascii=False))
+
+    # MLflow Tracking
+    if config.get("tracking", {}).get("enabled_mlflow"):
+        try:
+            import mlflow
+
+            with mlflow.start_run(run_name="baseline_evaluation"):
+                # Log metrics
+                if "accuracy" in metrics:
+                    mlflow.log_metric("accuracy", metrics["accuracy"])
+
+                mlflow.log_metric("samples", metrics.get("samples", 0))
+
+                # Log report artifact
+                if output_path.exists():
+                    mlflow.log_artifact(str(output_path))
+
+                print("MLflow: tracking complete.")
+        except ImportError:
+            print("\n" + "="*50)
+            print("MLflow is enabled in config but not installed.")
+            print("Please install it using:")
+            print("  pip install -r requirements-mlflow.txt")
+            print("="*50 + "\n")
+        except Exception as e:
+            print(f"MLflow tracking failed: {e}")
 
 
 if __name__ == "__main__":

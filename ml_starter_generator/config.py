@@ -67,6 +67,9 @@ def create_config(
             "type": "baseline",
             "params": {}
         },
+        "tracking": {
+            "enabled_mlflow": values.get("ENABLE_MLFLOW") == "true"
+        },
         "eda": {
             "id_columns": [],
             "date_columns": [],
