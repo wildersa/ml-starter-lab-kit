@@ -109,6 +109,10 @@ def create_problem_profile(
     *,
     force: bool
 ) -> None:
+    # Ensure language is stored
+    if "language" not in problem_profile:
+        problem_profile["language"] = "en"
+
     write_text(
         root / "configs/problem_profile.json",
         json.dumps(problem_profile, indent=2, ensure_ascii=False),

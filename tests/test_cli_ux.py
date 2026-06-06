@@ -43,6 +43,7 @@ class TestCLIUX(unittest.TestCase):
 
         # Mocking inputs for option 1 (current directory)
         # Sequence:
+        # 0. Language: "1" (en)
         # Project basics
         # 1. Project name: "current_dir_proj"
         # 2. Package name: "current_dir_pkg"
@@ -66,6 +67,7 @@ class TestCLIUX(unittest.TestCase):
         # Final summary
         # 19. Confirm: "y"
         inputs = [
+            "1",
             "current_dir_proj", "current_dir_pkg", "1",
             "data.csv",
             "", "", "", "", "", "",
