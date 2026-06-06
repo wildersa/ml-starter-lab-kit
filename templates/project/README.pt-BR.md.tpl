@@ -43,7 +43,7 @@ pip install -r requirements-dev.txt
 pip install -r requirements-notebook.txt
 ```
 
-Se o suporte a ML ou Torch foi selecionado (e os arquivos foram gerados), instale também:
+Se o suporte a ML, Torch ou MLflow foi selecionado (e os arquivos foram gerados), instale também:
 
 ```bash
 # ML Básico (se requirements-ml.txt existir)
@@ -51,6 +51,9 @@ pip install -r requirements-ml.txt
 
 # PyTorch (se requirements-torch-*.txt existir)
 pip install -r requirements-torch-*.txt
+
+# MLflow Tracking (se requirements-mlflow.txt existir)
+pip install -r requirements-mlflow.txt
 ```
 
 > **Nota sobre CUDA**: As instalações do CUDA podem exigir o índice de wheel do PyTorch correto e compatibilidade com o driver local.
@@ -139,3 +142,14 @@ python -m {{PACKAGE_NAME}}.train
 # Avaliar
 python -m {{PACKAGE_NAME}}.evaluate
 ```
+{% if ENABLE_MLFLOW == "true" %}
+## Rastreamento de Experimentos (MLflow)
+
+Você pode visualizar suas execuções iniciando o servidor local:
+
+```bash
+mlflow server --port 5000
+```
+
+Em seguida, abra seu navegador em [http://localhost:5000](http://localhost:5000).
+{% endif %}

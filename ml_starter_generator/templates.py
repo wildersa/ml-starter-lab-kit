@@ -4,8 +4,30 @@ from pathlib import Path
 from .constants import STARTER_ROOT
 
 def render(content: str, values: dict[str, str]) -> str:
+    # 1. Simple placeholders: {{KEY}}
     for key, value in values.items():
         content = content.replace("{{" + key + "}}", value)
+
+    # 2. Simple conditional blocks: {% if KEY == "value" %}...{% endif %}
+    # This is a very limited subset for specific P0 needs.
+    import re
+
+    pattern = re.compile(
+        r'{%\s*if\s+(\w+)\s*==\s*"([^"]+)"\s*%}(.*?){%\s*endif\s*%}',
+        re.DOTALL
+    )
+
+    def evaluate_condition(match):
+        key = match.group(1)
+        target_value = match.group(2)
+        inner_content = match.group(3)
+
+        if values.get(key) == target_value:
+            return inner_content.strip("\n")
+        return ""
+
+    content = pattern.sub(evaluate_condition, content)
+
     return content
 
 
