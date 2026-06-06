@@ -31,3 +31,4 @@ The documentation is intentionally short. It should help you start a project, no
 ## Project usage
 
 - [Starter and generated project layout](usage/project-layout.md)
+- [Experiment visualization strategy](experiment-visualization.md)
