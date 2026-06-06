@@ -10,27 +10,36 @@ O ML Starter Lab Kit é um **gerador de projetos** que ajuda você a iniciar exp
 ## Início rápido (Quick start)
 
 1. **Clone** este repositório:
+
    ```bash
    git clone https://github.com/wildersa/ml-starter-lab-kit.git
    cd ml-starter-lab-kit
    ```
+
 2. **Gere** seu projeto:
+
    ```bash
    python create_ml_starter.py
    ```
+
 3. **Acesse** a pasta do projeto gerado (ela é criada ao lado desta ferramenta):
+
    ```bash
    cd ../nome-do-seu-projeto
    ```
+
 4. **Inicialize**: Crie um ambiente virtual e instale os requisitos:
+
    ```bash
    python -m venv .venv
    source .venv/bin/activate  # Windows: .venv\Scripts\activate
    pip install -r requirements.txt
    ```
+
 5. **Comece**: Coloque seus dados em `data/raw/` e siga o `README.md` gerado.
 
 Layout recomendado:
+
 ```text
 workspace/
 ├── ml-starter-lab-kit/      # esta ferramenta
@@ -50,6 +59,7 @@ Veja [layout do starter e do projeto gerado](docs/usage/project-layout.pt-BR.md)
 ## Documentação
 
 Comece pelo [Índice da Documentação](docs/README.pt-BR.md) para explorar:
+
 - [Trilhas de aprendizado](docs/learning-paths.pt-BR.md)
 - [Guias de workflow](docs/workflows/README.pt-BR.md)
 - [Visão geral de arquiteturas](docs/architectures/README.pt-BR.md)
