@@ -129,10 +129,15 @@ TRANSLATIONS = {
         "success_msg": "Starter-kit created successfully!",
         "destination": "Destination",
         "next_steps": "Next steps",
-        "next_step_1": "1. Place your dataset at",
-        "next_step_2": "2. Review and adjust metadata in",
-        "next_step_3": "3. Define your features in",
-        "next_step_4": "4. Run the pipeline",
+        "next_step_cd": "Navigate to the project directory",
+        "next_step_already_in": "You are already in the project directory.",
+        "next_step_setup": "Set up the environment",
+        "next_step_install": "Install the package in editable mode",
+        "next_step_no_setup": "Note: Package setup is required (e.g., PYTHONPATH=src) before running modules.",
+        "next_step_1": "Place your dataset at",
+        "next_step_2": "Review and adjust metadata in",
+        "next_step_3": "Define your features in",
+        "next_step_4": "Run the pipeline",
         "next_step_4_data": "Step 1 (Data)",
         "next_step_4_train": "Step 2 (Train)",
         "next_step_4_eval": "Step 3 (Evaluate)",
@@ -250,10 +255,15 @@ TRANSLATIONS = {
         "success_msg": "Starter-kit criado com sucesso!",
         "destination": "Destino",
         "next_steps": "Próximos passos",
-        "next_step_1": "1. Coloque seu dataset em",
-        "next_step_2": "2. Revise e ajuste metadados em",
-        "next_step_3": "3. Defina suas features em",
-        "next_step_4": "4. Execute o pipeline",
+        "next_step_cd": "Navegue para o diretório do projeto",
+        "next_step_already_in": "Você já está no diretório do projeto.",
+        "next_step_setup": "Configure o ambiente",
+        "next_step_install": "Instale o pacote em modo editável",
+        "next_step_no_setup": "Nota: A configuração do pacote é necessária (ex: PYTHONPATH=src) antes de executar os módulos.",
+        "next_step_1": "Coloque seu dataset em",
+        "next_step_2": "Revise e ajuste metadados em",
+        "next_step_3": "Defina suas features em",
+        "next_step_4": "Execute o pipeline",
         "next_step_4_data": "Passo 1 (Dados)",
         "next_step_4_train": "Passo 2 (Treino)",
         "next_step_4_eval": "Passo 3 (Avaliação)",
@@ -542,21 +552,57 @@ def normalize_package_name(value: str) -> str:
     return value
 
 
-def print_summary(root: Path, values: dict[str, str], t: dict[str, str]) -> None:
+def print_summary(root: Path, values: dict[str, str], t: dict[str, str], include_pyproject: bool) -> None:
     UI.success(t["success_msg"])
     print(f"{t['destination']}: {UI.color(str(root.resolve()), UI.CYAN)}")
     print()
-    UI.panel(t["next_steps"],
-             f"{t['next_step_1']}: {values['DATASET_PATH']}\n"
-             f"{t['next_step_2']}: configs/config.json\n"
-             f"{t['next_step_3']}: src/{values['PACKAGE_NAME']}/features.py\n"
-             f"{t['next_step_4']}:\n"
-             f"   - {t['next_step_4_data']}:     python -m {values['PACKAGE_NAME']}.data\n"
-             f"   - {t['next_step_4_train']}:    python -m {values['PACKAGE_NAME']}.train\n"
-             f"   - {t['next_step_4_eval']}: python -m {values['PACKAGE_NAME']}.evaluate")
+
+    current_dir = Path.cwd().resolve()
+    target_dir = root.resolve()
+    steps = []
+
+    # 1. Navigation
+    if target_dir == current_dir:
+        steps.append(f"1. {t['next_step_already_in']}")
+    else:
+        try:
+            rel_path = target_dir.relative_to(current_dir)
+            steps.append(f"1. {t['next_step_cd']}: cd {rel_path}")
+        except ValueError:
+            steps.append(f"1. {t['next_step_cd']}: cd {target_dir}")
+
+    # 2. Environment/Package Setup
+    if include_pyproject:
+        steps.append(f"2. {t['next_step_setup']}:")
+        steps.append("   python -m venv .venv")
+        if sys.platform == "win32":
+            steps.append("   .venv\\Scripts\\activate")
+        else:
+            steps.append("   source .venv/bin/activate")
+        steps.append("   pip install -r requirements.txt")
+        steps.append(f"3. {t['next_step_install']}:")
+        steps.append("   pip install -e .")
+        next_idx = 4
+    else:
+        steps.append(f"2. {t['next_step_no_setup']}")
+        next_idx = 3
+
+    # 3. Data/Config
+    steps.append(f"{next_idx}. {t['next_step_1']}: {values['DATASET_PATH']}")
+    steps.append(f"{next_idx+1}. {t['next_step_2']}: configs/config.json")
+    steps.append(f"{next_idx+2}. {t['next_step_3']}: src/{values['PACKAGE_NAME']}/features.py")
+
+    # 4. Pipeline
+    run_idx = next_idx + 3
+    steps.append(f"{run_idx}. {t['next_step_4']}:")
+    steps.append(f"   - {t['next_step_4_data']}:     python -m {values['PACKAGE_NAME']}.data")
+    steps.append(f"   - {t['next_step_4_train']}:    python -m {values['PACKAGE_NAME']}.train")
+    steps.append(f"   - {t['next_step_4_eval']}: python -m {values['PACKAGE_NAME']}.evaluate")
 
     if values.get("ADVISOR_COMMAND"):
-        print(f"   - {t['next_step_advisor']}:   {values['ADVISOR_COMMAND']}")
+        steps.append(f"   - {t['next_step_advisor']}:   {values['ADVISOR_COMMAND']}")
+
+    UI.panel(t["next_steps"], "\n".join(steps))
 
 
 def main() -> None:
@@ -728,4 +774,4 @@ def main() -> None:
             force=force
         )
 
-    print_summary(output_dir, values, t)
+    print_summary(output_dir, values, t, include_pyproject)
