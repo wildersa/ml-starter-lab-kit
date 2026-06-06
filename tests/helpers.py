@@ -48,24 +48,32 @@ def run_generator(
     inputs.append(problem_baseline if problem_baseline is not None else "")
     inputs.append(problem_note if problem_note is not None else "")
 
-    if output_dir_sequence:
-        inputs.extend(output_dir_sequence)
-    else:
-        inputs.append(str(output_dir))
-
-    inputs.append(include_docs)
+    # Environment
     inputs.append(include_pyproject)
-
     if include_pyproject.lower() in ["y", "yes", ""]:
         inputs.append(python_profile)
         inputs.append(include_ml_basics)
         inputs.append(torch_variant)
 
+    # Optional tools
+    inputs.append(include_docs)
     inputs.append(optional_profile)
     if optional_profile == "4" or optional_profile == "custom":
         inputs.extend(optionals)
 
+    # Output location
+    if output_dir_sequence:
+        inputs.extend(output_dir_sequence)
+    else:
+        # 1. current, 2. nested, 3. sibling, 4. custom
+        # We use 4 (custom) to provide a specific path for tests
+        inputs.append("4")
+        inputs.append(str(output_dir))
+
     inputs.append(force)
+
+    # Final summary confirmation
+    inputs.append("y")
 
     with patch("ml_starter_generator.cli.input", side_effect=inputs):
         with patch("sys.stdout", new=io.StringIO()) as fake_out:
