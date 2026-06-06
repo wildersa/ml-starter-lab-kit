@@ -35,6 +35,12 @@ class DatasetAdvisor:
         self.t = {
             "en": {
                 "report_title": "Dataset Advisor Report",
+                "summary": "Summary",
+                "dataset_shape": "Dataset shape",
+                "target_column": "Target column",
+                "total_signals": "Total findings",
+                "model_recommendations_count": "Model recommendations",
+                "top_next_steps": "Top next steps",
                 "generated_for": "Generated for project",
                 "clean_dataset": "No major issues detected. Your dataset looks clean!",
                 "why_matters": "Why this matters",
@@ -77,6 +83,12 @@ class DatasetAdvisor:
             },
             "pt-BR": {
                 "report_title": "Relatório do Dataset Advisor",
+                "summary": "Resumo",
+                "dataset_shape": "Formato do dataset",
+                "target_column": "Coluna alvo",
+                "total_signals": "Total de descobertas",
+                "model_recommendations_count": "Recomendações de modelos",
+                "top_next_steps": "Principais próximos passos",
                 "generated_for": "Gerado para o projeto",
                 "clean_dataset": "Nenhum problema grave detectado. Seu dataset parece limpo!",
                 "why_matters": "Por que isso importa",
@@ -119,8 +131,10 @@ class DatasetAdvisor:
             }
         }[self.lang]
         self.results = {
+            "summary": {},
+            "next_steps": [],
             "signals": [],
-            "recommendations": [],
+            "model_recommendations": [],
             "columns": {
                 "numeric": [],
                 "categorical": [],
@@ -261,6 +275,18 @@ class DatasetAdvisor:
                     self.t["imbalance_rec"],
                     "Imbalanced classification techniques, StratifiedKFold, SMOTE"
                 )
+
+        # 3. Final Summary Metadata
+        self.results["summary"] = {
+            "project_name": "{{PROJECT_NAME}}",
+            "dataset_shape": [n_rows, n_cols],
+            "target_column": self.target_col,
+            "total_signals": len(self.results["signals"]),
+            "model_recommendations": len(self.results.get("model_recommendations", []))
+        }
+
+        # 4. Top next steps from findings
+        self.results["next_steps"] = [s["recommendation"] for s in self.results["signals"][:5]]
 
     def _is_date_like(self, series):
         if pd.api.types.is_datetime64_any_dtype(series):
@@ -458,7 +484,26 @@ class DatasetAdvisor:
 
     def write_reports(self):
         report_path = project_root() / "reports/dataset-advice.md"
-        content = f"# {self.t['report_title']}\n\n{self.t['generated_for']}: {{PROJECT_NAME}}\n\n"
+
+        # Build polished report
+        content = f"# {self.t['report_title']}\n\n"
+        content += f"{self.t['generated_for']}: {{PROJECT_NAME}}\n\n"
+
+        # Summary Section
+        summary = self.results["summary"]
+        content += f"## {self.t['summary']}\n"
+        content += f"- **{self.t['dataset_shape']}**: {summary['dataset_shape']}\n"
+        content += f"- **{self.t['target_column']}**: {summary['target_column']}\n"
+        content += f"- **{self.t['total_signals']}**: {summary['total_signals']}\n"
+        content += f"- **{self.t['model_recommendations_count']}**: {summary['model_recommendations']}\n\n"
+
+        # Top Next Steps
+        if self.results["next_steps"]:
+            content += f"## {self.t['top_next_steps']}\n"
+            for i, step in enumerate(self.results["next_steps"], 1):
+                content += f"{i}. {step}\n"
+            content += "\n"
+
         if not self.results["signals"]:
             content += f"{self.t['clean_dataset']}\n"
         else:
