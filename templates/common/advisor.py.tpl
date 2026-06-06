@@ -32,8 +32,16 @@ class DatasetAdvisor:
         self.target_col = target_col
         self.problem_profile = problem_profile
         self.results = {
+            "summary": {
+                "project_name": "{{PROJECT_NAME}}",
+                "dataset_shape": [0, 0],
+                "target_column": target_col,
+                "signal_count": 0,
+                "model_recommendation_count": 0
+            },
+            "next_steps": [],
             "signals": [],
-            "recommendations": [],
+            "model_recommendations": [],
             "columns": {
                 "numeric": [],
                 "categorical": [],
@@ -174,6 +182,22 @@ class DatasetAdvisor:
                     "Use stratified splitting and consider metrics like F1-score or PR-AUC instead of accuracy. You might also try class weighting.",
                     "Imbalanced classification techniques, StratifiedKFold, SMOTE"
                 )
+
+        # Update summary
+        self.results["summary"]["dataset_shape"] = [len(self.df), len(self.df.columns)]
+        self.results["summary"]["signal_count"] = len(self.results["signals"])
+        self.results["summary"]["model_recommendation_count"] = len(self.results.get("model_recommendations", []))
+
+        # Top next steps (P0.2)
+        # Derive 3-5 ordered actions from existing findings
+        next_steps = [s["recommendation"] for s in self.results["signals"]]
+        if self.results.get("model_recommendations"):
+            for rec in self.results["model_recommendations"]:
+                next_steps.append(f"Try {rec['model']}: {rec['why']}")
+
+        self.results["next_steps"] = next_steps[:5]
+        if not self.results["next_steps"]:
+            self.results["next_steps"] = ["Your dataset looks clean! You can start experimenting with standard models."]
 
     def _is_date_like(self, series):
         if pd.api.types.is_datetime64_any_dtype(series):
@@ -371,8 +395,25 @@ class DatasetAdvisor:
 
     def write_reports(self):
         report_path = project_root() / "reports/dataset-advice.md"
+
+        # Build Report Content (P0.1, P0.2)
         content = f"# Dataset Advisor Report\n\nGenerated for project: {{PROJECT_NAME}}\n\n"
-        if not self.results["signals"]:
+
+        # Summary Section (P0.1)
+        summary = self.results["summary"]
+        content += "## Summary\n"
+        content += f"- **Dataset shape**: {summary['dataset_shape'][0]} rows, {summary['dataset_shape'][1]} columns\n"
+        content += f"- **Target column**: {summary['target_column'] or 'Not specified'}\n"
+        content += f"- **Issues detected**: {summary['signal_count']} signals\n"
+        content += f"- **Model suggestions**: {summary['model_recommendation_count']} recommendations\n\n"
+
+        # Next Steps Section (P0.2)
+        content += "## Top next steps\n"
+        for i, step in enumerate(self.results["next_steps"], 1):
+            content += f"{i}. {step}\n"
+        content += "\n"
+
+        if not self.results["signals"] and not self.results.get("model_recommendations"):
             content += "No major issues detected. Your dataset looks clean!\n"
         else:
             content += "".join(self.report_sections)

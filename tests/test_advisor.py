@@ -116,5 +116,40 @@ class TestAdvisor(unittest.TestCase):
         self.assertIn("Imbalanced target", report_content)
         self.assertIn("High numeric correlation", report_content)
 
+        # P0.1 Summary
+        self.assertIn("## Summary", report_content)
+        self.assertIn("Dataset shape", report_content)
+        self.assertIn("Target column", report_content)
+        self.assertIn("Issues detected", report_content)
+        self.assertIn("Model suggestions", report_content)
+
+        # P0.2 Top next steps
+        self.assertIn("## Top next steps", report_content)
+        self.assertIn("1. ", report_content) # Should have at least one step
+
+        # P0.3 Finding headings (Stable headings)
+        self.assertIn("### Small dataset detected", report_content)
+        self.assertIn("- **What I found**:", report_content)
+        self.assertIn("- **Recommendation**:", report_content)
+        self.assertIn("- **Why this matters**:", report_content)
+        self.assertIn("- **Search terms**:", report_content)
+
+        # P0.5 JSON metadata
+        import json
+        with open(json_path, "r") as f:
+            advisor_json = json.load(f)
+
+        self.assertIn("summary", advisor_json)
+        self.assertIn("next_steps", advisor_json)
+        # 1. Small dataset
+        # 2. Missing values
+        # 3. Outliers
+        # 4. High cardinality categorical
+        # 5. Significant scale differences
+        # 6. High numeric correlation
+        # 7. Imbalanced target
+        self.assertEqual(advisor_json["summary"]["signal_count"], 7)
+        self.assertTrue(len(advisor_json["next_steps"]) >= 3)
+
 if __name__ == "__main__":
     unittest.main()
