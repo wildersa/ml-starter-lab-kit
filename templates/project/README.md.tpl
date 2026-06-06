@@ -66,23 +66,63 @@ python -c "import {{PACKAGE_NAME}}; print('Package {{PACKAGE_NAME}} ready')"
 python -c "import torch; print(f'Torch {torch.__version__} available. CUDA: {torch.cuda.is_available()}')"
 ```
 
+## Getting Started
+
+### 1. Prepare your data
+Place your dataset at `data/raw/dataset.csv` (or the path you configured).
+
+**Supervised Learning concepts:**
+- **Target**: The column you want to predict. Most projects have **one** main target.
+- **Features**: The columns used to make the prediction. You can have **many** feature columns. Existing CSV columns are already candidate features.
+
+Example `dataset.csv`:
+```csv
+feature_1,feature_2,feature_3,target_column
+1.2,0,red,0
+2.1,1,blue,1
+```
+
+### 2. Configure the project
+Review and edit `configs/config.json`:
+- `data.raw_path`: Your input data path.
+- `data.processed_path`: Where cleaned data goes.
+- `target.column`: The name of your target column.
+
+### 3. Run the Dataset Advisor
+If generated, the Advisor analyzes your data and suggests next steps:
+```bash
+{{ADVISOR_COMMAND}}
+```
+It creates `reports/dataset-advice.md` and a starting `src/{{PACKAGE_NAME}}/suggested_pipeline.py`.
+
+### 4. Feature Engineering
+Edit `src/{{PACKAGE_NAME}}/features.py` to add calculated features.
+
+### 5. Training and Baselines
+The generated `src/{{PACKAGE_NAME}}/train.py` is a **simple baseline**, not a final model. It establishes a minimum performance to beat.
+
 ## Suggested flow
 
-```text
-1. Place the dataset in data/raw/
-2. Adjust configs/config.json
+1. Place the dataset in `data/raw/`
+2. Adjust `configs/config.json`
 3. Perform EDA in the notebook
-4. Edit src/{{PACKAGE_NAME}}/features.py
-5. Train the model
+4. Edit `src/{{PACKAGE_NAME}}/features.py`
+5. Train the model (baseline)
 6. Evaluate results
 7. Document limitations and next steps
-```
 
 ## Suggested commands
 
 ```bash
+# Process data
 python -m {{PACKAGE_NAME}}.data
+
+# (Optional) Get advice
 {{ADVISOR_COMMAND}}
+
+# Train baseline
 python -m {{PACKAGE_NAME}}.train
+
+# Evaluate
 python -m {{PACKAGE_NAME}}.evaluate
 ```
