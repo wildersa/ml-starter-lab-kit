@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import re
+import os
+import sys
 from pathlib import Path
 from .constants import STARTER_ROOT, TASKS
 from .config import create_config, create_problem_profile
@@ -16,8 +18,58 @@ from .scaffold import (
     create_env_files,
 )
 
+class UI:
+    """Helper for terminal UI, colors, and sections."""
+    BLUE = '\033[94m'
+    CYAN = '\033[96m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    BOLD = '\033[1m'
+    END = '\033[0m'
+
+    @staticmethod
+    def use_color() -> bool:
+        """Check if colors should be used."""
+        if os.getenv("NO_COLOR"):
+            return False
+        # If we are in a test or piped, isatty() might be False.
+        # But for tests we might want to see colors or not.
+        if not sys.stdout.isatty():
+            return False
+        if os.getenv("TERM") == "dumb":
+            return False
+        return True
+
+    @classmethod
+    def color(cls, text: str, color_code: str) -> str:
+        if cls.use_color():
+            return f"{color_code}{text}{cls.END}"
+        return text
+
+    @classmethod
+    def section(cls, title: str, number: int) -> None:
+        print()
+        header = f"--- {number}. {title} ---"
+        print(cls.color(header, cls.BLUE + cls.BOLD))
+
+    @classmethod
+    def panel(cls, title: str, text: str) -> None:
+        print()
+        print(cls.color(f"[{title}]", cls.CYAN + cls.BOLD))
+        for line in text.strip().split('\n'):
+            print(f"  {line.strip()}")
+
+    @classmethod
+    def success(cls, text: str) -> None:
+        print(cls.color(f"✔ {text}", cls.GREEN))
+
+    @classmethod
+    def warning(cls, text: str) -> None:
+        print(cls.color(f"⚠ {text}", cls.YELLOW))
+
+
 def ask(prompt: str, default: str | None = None) -> str:
-    suffix = f" [{default}]" if default else ""
+    suffix = f" [{UI.color(default, UI.CYAN)}]" if default else ""
     full_prompt = f"{prompt}{suffix}: "
     print(full_prompt, end="", flush=True)
     value = input().strip()
@@ -26,7 +78,8 @@ def ask(prompt: str, default: str | None = None) -> str:
 
 def ask_yes_no(prompt: str, default: bool = True) -> bool:
     default_label = "Y/n" if default else "y/N"
-    full_prompt = f"{prompt} [{default_label}]: "
+    colored_label = UI.color(default_label, UI.CYAN)
+    full_prompt = f"{prompt} [{colored_label}]: "
     print(full_prompt, end="", flush=True)
     value = input().strip().lower()
 
@@ -145,8 +198,7 @@ def get_options_by_profile(profile: str) -> dict[str, bool]:
 
 
 def run_problem_framing_wizard(task: str) -> dict[str, str]:
-    print("\nProblem Framing Wizard (Optional)")
-    print("---------------------------------")
+    UI.panel("Problem Framing", "This optional wizard helps configure the starter kit to your specific goals.")
     print("Press Enter to use defaults.")
 
     # 1. Main goal?
@@ -222,27 +274,27 @@ def normalize_package_name(value: str) -> str:
 
 
 def print_summary(root: Path, values: dict[str, str]) -> None:
+    UI.success("Starter-kit created successfully!")
+    print(f"Destination: {UI.color(str(root.resolve()), UI.CYAN)}")
     print()
-    print("Starter-kit created.")
-    print(f"Destination: {root.resolve()}")
-    print(f"Project: {values['PROJECT_NAME']}")
-    print(f"Package: {values['PACKAGE_NAME']}")
-    print(f"Type: {values['TASK']}")
-    print()
-    print("Next steps:")
-    print("1. Adjust configs/config.json")
-    print("2. Place your dataset in data/raw/")
-    print("3. Edit src/<package>/features.py")
-    print("4. Run:")
-    print(f"   python -m {values['PACKAGE_NAME']}.data")
-    print(f"   python -m {values['PACKAGE_NAME']}.train")
-    print(f"   python -m {values['PACKAGE_NAME']}.evaluate")
+    UI.panel("Next steps",
+             f"1. Place your dataset at: {values['DATASET_PATH']}\n"
+             f"2. Review and adjust metadata in: configs/config.json\n"
+             f"3. Define your features in: src/{values['PACKAGE_NAME']}/features.py\n"
+             f"4. Run the pipeline:\n"
+             f"   - Step 1 (Data):     python -m {values['PACKAGE_NAME']}.data\n"
+             f"   - Step 2 (Train):    python -m {values['PACKAGE_NAME']}.train\n"
+             f"   - Step 3 (Evaluate): python -m {values['PACKAGE_NAME']}.evaluate")
+
+    if values.get("ADVISOR_COMMAND"):
+        print(f"   - Dataset Advice:   {values['ADVISOR_COMMAND']}")
 
 
 def main() -> None:
-    print("ML Starter Kit Builder")
-    print("======================")
+    print(UI.color("ML Starter Kit Builder", UI.BLUE + UI.BOLD))
+    print(UI.color("======================", UI.BLUE + UI.BOLD))
 
+    UI.section("Project basics", 1)
     default_project = Path.cwd().name
     project_name = ask("Project name", default_project)
     package_name = normalize_package_name(
@@ -251,6 +303,15 @@ def main() -> None:
     task = choose_task()
     preset = "none"
 
+    UI.section("Dataset and target", 2)
+    if task == "supervised":
+        UI.panel("Supervised Learning",
+                 "In supervised learning, you need a 'target' column (what you want to predict)\n"
+                 "and 'features' (the data used to make the prediction).")
+    elif task == "unsupervised":
+        UI.panel("Unsupervised Learning",
+                 "Unsupervised learning finds patterns in data without a specific target column.")
+
     dataset_path = ask("Dataset path", "data/raw/dataset.csv")
 
     if task == "unsupervised":
@@ -258,28 +319,10 @@ def main() -> None:
     else:
         target_column = ask("Target column name", "target")
 
+    UI.section("Problem framing", 3)
     problem_profile = run_problem_framing_wizard(task)
 
-    default_output_dir = STARTER_ROOT.parent / package_name
-    while True:
-        output_dir = Path(ask("Directory to create the structure", str(default_output_dir))).resolve()
-
-        is_inside = False
-        try:
-            if output_dir == STARTER_ROOT or output_dir.is_relative_to(STARTER_ROOT):
-                is_inside = True
-        except (ValueError, AttributeError):
-            is_inside = False
-
-        if is_inside:
-            print("\nWARNING: The target directory is inside the starter kit repository.")
-            print("Warning: The selected output directory is inside the starter repository.")
-            if ask_yes_no("Do you want to continue anyway?", default=False):
-                break
-        else:
-            break
-
-    include_docs = ask_yes_no("Create documentation files?", True)
+    UI.section("Environment", 4)
     include_pyproject = ask_yes_no("Create pyproject.toml and environment files?", True)
 
     python_version = "3.11"
@@ -291,6 +334,8 @@ def main() -> None:
         include_ml_basics = ask_yes_no("Include basic ML dependencies (pandas, numpy, scikit-learn, matplotlib, seaborn)?", False)
         torch_variant = choose_torch_variant()
 
+    UI.section("Optional tools", 5)
+    include_docs = ask_yes_no("Create documentation files?", True)
     print("\nOptional files (templates):")
     profile = choose_optional_profile()
     if profile == "custom":
@@ -310,9 +355,47 @@ def main() -> None:
         optional_options = get_options_by_profile(profile)
 
     if optional_options.get("advisor") and not include_ml_basics:
-        print("\nNOTE: Dataset Advisor requires basic ML dependencies (pandas, scikit-learn).")
+        UI.panel("Dependency Note", "Dataset Advisor requires basic ML dependencies (pandas, scikit-learn).")
         if ask_yes_no("Enable basic ML dependencies now?", True):
             include_ml_basics = True
+
+    UI.section("Output location", 6)
+    sibling_dir = (STARTER_ROOT.parent / package_name).resolve()
+    current_dir = Path.cwd().resolve()
+    nested_dir = (current_dir / package_name).resolve()
+
+    print(f"1. Current directory: {current_dir}")
+    print(f"2. New folder in current directory: {nested_dir}")
+    print(f"3. Sibling folder (recommended): {sibling_dir}")
+    print(f"4. Custom path")
+
+    while True:
+        choice = ask("Choose an option", "3")
+        if choice == "1":
+            output_dir = current_dir
+        elif choice == "2":
+            output_dir = nested_dir
+        elif choice == "3":
+            output_dir = sibling_dir
+        elif choice == "4":
+            output_dir = Path(ask("Enter custom path")).resolve()
+        else:
+            print("Invalid option.")
+            continue
+
+        is_inside = False
+        try:
+            if output_dir == STARTER_ROOT or output_dir.is_relative_to(STARTER_ROOT):
+                is_inside = True
+        except (ValueError, AttributeError):
+            is_inside = False
+
+        if is_inside:
+            UI.warning("The selected output directory is inside the starter repository.")
+            if ask_yes_no("Do you want to continue anyway?", default=False):
+                break
+        else:
+            break
 
     force = ask_yes_no("Overwrite existing files if there is a conflict?", False)
 
@@ -334,6 +417,24 @@ def main() -> None:
         "PYTHON_REQUIRES": python_requires,
         "ADVISOR_COMMAND": advisor_cmd,
     }
+
+    UI.section("Final summary", 7)
+    print(f"Project name:      {values['PROJECT_NAME']}")
+    print(f"Package name:      {values['PACKAGE_NAME']}")
+    print(f"ML Task:           {values['TASK']}")
+    print(f"Dataset path:      {values['DATASET_PATH']}")
+    if target_column:
+        print(f"Target column:     {values['TARGET_COLUMN']}")
+    print(f"Python version:    {python_version}")
+    print(f"PyTorch variant:   {torch_variant}")
+    print(f"Include ML basics: {'yes' if include_ml_basics else 'no'}")
+    print(f"Output directory:  {output_dir}")
+    print(f"Overwrite files:   {'yes' if force else 'no'}")
+
+    print()
+    if not ask_yes_no("Create project files?", True):
+        print("Aborted.")
+        return
 
     create_dirs(output_dir, package_name, preset, include_docs)
     create_config(output_dir, values, force=force)

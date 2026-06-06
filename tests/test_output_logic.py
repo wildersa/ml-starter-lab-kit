@@ -39,10 +39,10 @@ class TestOutputLogic(unittest.TestCase):
                 task="2",
                 dataset_path="data.csv",
                 target_column="target",
-                output_dir_sequence=[str(inside_path), "n", str(outside_path)]
+                output_dir_sequence=["4", str(inside_path), "n", "4", str(outside_path)]
             )
 
-            self.assertIn("Warning: The selected output directory is inside the starter repository.", output)
+            self.assertIn("The selected output directory is inside the starter repository.", output)
             self.assertTrue((outside_path / "README.md").exists())
 
     def test_readme_content(self):
