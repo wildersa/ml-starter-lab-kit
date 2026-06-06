@@ -323,6 +323,18 @@ def main() -> None:
         python_requires = ">=3.14,<3.15"
 
     advisor_cmd = f"python -m {package_name}.advisor" if optional_options.get("advisor") else ""
+    advisor_quickstart = ""
+    if optional_options.get("advisor"):
+        advisor_quickstart = f"""
+### 6. Dataset Advisor (Optional)
+Run the Dataset Advisor to get expert-like feedback on your data:
+```bash
+python -m {package_name}.advisor
+```
+It generates:
+- `reports/dataset-advice.md`: A report with data quality findings and model recommendations.
+- `src/{package_name}/suggested_pipeline.py`: A starter scikit-learn pipeline with appropriate preprocessing for your specific columns.
+"""
 
     values = {
         "PROJECT_NAME": project_name,
@@ -333,6 +345,7 @@ def main() -> None:
         "TARGET_COLUMN": target_column,
         "PYTHON_REQUIRES": python_requires,
         "ADVISOR_COMMAND": advisor_cmd,
+        "ADVISOR_QUICKSTART": advisor_quickstart,
     }
 
     create_dirs(output_dir, package_name, preset, include_docs)

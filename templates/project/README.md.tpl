@@ -66,6 +66,39 @@ python -c "import {{PACKAGE_NAME}}; print('Package {{PACKAGE_NAME}} ready')"
 python -c "import torch; print(f'Torch {torch.__version__} available. CUDA: {torch.cuda.is_available()}')"
 ```
 
+## Quick Start & Core Concepts
+
+### 1. Data placement
+Place your dataset in `data/raw/`.
+By default, the project expects the file at: `{{DATASET_PATH}}`.
+
+### 2. Configuration
+Review `configs/config.json`. Key fields to check:
+- `data.raw_path`: Path to your raw CSV file.
+- `data.processed_path`: Where the processed table will be saved (usually `data/processed/modeling_table.csv`).
+- `target.column`: The name of the column you want to predict.
+
+### 3. Target vs Features
+In supervised learning, you usually have:
+- **Target**: The single column you want to predict (e.g., `is_spam`).
+- **Features**: The many columns used to make that prediction (e.g., `sender`, `subject_length`, `has_attachments`). The existing columns in your CSV are already candidate features.
+
+**Example CSV:**
+```csv
+age,city,income,bought_product
+25,NY,50000,1
+30,SF,80000,0
+```
+- **Target**: `bought_product`
+- **Features**: `age`, `city`, `income`
+
+### 4. Feature Engineering (`features.py`)
+Use `src/{{PACKAGE_NAME}}/features.py` to create *new* calculated features from your raw data (like calculating a ratio between two columns or extracting the month from a date).
+
+### 5. Training a Baseline (`train.py`)
+Running `python -m {{PACKAGE_NAME}}.train` trains a **baseline model**.
+A baseline is a simple, naive model (like always predicting the most frequent category) used as a starting benchmark. It is **not** a final production model, but a reference point that your future, more complex models should try to beat.
+{{ADVISOR_QUICKSTART}}
 ## Suggested flow
 
 ```text
