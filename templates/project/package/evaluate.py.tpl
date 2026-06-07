@@ -3,8 +3,8 @@ from __future__ import annotations
 import json
 from collections import Counter
 
-from .config import load_config, project_root
-from .data import load_csv
+from .core.config import load_config, project_root
+from .core.data import load_csv
 
 
 def load_model(path: str = "models/model.json") -> dict[str, object]:
