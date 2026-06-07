@@ -70,12 +70,19 @@ def create_notebook_placeholder(root: Path, values: dict[str, str], *, force: bo
 
 
 def create_docs(root: Path, values: dict[str, str], *, force: bool) -> None:
+    lang = values.get("LANGUAGE", "en")
     docs = {
         "docs/data-dictionary.md": load_template("data-dictionary.md", values, folder="project/docs"),
         "reports/modeling-notes.md": load_template("modeling-notes.md", values, folder="project/reports"),
         ".gitignore": load_template("gitignore", values, folder="project"),
         ".env.example": load_template("env.example", values, folder="project"),
     }
+
+    if values.get("INCLUDE_DEMO") == "true":
+        template_name = "demo-scenario.md"
+        if lang == "pt-BR":
+            template_name = "demo-scenario.pt-BR.md"
+        docs["docs/demo-scenario.md"] = load_template(template_name, values, folder="project/docs")
 
     for rel, content in docs.items():
         write_text(root / rel, content, force=force)

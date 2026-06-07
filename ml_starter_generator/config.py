@@ -19,7 +19,7 @@ def create_config(
         raw_path = "data/raw/demo_dataset.csv"
         if task == "supervised":
             goal = (problem_profile or {}).get("goal", "").lower()
-            if "number" in goal or "número" in goal:
+            if any(keyword in goal for keyword in ["number", "número", "2"]):
                 target_column = "price"
             else:
                 target_column = "subscribed"

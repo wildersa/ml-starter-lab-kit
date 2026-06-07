@@ -6,7 +6,7 @@ def get_demo_data(task: str, goal: str = "") -> str:
     Technical identifiers (column names) remain in English.
     """
     goal_lower = goal.lower()
-    is_regression = "number" in goal_lower or "número" in goal_lower
+    is_regression = any(keyword in goal_lower for keyword in ["number", "número", "2"])
 
     if task == "supervised":
         if is_regression:

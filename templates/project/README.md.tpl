@@ -73,6 +73,10 @@ python -c "import torch; print(f'Torch {torch.__version__} available. CUDA: {tor
 
 ### 1. Prepare your data
 Place your dataset at `data/raw/dataset.csv` (or the path you configured).
+{% if INCLUDE_DEMO == "true" %}
+**Demo Dataset**: This project includes a synthetic dataset for learning.
+Check `docs/demo-scenario.md` for the scenario and data dictionary.
+{% endif %}
 
 **Supervised Learning concepts:**
 - **Target**: The column you want to predict. Most projects have **one** main target.
