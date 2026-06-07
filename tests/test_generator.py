@@ -387,6 +387,7 @@ class TestGenerator(unittest.TestCase):
         with open(lab_path) as f:
             content = f.read()
             self.assertIn("learning_workspace.py", content)
+            self.assertIn("pkg_dir = Path(__file__).parent", content)
             self.assertIn("Streamlit workspace is not available in this project.", content)
 
 if __name__ == "__main__":

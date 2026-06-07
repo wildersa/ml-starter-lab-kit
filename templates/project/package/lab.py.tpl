@@ -50,12 +50,14 @@ def run_all():
     run_evaluate()
 
 def run_workspace():
-    # Workspace is usually a Streamlit app named learning_workspace.py in the root
-    workspace_path = Path("learning_workspace.py")
+    # Workspace is a Streamlit app named learning_workspace.py inside the package
+    pkg_dir = Path(__file__).parent
+    workspace_path = pkg_dir / "learning_workspace.py"
+
     if workspace_path.exists():
         print("\n[INFO] Streamlit workspace found.")
         print("Run it with:")
-        print("  streamlit run learning_workspace.py")
+        print(f"  streamlit run {workspace_path}")
     else:
         print("\n[INFO] Streamlit workspace is not available in this project.")
         print("Guided Learning Mode projects include a workspace for interactive exploration.")
