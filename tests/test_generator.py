@@ -29,6 +29,9 @@ class TestGenerator(unittest.TestCase):
 
         self.assertTrue((self.test_dir / "README.md").exists())
         self.assertTrue((self.test_dir / "src" / self.package_name / "train.py").exists())
+        self.assertTrue((self.test_dir / "src" / self.package_name / "core/config.py").exists())
+        self.assertTrue((self.test_dir / "src" / self.package_name / "core/data.py").exists())
+        self.assertTrue((self.test_dir / "src" / self.package_name / "core/readiness.py").exists())
         self.assertTrue((self.test_dir / "configs/config.json").exists())
 
         with open(self.test_dir / "configs/config.json") as f:

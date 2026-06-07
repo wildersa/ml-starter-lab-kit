@@ -4,8 +4,8 @@ import json
 from collections import Counter
 from pathlib import Path
 
-from .config import load_config, project_root
-from .data import load_csv
+from .core.config import load_config, project_root
+from .core.data import load_csv
 from .features import apply_configured_features
 
 

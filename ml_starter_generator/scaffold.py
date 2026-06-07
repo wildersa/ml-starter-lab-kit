@@ -15,6 +15,7 @@ def create_dirs(root: Path, package_name: str, preset: str, include_docs: bool) 
         "models",
         "reports/figures",
         f"src/{package_name}",
+        f"src/{package_name}/core",
         "tests",
     ]
 
@@ -48,6 +49,10 @@ def create_package_files(root: Path, values: dict[str, str], *, force: bool) -> 
         "evaluate.py": load_template("evaluate.py", values, folder="project/package"),
         "predict.py": load_template("predict.py", values, folder="project/package"),
         "guide.py": load_template("guide.py", values, folder="project/package"),
+        "core/__init__.py": load_template("__init__.py", values, folder="project/package/core"),
+        "core/config.py": load_template("config.py", values, folder="project/package/core"),
+        "core/data.py": load_template("data.py", values, folder="project/package/core"),
+        "core/readiness.py": load_template("readiness.py", values, folder="project/package/core"),
     }
 
     for rel, content in files.items():
