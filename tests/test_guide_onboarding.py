@@ -28,8 +28,8 @@ class TestGuideOnboarding(unittest.TestCase):
 
         next_steps_output = output.split("[Next steps]")[1]
 
-        guide_cmd = f"python -m {self.package_name}.guide"
-        data_cmd = f"python -m {self.package_name}.data"
+        guide_cmd = f"python -m {self.package_name}.lab check"
+        data_cmd = f"python -m {self.package_name}.lab eda"
 
         self.assertIn(guide_cmd, next_steps_output)
         self.assertIn(data_cmd, next_steps_output)
@@ -53,13 +53,13 @@ class TestGuideOnboarding(unittest.TestCase):
 
         # Check Suggested flow
         flow_section = content.split("## Suggested flow")[1].split("##")[0]
-        self.assertIn(f"python -m {self.package_name}.guide", flow_section)
+        self.assertIn(f"python -m {self.package_name}.lab check", flow_section)
 
         # Check Suggested commands
         commands_section = content.split("## Suggested commands")[1]
 
-        guide_cmd = f"python -m {self.package_name}.guide"
-        data_cmd = f"python -m {self.package_name}.data"
+        guide_cmd = f"python -m {self.package_name}.lab check"
+        data_cmd = f"python -m {self.package_name}.lab eda"
 
         self.assertIn(guide_cmd, commands_section)
         self.assertIn(data_cmd, commands_section)
@@ -100,8 +100,8 @@ class TestGuideOnboarding(unittest.TestCase):
 
         next_steps_output = output.split("[Próximos passos]")[1]
 
-        guide_cmd = f"python -m {self.package_name}.guide"
-        data_cmd = f"python -m {self.package_name}.data"
+        guide_cmd = f"python -m {self.package_name}.lab check"
+        data_cmd = f"python -m {self.package_name}.lab eda"
 
         self.assertIn(guide_cmd, next_steps_output)
         self.assertIn(data_cmd, next_steps_output)

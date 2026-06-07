@@ -158,7 +158,7 @@ class TestLocalization(unittest.TestCase):
 
         # Check README commands
         readme_content = (self.test_dir / "README.md").read_text()
-        self.assertIn("python -m meu_pacote.data", readme_content)
+        self.assertIn("python -m meu_pacote.lab check", readme_content)
 
 if __name__ == "__main__":
     unittest.main()
