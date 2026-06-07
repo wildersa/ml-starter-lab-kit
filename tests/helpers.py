@@ -7,6 +7,7 @@ def run_generator(
     project_name="test_project",
     package_name="",
     task="2",
+    experience_mode="1",
     dataset_path="data/raw/dataset.csv",
     target_column="target",
     include_demo="n",
@@ -31,11 +32,14 @@ def run_generator(
     if optionals is None:
         optionals = ["n"] * 10
 
+    is_guided = (experience_mode == "2" or experience_mode == "guided")
+
     inputs = [
         language,
         project_name,
         package_name,
         task,
+        experience_mode,
         dataset_path,
     ]
 
@@ -62,15 +66,18 @@ def run_generator(
     inputs.append(include_pyproject)
     if include_pyproject.lower() in ["y", "yes", ""]:
         inputs.append(python_profile)
-        inputs.append(include_ml_basics)
+        if not is_guided:
+            inputs.append(include_ml_basics)
         inputs.append(include_mlflow)
         inputs.append(torch_variant)
 
     # Optional tools
-    inputs.append(include_docs)
-    inputs.append(optional_profile)
-    if optional_profile == "4" or optional_profile == "custom":
-        inputs.extend(optionals)
+    is_guided = (experience_mode == "2" or experience_mode == "guided")
+    if not is_guided:
+        inputs.append(include_docs)
+        inputs.append(optional_profile)
+        if optional_profile == "4" or optional_profile == "custom":
+            inputs.extend(optionals)
 
     # Output location
     if output_dir_sequence:

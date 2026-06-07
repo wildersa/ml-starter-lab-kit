@@ -96,6 +96,10 @@ def create_config(
             "categorical_columns": [],
             "numeric_columns": [],
             "suspected_leakage_columns": []
+        },
+        "learning": {
+            "enabled": values.get("LEARNING_ENABLED") == "true",
+            "mode": values.get("LEARNING_MODE", "minimal")
         }
     }
 

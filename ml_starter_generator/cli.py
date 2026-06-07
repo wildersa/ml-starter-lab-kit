@@ -26,6 +26,9 @@ TRANSLATIONS = {
         "project_basics": "Project basics",
         "project_name": "Project name",
         "package_name": "Python package name",
+        "experience_mode": "Experience Mode",
+        "mode_minimal": "Minimal Starter",
+        "mode_guided": "Guided Learning Mode",
         "choose_task": "Project Type (ML Task)",
         "task_generic": "generic ML structure",
         "task_supervised": "classification/regression",
@@ -124,6 +127,7 @@ TRANSLATIONS = {
         "summary_target_column": "Target column",
         "summary_include_demo": "Include demo dataset",
         "summary_python_version": "Python version",
+        "summary_experience_mode": "Experience Mode",
         "summary_torch_variant": "PyTorch variant",
         "summary_ml_basics": "Include ML basics",
         "summary_output_dir": "Output directory",
@@ -158,6 +162,9 @@ TRANSLATIONS = {
         "project_basics": "Informações básicas",
         "project_name": "Nome do projeto",
         "package_name": "Nome do pacote Python",
+        "experience_mode": "Modo de Experiência",
+        "mode_minimal": "Starter Mínimo (Minimal Starter)",
+        "mode_guided": "Modo Aprendizado Guiado (Guided Learning)",
         "choose_task": "Tipo de Projeto (Tarefa de ML)",
         "task_generic": "estrutura genérica de ML",
         "task_supervised": "classificação/regressão",
@@ -256,6 +263,7 @@ TRANSLATIONS = {
         "summary_target_column": "Coluna alvo",
         "summary_include_demo": "Incluir dataset de demo",
         "summary_python_version": "Versão do Python",
+        "summary_experience_mode": "Modo de Experiência",
         "summary_torch_variant": "Variante do PyTorch",
         "summary_ml_basics": "Incluir ML básico",
         "summary_output_dir": "Diretório de saída",
@@ -395,6 +403,21 @@ def choose_task(t: dict[str, str]) -> str:
             return TASKS[choice]
         if choice in TASKS.values():
             return choice
+        print(t['invalid_option'])
+
+
+def choose_experience_mode(t: dict[str, str]) -> str:
+    print()
+    print(f"{t['experience_mode']}:")
+    print(f"1. minimal - {t['mode_minimal']}")
+    print(f"2. guided  - {t['mode_guided']}")
+
+    while True:
+        choice = ask(t['choose_option'], "1")
+        if choice == "1" or choice == "minimal":
+            return "minimal"
+        if choice == "2" or choice == "guided":
+            return "guided"
         print(t['invalid_option'])
 
 
@@ -636,6 +659,7 @@ def main() -> None:
         ask(t["package_name"], normalize_package_name(project_name))
     )
     task = choose_task(t)
+    experience_mode = choose_experience_mode(t)
     preset = "none"
 
     UI.section(t["dataset_target"], 2)
@@ -666,14 +690,26 @@ def main() -> None:
 
     if include_pyproject:
         python_version = choose_python_profile(t)
-        include_ml_basics = ask_yes_no(t["ml_basics"], False, lang=lang)
+        if experience_mode == "guided":
+            include_ml_basics = True
+        else:
+            include_ml_basics = ask_yes_no(t["ml_basics"], False, lang=lang)
         include_mlflow = ask_yes_no(t["mlflow_tracking"], False, lang=lang)
         torch_variant = choose_torch_variant(t)
 
     UI.section(t["optional_tools"], 5)
-    include_docs = ask_yes_no(t["create_docs"], True, lang=lang)
+    if experience_mode == "guided":
+        include_docs = True
+    else:
+        include_docs = ask_yes_no(t["create_docs"], True, lang=lang)
+
     print(f"\n{t['optional_files_templates']}")
-    profile = choose_optional_profile(t)
+
+    if experience_mode == "guided":
+        profile = "recommended"
+    else:
+        profile = choose_optional_profile(t)
+
     if profile == "custom":
         optional_options = {
             "eda": ask_yes_no(t["include_eda"], False, lang=lang),
@@ -690,9 +726,16 @@ def main() -> None:
     else:
         optional_options = get_options_by_profile(profile)
 
+    if experience_mode == "guided":
+        optional_options["eda"] = True
+        optional_options["advisor"] = True
+
     if optional_options.get("advisor") and not include_ml_basics:
-        UI.panel(t["dependency_note_title"], t["dependency_note_text"])
-        if ask_yes_no(t["enable_ml_basics"], True, lang=lang):
+        if experience_mode != "guided":
+            UI.panel(t["dependency_note_title"], t["dependency_note_text"])
+            if ask_yes_no(t["enable_ml_basics"], True, lang=lang):
+                include_ml_basics = True
+        else:
             include_ml_basics = True
 
     UI.section(t["output_location"], 6)
@@ -766,12 +809,15 @@ def main() -> None:
         "ADVISOR_COMMAND": advisor_cmd,
         "LANGUAGE": lang,
         "ENABLE_MLFLOW": "true" if include_mlflow else "false",
+        "LEARNING_ENABLED": "true" if experience_mode == "guided" else "false",
+        "LEARNING_MODE": experience_mode,
     }
 
     UI.section(t["final_summary"], 7)
     print(f"{t['summary_project_name']}:      {values['PROJECT_NAME']}")
     print(f"{t['summary_package_name']}:      {values['PACKAGE_NAME']}")
     print(f"{t['summary_task']}:           {values['TASK']}")
+    print(f"{t['summary_experience_mode']}:   {experience_mode}")
     print(f"{t['summary_dataset_path']}:      {values['DATASET_PATH']}")
     if target_column:
         print(f"{t['summary_target_column']}:     {values['TARGET_COLUMN']}")

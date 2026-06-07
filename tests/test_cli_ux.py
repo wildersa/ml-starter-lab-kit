@@ -69,6 +69,7 @@ class TestCLIUX(unittest.TestCase):
         inputs = [
             "1",
             "current_dir_proj", "current_dir_pkg", "1",
+            "1", # experience mode: minimal
             "data.csv",
             "", "", "", "", "", "",
             "y", "1", "n", "1",
