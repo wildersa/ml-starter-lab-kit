@@ -460,7 +460,7 @@ def choose_torch_variant(t: dict[str, str]) -> str:
         print(t['invalid_option'])
 
 
-def choose_optional_profile(t: dict[str, str]) -> str:
+def choose_optional_profile(t: dict[str, str], experience_mode: str = "minimal") -> str:
     print()
     print(f"{t['optional_profile']}:")
     print(f"1. minimal     - {t['profile_minimal']}")
@@ -468,8 +468,10 @@ def choose_optional_profile(t: dict[str, str]) -> str:
     print(f"3. full        - {t['profile_full']}")
     print(f"4. custom      - {t['profile_custom']}")
 
+    default_choice = "1" if experience_mode == "minimal" else "2"
+
     while True:
-        choice = ask(t['choose_option'], "2")
+        choice = ask(t['choose_option'], default_choice)
         if choice in {"1", "2", "3", "4"}:
             mapping = {"1": "minimal", "2": "recommended", "3": "full", "4": "custom"}
             return mapping[choice]
@@ -701,14 +703,15 @@ def main() -> None:
     if experience_mode == "guided":
         include_docs = True
     else:
-        include_docs = ask_yes_no(t["create_docs"], True, lang=lang)
+        default_docs = (experience_mode != "minimal")
+        include_docs = ask_yes_no(t["create_docs"], default_docs, lang=lang)
 
     print(f"\n{t['optional_files_templates']}")
 
     if experience_mode == "guided":
         profile = "recommended"
     else:
-        profile = choose_optional_profile(t)
+        profile = choose_optional_profile(t, experience_mode=experience_mode)
 
     if profile == "custom":
         optional_options = {
