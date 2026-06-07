@@ -98,14 +98,14 @@ Review and edit `configs/config.json`:
 ### 3. Run the Project Guide
 Validate if your dataset and configuration are ready for the pipeline:
 ```bash
-python -m {{PACKAGE_NAME}}.guide
+python -m {{PACKAGE_NAME}}.lab check
 ```
 The guide checks if the CSV exists and if the target column is correctly identified.
 
 ### 4. Run the Dataset Advisor
 If enabled, the Advisor performs a deeper heuristic analysis of your data to suggest modeling strategies:
 ```bash
-{{ADVISOR_COMMAND}}
+python -m {{PACKAGE_NAME}}.lab advisor
 ```
 It creates `reports/dataset-advice.md` and a starting `src/{{PACKAGE_NAME}}/suggested_pipeline.py`.
 
@@ -121,30 +121,35 @@ The generated `src/{{PACKAGE_NAME}}/train.py` is a **simple baseline**, not a fi
 
 1. Place the dataset in `data/raw/`
 2. Adjust `configs/config.json`
-3. Run `python -m {{PACKAGE_NAME}}.guide` to validate readiness
-4. Perform EDA in the notebook
+3. Run `python -m {{PACKAGE_NAME}}.lab check` to validate readiness
+4. Perform EDA: `python -m {{PACKAGE_NAME}}.lab eda` or via notebook
 5. Edit `src/{{PACKAGE_NAME}}/features.py`
-6. Train the model (baseline)
-7. Evaluate results
+6. Train the model: `python -m {{PACKAGE_NAME}}.lab train`
+7. Evaluate results: `python -m {{PACKAGE_NAME}}.lab evaluate`
 8. Document limitations and next steps
 
 ## Suggested commands
 
+The project includes a unified **Lab CLI** to run common steps:
+
 ```bash
 # Validate readiness
-python -m {{PACKAGE_NAME}}.guide
+python -m {{PACKAGE_NAME}}.lab check
 
-# Process data
-python -m {{PACKAGE_NAME}}.data
+# Run basic EDA
+python -m {{PACKAGE_NAME}}.lab eda
 
 # (Optional) Get modeling advice
-{{ADVISOR_COMMAND}}
+python -m {{PACKAGE_NAME}}.lab advisor
 
 # Train baseline
-python -m {{PACKAGE_NAME}}.train
+python -m {{PACKAGE_NAME}}.lab train
 
 # Evaluate
-python -m {{PACKAGE_NAME}}.evaluate
+python -m {{PACKAGE_NAME}}.lab evaluate
+
+# Run all basic steps (check, eda, train, evaluate)
+python -m {{PACKAGE_NAME}}.lab all
 ```
 {% if ENABLE_MLFLOW == "true" %}
 ## Experiment Tracking (MLflow)

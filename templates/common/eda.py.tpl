@@ -3,6 +3,8 @@ from __future__ import annotations
 from collections import Counter
 from typing import Any
 
+from .core.config import load_config
+from .core.data import load_csv
 
 Rows = list[dict[str, Any]]
 
@@ -56,3 +58,22 @@ def print_basic_report(rows: Rows, target_column: str | None = None) -> None:
     if target_column:
         print(f"Target distribution for {target_column}:")
         print(target_distribution(rows, target_column))
+
+
+def main() -> None:
+    config = load_config()
+    raw_path = config["data"]["raw_path"]
+    target_column = config["target"]["column"]
+
+    try:
+        rows = load_csv(raw_path)
+        print(f"\n--- Basic EDA: {raw_path} ---")
+        print_basic_report(rows, target_column)
+    except FileNotFoundError:
+        print(f"Dataset not found at {raw_path}. Please place your data there first.")
+    except Exception as e:
+        print(f"Error during EDA: {e}")
+
+
+if __name__ == "__main__":
+    main()

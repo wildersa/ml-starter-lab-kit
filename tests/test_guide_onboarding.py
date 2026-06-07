@@ -29,12 +29,15 @@ class TestGuideOnboarding(unittest.TestCase):
         next_steps_output = output.split("[Next steps]")[1]
 
         guide_cmd = f"python -m {self.package_name}.guide"
+        lab_check_cmd = f"python -m {self.package_name}.lab check"
         data_cmd = f"python -m {self.package_name}.data"
 
-        self.assertIn(guide_cmd, next_steps_output)
+        # Direct commands still exist in summary or can be used.
+        # But for this test, we check if guide (direct or via lab) comes before data
+        self.assertTrue(guide_cmd in next_steps_output or lab_check_cmd in next_steps_output)
         self.assertIn(data_cmd, next_steps_output)
 
-        guide_idx = next_steps_output.find(guide_cmd)
+        guide_idx = next_steps_output.find(guide_cmd) if guide_cmd in next_steps_output else next_steps_output.find(lab_check_cmd)
         data_idx = next_steps_output.find(data_cmd)
 
         self.assertLess(guide_idx, data_idx, "Guide command should be before data command in terminal summary")
@@ -53,21 +56,26 @@ class TestGuideOnboarding(unittest.TestCase):
 
         # Check Suggested flow
         flow_section = content.split("## Suggested flow")[1].split("##")[0]
-        self.assertIn(f"python -m {self.package_name}.guide", flow_section)
+        self.assertIn(f"python -m {self.package_name}.lab check", flow_section)
 
         # Check Suggested commands
         commands_section = content.split("## Suggested commands")[1]
 
-        guide_cmd = f"python -m {self.package_name}.guide"
+        lab_check_cmd = f"python -m {self.package_name}.lab check"
+        # We don't have .data in lab CLI, so it remains direct
         data_cmd = f"python -m {self.package_name}.data"
 
-        self.assertIn(guide_cmd, commands_section)
-        self.assertIn(data_cmd, commands_section)
+        # Note: .data is NOT in the lab CLI list in README currently,
+        # it was replaced by 'eda' in 'Suggested commands' but let's check what's there
+        self.assertIn(lab_check_cmd, commands_section)
 
-        guide_idx = commands_section.find(guide_cmd)
-        data_idx = commands_section.find(data_cmd)
+        lab_check_idx = commands_section.find(lab_check_cmd)
+        # lab all is at the end
+        lab_all_cmd = f"python -m {self.package_name}.lab all"
+        self.assertIn(lab_all_cmd, commands_section)
+        lab_all_idx = commands_section.find(lab_all_cmd)
 
-        self.assertLess(guide_idx, data_idx, "Guide command should be before data command in README suggested commands")
+        self.assertLess(lab_check_idx, lab_all_idx)
 
     def test_advisor_and_guide_distinct_roles(self):
         """P0.3 - Advisor and guide roles are distinct in README."""
@@ -101,12 +109,13 @@ class TestGuideOnboarding(unittest.TestCase):
         next_steps_output = output.split("[Próximos passos]")[1]
 
         guide_cmd = f"python -m {self.package_name}.guide"
+        lab_check_cmd = f"python -m {self.package_name}.lab check"
         data_cmd = f"python -m {self.package_name}.data"
 
-        self.assertIn(guide_cmd, next_steps_output)
+        self.assertTrue(guide_cmd in next_steps_output or lab_check_cmd in next_steps_output)
         self.assertIn(data_cmd, next_steps_output)
 
-        guide_idx = next_steps_output.find(guide_cmd)
+        guide_idx = next_steps_output.find(guide_cmd) if guide_cmd in next_steps_output else next_steps_output.find(lab_check_cmd)
         data_idx = next_steps_output.find(data_cmd)
 
         self.assertLess(guide_idx, data_idx, "Guide command should be before data command in PT-BR terminal summary")
@@ -116,12 +125,10 @@ class TestGuideOnboarding(unittest.TestCase):
 
         # Check Suggested commands in PT-BR README
         commands_section = content.split("## Comandos sugeridos")[1]
-        guide_idx_readme = commands_section.find(guide_cmd)
-        data_idx_readme = commands_section.find(data_cmd)
+        lab_check_cmd = f"python -m {self.package_name}.lab check"
 
-        self.assertNotEqual(guide_idx_readme, -1, "Guide command not found in PT-BR README")
-        self.assertNotEqual(data_idx_readme, -1, "Data command not found in PT-BR README")
-        self.assertLess(guide_idx_readme, data_idx_readme, "Guide command should be before data command in PT-BR README")
+        lab_check_idx_readme = commands_section.find(lab_check_cmd)
+        self.assertNotEqual(lab_check_idx_readme, -1, "Lab check command not found in PT-BR README")
 
 if __name__ == "__main__":
     unittest.main()

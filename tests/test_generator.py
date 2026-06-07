@@ -233,10 +233,10 @@ class TestGenerator(unittest.TestCase):
         readme_path = self.test_dir / "README.md"
         with open(readme_path) as f:
             content = f.read()
-            self.assertIn("python -m cmd_pkg.data", content)
-            self.assertIn("python -m cmd_pkg.train", content)
-            self.assertIn("python -m cmd_pkg.evaluate", content)
-            self.assertNotIn("python -m src.cmd_pkg.data", content)
+            self.assertIn("python -m cmd_pkg.lab check", content)
+            self.assertIn("python -m cmd_pkg.lab train", content)
+            self.assertIn("python -m cmd_pkg.lab evaluate", content)
+            self.assertNotIn("python -m src.cmd_pkg.lab", content)
 
     def test_minimal_profile(self):
         run_generator(
@@ -327,6 +327,47 @@ class TestGenerator(unittest.TestCase):
 
         expected_text = "Include basic ML dependencies (pandas, numpy, scikit-learn, matplotlib, seaborn)?"
         self.assertIn(expected_text, output)
+
+    def test_lab_cli_generation(self):
+        # Test Guided Learning Mode (which includes eda and advisor)
+        run_generator(
+            project_name="guided_lab_proj",
+            package_name="guided_lab_pkg",
+            task="1",
+            output_dir=self.test_dir,
+            experience_mode="2"
+        )
+
+        lab_path = self.test_dir / "src/guided_lab_pkg/lab.py"
+        self.assertTrue(lab_path.exists())
+
+        with open(lab_path) as f:
+            content = f.read()
+            self.assertIn("def main() -> None:", content)
+            self.assertIn("subparsers.add_parser(\"check\"", content)
+            self.assertIn("subparsers.add_parser(\"eda\"", content)
+            self.assertIn("subparsers.add_parser(\"advisor\"", content)
+            self.assertIn("subparsers.add_parser(\"train\"", content)
+            self.assertIn("subparsers.add_parser(\"evaluate\"", content)
+            self.assertIn("subparsers.add_parser(\"all\"", content)
+            self.assertIn("subparsers.add_parser(\"workspace\"", content)
+
+        # Verify direct commands still exist
+        self.assertTrue((self.test_dir / "src/guided_lab_pkg/guide.py").exists())
+        self.assertTrue((self.test_dir / "src/guided_lab_pkg/train.py").exists())
+
+    def test_lab_cli_minimal(self):
+        # Test Minimal Starter
+        run_generator(
+            project_name="min_lab_proj",
+            package_name="min_lab_pkg",
+            task="1",
+            output_dir=self.test_dir,
+            experience_mode="1"
+        )
+
+        lab_path = self.test_dir / "src/min_lab_pkg/lab.py"
+        self.assertTrue(lab_path.exists())
 
 if __name__ == "__main__":
     unittest.main()
