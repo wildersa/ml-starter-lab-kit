@@ -96,8 +96,8 @@ class TestProblemFraming(unittest.TestCase):
         package_name = "advisor_pkg"
         output_dir = self.test_dir / project_name
 
-        # Include advisor template
-        optionals = ["n"] * 9 + ["y"]
+        # Include eda and advisor template
+        optionals = ["y"] + ["n"] * 8 + ["y"]
 
         run_generator(
             project_name=project_name,
@@ -125,6 +125,15 @@ class TestProblemFraming(unittest.TestCase):
         # Run advisor
         env = os.environ.copy()
         env["PYTHONPATH"] = str(output_dir / "src")
+
+        # P0.1: Must run EDA first
+        subprocess.run(
+            [sys.executable, "-m", f"{package_name}.eda"],
+            cwd=output_dir,
+            env=env,
+            check=True
+        )
+
         result = subprocess.run(
             [sys.executable, "-m", f"{package_name}.advisor"],
             cwd=output_dir,
