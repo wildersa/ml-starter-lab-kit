@@ -24,6 +24,14 @@ def run_advisor():
         print("\n[INFO] Dataset Advisor is not enabled in this project.")
         print("To enable it, generate a project with the 'guided' mode or 'recommended' profile.")
 
+def run_learn():
+    try:
+        learning = importlib.import_module(".learning", package=__package__)
+        learning.main()
+    except ImportError:
+        print("\n[INFO] Learning Notes module is not enabled in this project.")
+        print("To enable it, generate a project with the 'guided' mode or 'recommended' profile.")
+
 def run_train():
     from . import train
     train.main()
@@ -73,6 +81,7 @@ def main():
     subparsers.add_parser("check", help="Run dataset and configuration readiness check")
     subparsers.add_parser("eda", help="Run exploratory data analysis")
     subparsers.add_parser("advisor", help="Run Dataset Advisor for modeling suggestions")
+    subparsers.add_parser("learn", help="Generate dataset-contextual learning notes")
     subparsers.add_parser("train", help="Train the baseline model")
     subparsers.add_parser("evaluate", help="Evaluate the model performance")
     subparsers.add_parser("all", help="Run the full pipeline (check, eda, train, evaluate)")
@@ -86,6 +95,8 @@ def main():
         run_eda()
     elif args.command == "advisor":
         run_advisor()
+    elif args.command == "learn":
+        run_learn()
     elif args.command == "train":
         run_train()
     elif args.command == "evaluate":

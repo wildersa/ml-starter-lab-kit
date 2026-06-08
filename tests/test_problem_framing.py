@@ -104,7 +104,7 @@ class TestProblemFraming(unittest.TestCase):
             package_name=package_name,
             output_dir=output_dir,
             optional_profile="4",
-            optionals=optionals,
+            optionals=optionals + ["n"],
             include_ml_basics="y",
             problem_goal="predict a category",
             problem_priority="imbalanced classes",

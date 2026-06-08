@@ -150,6 +150,7 @@ def create_optional_files(
         "model_report": reports_path / "model-report.md",
         "experiment_log": reports_path / "experiment-log.md",
         "advisor": package_path / "advisor.py",
+        "learning": package_path / "learning.py",
         "learning_workspace": package_path / "learning_workspace.py",
     }
 
@@ -164,6 +165,7 @@ def create_optional_files(
         "model_report": "model_report.md",
         "experiment_log": "experiment_log.md",
         "advisor": "advisor.py",
+        "learning": "learning.py.tpl",
         "learning_workspace": "learning_workspace.py",
     }
 
