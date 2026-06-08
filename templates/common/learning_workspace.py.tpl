@@ -141,17 +141,26 @@ def main():
         st.header("💡 Model Suggestions")
         st.write("Recommendations based on your problem framing and data profile.")
 
-        try:
-            # Check if advisor artifact exists
-            advisor_report = project_root() / "reports/eda-summary.md"
-            if advisor_report.exists():
+        eda_summary_path = project_root() / "configs/eda_summary.json"
+        advisor_report = project_root() / "reports/dataset-advice.md"
+
+        if not eda_summary_path.exists():
+            st.info("Exploratory Data Analysis (EDA) is required before generating suggestions.")
+            st.markdown(f"""
+            Please run the EDA step first:
+            ```bash
+            python -m {{PACKAGE_NAME}}.lab eda
+            ```
+            """)
+        elif advisor_report.exists():
+            try:
                 st.success("Dataset Advisor report found.")
                 st.markdown(advisor_report.read_text())
-            else:
-                st.info("Run the Dataset Advisor to get modeling suggestions:")
-                st.code(f"python -m {{PACKAGE_NAME}}.lab advisor")
-        except Exception:
-            st.warning("Could not load Advisor suggestions.")
+            except Exception:
+                st.warning("Could not read the Advisor suggestions report.")
+        else:
+            st.info("Run the Dataset Advisor to get modeling suggestions based on your data:")
+            st.code(f"python -m {{PACKAGE_NAME}}.lab advisor")
 
     elif section == "Baseline Lab":
         st.header("🔬 Baseline Lab")
