@@ -30,7 +30,7 @@ def run_generator(
     output_dir_sequence=None
 ):
     if optionals is None:
-        optionals = ["n"] * 11
+        optionals = ["n"] * 12
 
     is_guided = (experience_mode == "2" or experience_mode == "guided")
 
