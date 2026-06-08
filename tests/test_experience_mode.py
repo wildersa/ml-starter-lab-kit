@@ -70,7 +70,7 @@ class TestExperienceMode(unittest.TestCase):
             experience_mode="2",
             output_dir=self.test_dir,
             optional_profile="4",
-            optionals=optionals
+            optionals=optionals + ["n"]
         )
 
         pkg_path = self.test_dir / "src/guided_custom"

@@ -30,7 +30,7 @@ def run_generator(
     output_dir_sequence=None
 ):
     if optionals is None:
-        optionals = ["n"] * 10
+        optionals = ["n"] * 11
 
     is_guided = (experience_mode == "2" or experience_mode == "guided")
 
@@ -77,6 +77,8 @@ def run_generator(
         inputs.append(include_docs)
         inputs.append(optional_profile)
         if optional_profile == "4" or optional_profile == "custom":
+            # The number of custom options might change.
+            # We take what was provided.
             inputs.extend(optionals)
 
     # Output location

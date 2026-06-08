@@ -58,5 +58,19 @@ class TestTemplates(unittest.TestCase):
         self.assertIn("elif section == \"Baseline Lab\":", content)
         self.assertIn("st.warning(\"📊 **EDA Required**: We recommend running EDA before starting your baseline experiments.\")", content)
 
+    def test_learning_workspace_learning_notes_section(self):
+        """P0.4: Verify workspace contains Learning Notes section."""
+        values = {
+            "PROJECT_NAME": "Test Project",
+            "PACKAGE_NAME": "test_pkg",
+        }
+        content = load_template("learning_workspace.py", values)
+
+        self.assertIn("elif section == \"Learning Notes\":", content)
+        self.assertIn("st.header(\"📚 Learning Notes\")", content)
+        self.assertIn("if not eda_summary_path.exists():", content)
+        self.assertIn("elif learning_report.exists():", content)
+        self.assertIn("python -m test_pkg.lab learn", content)
+
 if __name__ == "__main__":
     unittest.main()

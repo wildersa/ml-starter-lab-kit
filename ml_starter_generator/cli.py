@@ -107,6 +107,7 @@ TRANSLATIONS = {
         "include_model_report": "Include model report template?",
         "include_experiment_log": "Include experiment log template?",
         "include_advisor": "Include explainable Dataset Advisor?",
+        "include_learning": "Include dataset-contextual learning notes?",
         "dependency_note_title": "Dependency Note",
         "dependency_note_text": "Dataset Advisor requires basic ML dependencies (pandas, scikit-learn).",
         "enable_ml_basics": "Enable basic ML dependencies now?",
@@ -243,6 +244,7 @@ TRANSLATIONS = {
         "include_model_report": "Incluir template de relatório de modelo?",
         "include_experiment_log": "Incluir template de log de experimentos?",
         "include_advisor": "Incluir Dataset Advisor explicável?",
+        "include_learning": "Incluir notas de aprendizado contextuais ao dataset?",
         "dependency_note_title": "Nota de Dependência",
         "dependency_note_text": "O Dataset Advisor requer dependências básicas de ML (pandas, scikit-learn).",
         "enable_ml_basics": "Ativar dependências básicas de ML agora?",
@@ -492,6 +494,7 @@ def get_options_by_profile(profile: str) -> dict[str, bool]:
         "model_report": False,
         "experiment_log": False,
         "advisor": False,
+        "learning": False,
     }
 
     if profile == "minimal":
@@ -503,6 +506,7 @@ def get_options_by_profile(profile: str) -> dict[str, bool]:
         options["metrics"] = True
         options["visualization"] = True
         options["advisor"] = True
+        options["learning"] = True
         return options
 
     if profile == "full":
@@ -725,6 +729,7 @@ def main() -> None:
             "model_report": ask_yes_no(t["include_model_report"], False, lang=lang),
             "experiment_log": ask_yes_no(t["include_experiment_log"], False, lang=lang),
             "advisor": ask_yes_no(t["include_advisor"], False, lang=lang),
+            "learning": ask_yes_no(t["include_learning"], False, lang=lang),
         }
     else:
         optional_options = get_options_by_profile(profile)
@@ -732,6 +737,7 @@ def main() -> None:
     if experience_mode == "guided":
         optional_options["eda"] = True
         optional_options["advisor"] = True
+        optional_options["learning"] = True
         optional_options["learning_workspace"] = True
 
     if optional_options.get("advisor") and not include_ml_basics:

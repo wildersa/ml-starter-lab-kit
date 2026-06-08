@@ -23,7 +23,7 @@ class TestAdvisor(unittest.TestCase):
 
         # 10 optionals: eda, preprocessing, metrics, optimization, feature_measurement,
         # visualization, notebook_factory, model_report, experiment_log, advisor
-        optionals = ["n", "n", "n", "n", "n", "n", "n", "n", "n", "y"]
+        optionals = ["n", "n", "n", "n", "n", "n", "n", "n", "n", "y", "n"]
 
         run_generator(
             project_name=project_name,
@@ -57,7 +57,7 @@ class TestAdvisor(unittest.TestCase):
         package_name = "advisor_exec_pkg"
         output_dir = self.test_dir / project_name
 
-        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "y"]
+        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "y", "n"]
 
         run_generator(
             project_name=project_name,

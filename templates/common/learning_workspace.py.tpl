@@ -52,6 +52,7 @@ def main():
         [
             "Setup Check",
             "Guided EDA",
+            "Learning Notes",
             "Target Analysis",
             "Feature Explorer",
             "Model Suggestions",
@@ -115,6 +116,29 @@ def main():
             ```
             Then refresh this page to see the results.
             """)
+
+    elif section == "Learning Notes":
+        st.header("📚 Learning Notes")
+        st.write("Understand ML concepts through the lens of your own data.")
+
+        eda_summary_path = project_root() / "configs/eda_summary.json"
+        learning_report = project_root() / "reports/learning-notes.md"
+
+        if not eda_summary_path.exists():
+            st.warning("📊 **EDA Required**: Learning notes require data analysis first.")
+            st.markdown(f"""
+            Please run the EDA step first:
+            ```bash
+            python -m {{PACKAGE_NAME}}.lab eda
+            ```
+            """)
+        elif learning_report.exists():
+            st.success("Contextual learning notes found.")
+            st.markdown(learning_report.read_text())
+        else:
+            st.info("Generate your contextual learning notes:")
+            st.code(f"python -m {{PACKAGE_NAME}}.lab learn")
+            st.write("Then refresh this page to see the notes.")
 
     elif section == "Target Analysis":
         st.header("🎯 Target Analysis")

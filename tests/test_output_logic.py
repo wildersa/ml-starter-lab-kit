@@ -73,7 +73,7 @@ class TestOutputLogic(unittest.TestCase):
         output_dir = self.test_dir / "eda_project"
 
         # eda is the 1st optional tool
-        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "n"]
+        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n"]
 
         run_generator(
             project_name="EDA Project",
@@ -141,7 +141,7 @@ class TestOutputLogic(unittest.TestCase):
             package_name=package_name,
             output_dir=output_dir,
             optional_profile="4",
-            optionals=["y"] + ["n"]*9
+            optionals=["y"] + ["n"]*10
         )
 
         # Ensure no dataset exists
@@ -171,7 +171,7 @@ class TestOutputLogic(unittest.TestCase):
         output_dir = self.test_dir / "advisor_block_project"
 
         # eda is 1st, advisor is 10th
-        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "y"]
+        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "y", "n"]
 
         run_generator(
             project_name="Advisor Block Project",
@@ -211,7 +211,7 @@ class TestOutputLogic(unittest.TestCase):
         package_name = "advisor_success_pkg"
         output_dir = self.test_dir / "advisor_success_project"
 
-        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "y"]
+        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "y", "n"]
 
         run_generator(
             project_name="Advisor Success Project",
@@ -252,6 +252,89 @@ class TestOutputLogic(unittest.TestCase):
         # P0.3: Artifacts created
         self.assertTrue((output_dir / "configs/suggested_pipeline.json").exists())
         self.assertTrue((output_dir / "reports/dataset-advice.md").exists())
+
+    def test_learning_blocked_without_eda(self):
+        """P0.1: Learning is blocked without EDA artifact."""
+        package_name = "learn_block_pkg"
+        output_dir = self.test_dir / "learn_block_project"
+
+        run_generator(
+            project_name="Learn Block Project",
+            package_name=package_name,
+            output_dir=output_dir,
+            optional_profile="2" # recommended includes learning
+        )
+
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(output_dir / "src")
+        result = subprocess.run(
+            [sys.executable, "-m", f"{package_name}.learning"],
+            cwd=output_dir,
+            env=env,
+            capture_output=True,
+            text=True
+        )
+
+        self.assertFalse((output_dir / "configs/learning_context.json").exists())
+        self.assertIn("require an EDA summary", result.stdout)
+
+    def test_learning_artifacts_generated(self):
+        """P0.2, P0.3: Learning artifacts generated and contextual."""
+        package_name = "learn_success_pkg"
+        output_dir = self.test_dir / "learn_success_project"
+
+        run_generator(
+            project_name="Learn Success Project",
+            package_name=package_name,
+            output_dir=output_dir,
+            optional_profile="2"
+        )
+
+        # 1. Create dummy data and EDA artifact
+        data_dir = output_dir / "data/raw"
+        data_dir.mkdir(parents=True, exist_ok=True)
+        with open(data_dir / "dataset.csv", "w", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(["feat1", "my_target"])
+            writer.writerow(["1.0", "0"])
+
+        # Create eda_summary.json manually to save time
+        eda_summary = {
+            "rows": 1,
+            "columns": ["feat1", "my_target"],
+            "target_column": "my_target",
+            "target_exists": True,
+            "missing_summary": {"feat1": 0, "my_target": 0},
+            "unique_counts": {"feat1": 1, "my_target": 1},
+            "target_distribution": {"0": 1}
+        }
+        eda_path = output_dir / "configs/eda_summary.json"
+        eda_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(eda_path, "w") as f:
+            json.dump(eda_summary, f)
+
+        # 2. Run Learning tool
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(output_dir / "src")
+        result = subprocess.run(
+            [sys.executable, "-m", f"{package_name}.learning"],
+            cwd=output_dir,
+            env=env,
+            capture_output=True,
+            text=True
+        )
+
+        self.assertEqual(result.returncode, 0)
+        self.assertTrue((output_dir / "configs/learning_context.json").exists())
+        self.assertTrue((output_dir / "reports/learning-notes.md").exists())
+
+        # P0.3: Verify contextuality
+        with open(output_dir / "configs/learning_context.json", "r") as f:
+            ctx = json.load(f)
+            self.assertEqual(ctx["target"]["name"], "my_target")
+
+        report_md = (output_dir / "reports/learning-notes.md").read_text()
+        self.assertIn("my_target", report_md)
 
 if __name__ == "__main__":
     unittest.main()
