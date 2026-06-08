@@ -632,17 +632,17 @@ def print_summary(root: Path, values: dict[str, str], t: dict[str, str], include
 
     steps.append(f"{next_idx+1}. {t['next_step_2']}: configs/config.json")
     steps.append(f"{next_idx+2}. {t['next_step_3']}: src/{values['PACKAGE_NAME']}/features.py")
-    steps.append(f"{next_idx+3}. {t['next_step_guide']}: python -m {values['PACKAGE_NAME']}.guide")
+    steps.append(f"{next_idx+3}. {t['next_step_guide']}: python -m {values['PACKAGE_NAME']}.lab check")
 
     # 5. Pipeline
     run_idx = next_idx + 4
     steps.append(f"{run_idx}. {t['next_step_4']}:")
-    steps.append(f"   - {t['next_step_4_data']}:     python -m {values['PACKAGE_NAME']}.data")
-    steps.append(f"   - {t['next_step_4_train']}:    python -m {values['PACKAGE_NAME']}.train")
-    steps.append(f"   - {t['next_step_4_eval']}: python -m {values['PACKAGE_NAME']}.evaluate")
+    steps.append(f"   - {t['next_step_4_data']}:     python -m {values['PACKAGE_NAME']}.lab eda")
+    steps.append(f"   - {t['next_step_4_train']}:    python -m {values['PACKAGE_NAME']}.lab train")
+    steps.append(f"   - {t['next_step_4_eval']}: python -m {values['PACKAGE_NAME']}.lab evaluate")
 
     if values.get("ADVISOR_COMMAND"):
-        steps.append(f"   - {t['next_step_advisor']}:   {values['ADVISOR_COMMAND']}")
+        steps.append(f"   - {t['next_step_advisor']}:   python -m {values['PACKAGE_NAME']}.lab advisor")
 
     UI.panel(t["next_steps"], "\n".join(steps))
 

@@ -98,14 +98,14 @@ Revise e edite `configs/config.json`:
 ### 3. Execute o Guia do Projeto
 Valide se seu dataset e configuração estão prontos para o pipeline:
 ```bash
-python -m {{PACKAGE_NAME}}.guide
+python -m {{PACKAGE_NAME}}.lab check
 ```
 O guia verifica se o CSV existe e se a coluna alvo foi identificada corretamente.
 
 ### 4. Execute o Dataset Advisor
 Se ativado, o Advisor realiza uma análise heurística mais profunda dos seus dados para sugerir estratégias de modelagem:
 ```bash
-{{ADVISOR_COMMAND}}
+python -m {{PACKAGE_NAME}}.lab advisor
 ```
 Ele cria o relatório `reports/dataset-advice.md` e um ponto de partida em `src/{{PACKAGE_NAME}}/suggested_pipeline.py`.
 
@@ -121,8 +121,8 @@ O arquivo `src/{{PACKAGE_NAME}}/train.py` gerado é um **baseline simples**, nã
 
 1. Coloque o dataset em `data/raw/`
 2. Ajuste `configs/config.json`
-3. Execute `python -m {{PACKAGE_NAME}}.guide` para validar a prontidão
-4. Realize a EDA no notebook
+3. Execute `python -m {{PACKAGE_NAME}}.lab check` para validar a prontidão
+4. Realize a EDA no notebook (ou execute `python -m {{PACKAGE_NAME}}.lab eda`)
 5. Edite `src/{{PACKAGE_NAME}}/features.py`
 6. Treine o modelo (baseline)
 7. Avalie os resultados
@@ -132,19 +132,22 @@ O arquivo `src/{{PACKAGE_NAME}}/train.py` gerado é um **baseline simples**, nã
 
 ```bash
 # Validar prontidão
-python -m {{PACKAGE_NAME}}.guide
+python -m {{PACKAGE_NAME}}.lab check
 
-# Processar dados
-python -m {{PACKAGE_NAME}}.data
+# (Opcional) Executar EDA
+python -m {{PACKAGE_NAME}}.lab eda
 
 # (Opcional) Obter sugestões de modelagem
-{{ADVISOR_COMMAND}}
+python -m {{PACKAGE_NAME}}.lab advisor
 
 # Treinar baseline
-python -m {{PACKAGE_NAME}}.train
+python -m {{PACKAGE_NAME}}.lab train
 
 # Avaliar
-python -m {{PACKAGE_NAME}}.evaluate
+python -m {{PACKAGE_NAME}}.lab evaluate
+
+# Executar todos os passos
+python -m {{PACKAGE_NAME}}.lab all
 ```
 {% if ENABLE_MLFLOW == "true" %}
 ## Rastreamento de Experimentos (MLflow)

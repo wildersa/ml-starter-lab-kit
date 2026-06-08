@@ -23,9 +23,9 @@ class TestOnboardingConsistency(unittest.TestCase):
         )
 
         # Should contain the correct commands
-        self.assertIn("python -m consistency_pkg.data", output)
-        self.assertIn("python -m consistency_pkg.train", output)
-        self.assertIn("python -m consistency_pkg.evaluate", output)
+        self.assertIn("python -m consistency_pkg.lab check", output)
+        self.assertIn("python -m consistency_pkg.lab train", output)
+        self.assertIn("python -m consistency_pkg.lab evaluate", output)
 
         # Should NOT contain the old src. prefix
         self.assertNotIn("python -m src.consistency_pkg.data", output)

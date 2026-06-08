@@ -28,7 +28,7 @@ class TestCLISummaryOrder(unittest.TestCase):
 
         # Verify setup steps
         setup_steps = ["python -m venv .venv", "pip install -r requirements.txt", "pip install -e ."]
-        module_commands = [f"python -m {self.package_name}.data", f"python -m {self.package_name}.train"]
+        module_commands = [f"python -m {self.package_name}.lab eda", f"python -m {self.package_name}.lab train"]
 
         for step in setup_steps:
             self.assertIn(step, output)
@@ -46,7 +46,7 @@ class TestCLISummaryOrder(unittest.TestCase):
             # Fallback for how it might be displayed
             dataset_line_idx = next_steps_output.find("data/raw/dataset.csv")
 
-        data_cmd_idx = next_steps_output.find(f"python -m {self.package_name}.data")
+        data_cmd_idx = next_steps_output.find(f"python -m {self.package_name}.lab eda")
 
         self.assertLess(nav_idx, setup_idx, "Navigation should be before setup")
         self.assertLess(setup_idx, install_idx, "Venv setup should be before editable install")

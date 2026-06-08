@@ -233,10 +233,10 @@ class TestGenerator(unittest.TestCase):
         readme_path = self.test_dir / "README.md"
         with open(readme_path) as f:
             content = f.read()
-            self.assertIn("python -m cmd_pkg.data", content)
-            self.assertIn("python -m cmd_pkg.train", content)
-            self.assertIn("python -m cmd_pkg.evaluate", content)
-            self.assertNotIn("python -m src.cmd_pkg.data", content)
+            self.assertIn("python -m cmd_pkg.lab check", content)
+            self.assertIn("python -m cmd_pkg.lab train", content)
+            self.assertIn("python -m cmd_pkg.lab evaluate", content)
+            self.assertNotIn("python -m src.cmd_pkg.lab", content)
 
     def test_minimal_profile(self):
         run_generator(
@@ -327,6 +327,68 @@ class TestGenerator(unittest.TestCase):
 
         expected_text = "Include basic ML dependencies (pandas, numpy, scikit-learn, matplotlib, seaborn)?"
         self.assertIn(expected_text, output)
+
+    def test_lab_cli_generation(self):
+        # Test generation in minimal mode
+        run_generator(
+            project_name="lab_minimal",
+            package_name="lab_minimal",
+            task="1",
+            output_dir=self.test_dir,
+            experience_mode="1", # minimal
+            optional_profile="1" # minimal
+        )
+
+        lab_path = self.test_dir / "src/lab_minimal/lab.py"
+        self.assertTrue(lab_path.exists())
+
+        with open(lab_path) as f:
+            content = f.read()
+            self.assertIn("argparse", content)
+            self.assertIn("subparsers.add_parser(\"check\"", content)
+            self.assertIn("subparsers.add_parser(\"train\"", content)
+            self.assertIn("subparsers.add_parser(\"workspace\"", content)
+            self.assertIn("def run_workspace():", content)
+
+        # Ensure existing commands are still there
+        self.assertTrue((self.test_dir / "src/lab_minimal/guide.py").exists())
+        self.assertTrue((self.test_dir / "src/lab_minimal/train.py").exists())
+
+        shutil.rmtree(self.test_dir)
+        os.makedirs(self.test_dir)
+
+        # Test generation in guided mode
+        run_generator(
+            project_name="lab_guided",
+            package_name="lab_guided",
+            task="1",
+            output_dir=self.test_dir,
+            experience_mode="2" # guided
+        )
+
+        lab_path = self.test_dir / "src/lab_guided/lab.py"
+        self.assertTrue(lab_path.exists())
+
+        with open(lab_path) as f:
+            content = f.read()
+            self.assertIn("def run_all():", content)
+
+    def test_lab_cli_workspace_guidance(self):
+        # In a minimal project, workspace should just print guidance
+        run_generator(
+            project_name="ws_test",
+            package_name="ws_test",
+            task="1",
+            output_dir=self.test_dir,
+            experience_mode="1"
+        )
+
+        lab_path = self.test_dir / "src/ws_test/lab.py"
+        with open(lab_path) as f:
+            content = f.read()
+            self.assertIn("learning_workspace.py", content)
+            self.assertIn("pkg_dir = Path(__file__).parent", content)
+            self.assertIn("Streamlit workspace is not available in this project.", content)
 
 if __name__ == "__main__":
     unittest.main()
