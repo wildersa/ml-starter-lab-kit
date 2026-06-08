@@ -588,6 +588,16 @@ if __name__ == "__main__":
 
 
 def main():
+    # P0.1: Gate advisor behind EDA artifact
+    eda_summary_path = project_root() / "configs/eda_summary.json"
+    if not eda_summary_path.exists():
+        print("\n[STOPSHIP] Dataset Advisor requires an EDA summary to provide data-driven suggestions.")
+        print("Please run the Exploratory Data Analysis (EDA) step first:")
+        print(f"  python -m {{PACKAGE_NAME}}.lab eda")
+        print("  OR")
+        print(f"  python -m {{PACKAGE_NAME}}.eda")
+        return
+
     config = load_config()
     target_col = config.get("target", {}).get("column")
 

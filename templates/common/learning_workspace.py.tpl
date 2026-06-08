@@ -145,12 +145,13 @@ def main():
         advisor_report = project_root() / "reports/dataset-advice.md"
 
         if not eda_summary_path.exists():
-            st.info("Exploratory Data Analysis (EDA) is required before generating suggestions.")
+            st.warning("📊 **EDA Required**: Exploratory Data Analysis (EDA) is required before generating suggestions.")
             st.markdown(f"""
-            Please run the EDA step first:
+            Suggestions must be data-driven. Please run the EDA step first to understand your dataset characteristics:
             ```bash
             python -m {{PACKAGE_NAME}}.lab eda
             ```
+            Then refresh this page to continue.
             """)
         elif advisor_report.exists():
             try:
@@ -165,11 +166,22 @@ def main():
     elif section == "Baseline Lab":
         st.header("🔬 Baseline Lab")
         st.write("Start with simple models to establish a 'floor' for performance.")
-        st.markdown("""
-        **Why a baseline?**
-        You should always know how a simple model (like a Mean/Mode predictor or a Linear Regression)
-        performs before trying complex algorithms.
-        """)
+
+        eda_summary_path = project_root() / "configs/eda_summary.json"
+        if not eda_summary_path.exists():
+            st.warning("📊 **EDA Required**: We recommend running EDA before starting your baseline experiments.")
+            st.markdown(f"""
+            Understanding your data distribution and missing values is crucial for setting up a proper baseline.
+            ```bash
+            python -m {{PACKAGE_NAME}}.lab eda
+            ```
+            """)
+        else:
+            st.markdown("""
+            **Why a baseline?**
+            You should always know how a simple model (like a Mean/Mode predictor or a Linear Regression)
+            performs before trying complex algorithms.
+            """)
 
     elif section == "Train & Evaluate":
         st.header("🚀 Train & Evaluate")

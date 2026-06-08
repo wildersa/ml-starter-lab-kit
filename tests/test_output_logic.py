@@ -165,5 +165,93 @@ class TestOutputLogic(unittest.TestCase):
         self.assertFalse((output_dir / "configs/eda_summary.json").exists())
         self.assertFalse((output_dir / "reports/eda-summary.md").exists())
 
+    def test_advisor_blocked_without_eda(self):
+        """P0.1, P0.2: Advisor is blocked without EDA artifact and gives actionable message."""
+        package_name = "advisor_block_pkg"
+        output_dir = self.test_dir / "advisor_block_project"
+
+        # eda is 1st, advisor is 10th
+        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "y"]
+
+        run_generator(
+            project_name="Advisor Block Project",
+            package_name=package_name,
+            output_dir=output_dir,
+            optional_profile="4",
+            optionals=optionals
+        )
+
+        # Ensure dataset exists but NO eda_summary.json
+        data_dir = output_dir / "data/raw"
+        data_dir.mkdir(parents=True, exist_ok=True)
+        with open(data_dir / "dataset.csv", "w") as f:
+            f.write("a,b,target\n1,2,0\n")
+
+        # Run Advisor
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(output_dir / "src")
+        result = subprocess.run(
+            [sys.executable, "-m", f"{package_name}.advisor"],
+            cwd=output_dir,
+            env=env,
+            capture_output=True,
+            text=True
+        )
+
+        # P0.1: No suggested_pipeline.json should be created
+        self.assertFalse((output_dir / "configs/suggested_pipeline.json").exists())
+
+        # P0.2: Output contains actionable EDA command
+        output_combined = result.stdout + result.stderr
+        self.assertIn(f"python -m {package_name}.lab eda", output_combined)
+        self.assertIn("requires an EDA summary", output_combined)
+
+    def test_advisor_runs_after_eda(self):
+        """P0.3: Advisor runs normally when eda_summary.json exists."""
+        package_name = "advisor_success_pkg"
+        output_dir = self.test_dir / "advisor_success_project"
+
+        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "y"]
+
+        run_generator(
+            project_name="Advisor Success Project",
+            package_name=package_name,
+            output_dir=output_dir,
+            optional_profile="4",
+            optionals=optionals
+        )
+
+        # Create dummy data
+        data_dir = output_dir / "data/raw"
+        data_dir.mkdir(parents=True, exist_ok=True)
+        with open(data_dir / "dataset.csv", "w") as f:
+            f.write("feat1,feat2,target\n1.0,cat1,0\n2.0,cat2,1\n")
+
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(output_dir / "src")
+
+        # 1. Run EDA first
+        subprocess.run(
+            [sys.executable, "-m", f"{package_name}.eda"],
+            cwd=output_dir,
+            env=env,
+            check=True
+        )
+        self.assertTrue((output_dir / "configs/eda_summary.json").exists())
+
+        # 2. Run Advisor
+        result = subprocess.run(
+            [sys.executable, "-m", f"{package_name}.advisor"],
+            cwd=output_dir,
+            env=env,
+            capture_output=True,
+            text=True
+        )
+
+        self.assertEqual(result.returncode, 0)
+        # P0.3: Artifacts created
+        self.assertTrue((output_dir / "configs/suggested_pipeline.json").exists())
+        self.assertTrue((output_dir / "reports/dataset-advice.md").exists())
+
 if __name__ == "__main__":
     unittest.main()

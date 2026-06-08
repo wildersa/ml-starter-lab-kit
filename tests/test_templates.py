@@ -40,5 +40,23 @@ class TestTemplates(unittest.TestCase):
         # It also has absolute import logic
         self.assertIn("importlib.import_module(f\"{module_name}.config\")", content)
 
+    def test_learning_workspace_eda_gate(self):
+        """P0.4: Verify workspace contains EDA gate for suggestions and baseline."""
+        values = {
+            "PROJECT_NAME": "Test Project",
+            "PACKAGE_NAME": "test_pkg",
+        }
+        content = load_template("learning_workspace.py", values)
+
+        # P0.4: Model Suggestions check
+        self.assertIn("elif section == \"Model Suggestions\":", content)
+        self.assertIn("if not eda_summary_path.exists():", content)
+        self.assertIn("st.warning(\"📊 **EDA Required**: Exploratory Data Analysis (EDA) is required before generating suggestions.\")", content)
+        self.assertIn("python -m test_pkg.lab eda", content)
+
+        # Baseline Lab check
+        self.assertIn("elif section == \"Baseline Lab\":", content)
+        self.assertIn("st.warning(\"📊 **EDA Required**: We recommend running EDA before starting your baseline experiments.\")", content)
+
 if __name__ == "__main__":
     unittest.main()
