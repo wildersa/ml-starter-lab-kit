@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import sys
-from pathlib import Path
 from typing import Any
 
 import pandas as pd
@@ -14,7 +13,6 @@ except ImportError:
     SKLEARN_AVAILABLE = False
 
 from .core.config import load_config, project_root
-from .core.data import load_csv
 
 class BaselineLab:
     def __init__(self, eda_summary: dict[str, Any], problem_profile: dict[str, Any], config: dict[str, Any]):
@@ -92,8 +90,16 @@ class BaselineLab:
         }
 
         # Determine if classification or regression
-        is_classification = "category" in goal or "categoria" in goal
-        is_regression = "number" in goal or "número" in goal
+        # Heuristic: use goal first, then fallback to target data type if goal is ambiguous
+        is_classification = any(kw in goal for kw in ["category", "categoria", "classify", "classificar", "churn", "subscribed", "yes/no"])
+        is_regression = any(kw in goal for kw in ["number", "número", "price", "value", "preço", "valor", "amount", "quantia"])
+
+        # Refine based on data type if not strictly determined by goal keywords
+        if not is_classification and not is_regression:
+            if pd.api.types.is_numeric_dtype(y) and y.nunique() > 10:
+                is_regression = True
+            else:
+                is_classification = True
 
         if is_classification:
             model = DummyClassifier(strategy="most_frequent")
@@ -161,7 +167,7 @@ def main():
     try:
         config = load_config()
         pkg = config.get("project", {}).get("package", "your_package")
-    except:
+    except Exception:
         pkg = "your_package"
 
     if not eda_path.exists():
@@ -197,6 +203,10 @@ def main():
         print(f"- {results_path}")
         print(f"- {report_path}")
 
+    except FileNotFoundError as e:
+        print(f"Error: {e}")
+    except json.JSONDecodeError:
+        print(f"Error: Could not parse EDA summary at {eda_path}")
     except Exception as e:
         print(f"Error in Baseline Lab: {e}")
 
