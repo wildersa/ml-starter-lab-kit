@@ -4,3 +4,6 @@ numpy
 scikit-learn
 matplotlib
 seaborn
+{% if LEARNING_ENABLED == "true" %}
+streamlit
+{% endif %}

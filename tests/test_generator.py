@@ -390,5 +390,55 @@ class TestGenerator(unittest.TestCase):
             self.assertIn("pkg_dir = Path(__file__).parent", content)
             self.assertIn("Streamlit workspace is not available in this project.", content)
 
+    def test_guided_mode_generates_workspace(self):
+        run_generator(
+            project_name="guided_ws",
+            package_name="guided_ws",
+            task="1",
+            output_dir=self.test_dir,
+            experience_mode="2" # guided
+        )
+
+        ws_path = self.test_dir / "src/guided_ws/learning_workspace.py"
+        self.assertTrue(ws_path.exists())
+
+        # Check for streamlit in requirements-ml.txt
+        req_path = self.test_dir / "requirements-ml.txt"
+        self.assertTrue(req_path.exists())
+        with open(req_path) as f:
+            content = f.read()
+            self.assertIn("streamlit", content)
+
+    def test_minimal_mode_no_workspace(self):
+        run_generator(
+            project_name="minimal_ws",
+            package_name="minimal_ws",
+            task="1",
+            output_dir=self.test_dir,
+            experience_mode="1" # minimal
+        )
+
+        ws_path = self.test_dir / "src/minimal_ws/learning_workspace.py"
+        self.assertFalse(ws_path.exists())
+
+        # Even if ML basics are enabled, streamlit should not be there in minimal
+        shutil.rmtree(self.test_dir)
+        os.makedirs(self.test_dir)
+
+        run_generator(
+            project_name="minimal_ws_ml",
+            package_name="minimal_ws_ml",
+            task="1",
+            output_dir=self.test_dir,
+            experience_mode="1", # minimal
+            include_ml_basics="y"
+        )
+
+        req_path = self.test_dir / "requirements-ml.txt"
+        self.assertTrue(req_path.exists())
+        with open(req_path) as f:
+            content = f.read()
+            self.assertNotIn("streamlit", content)
+
 if __name__ == "__main__":
     unittest.main()
