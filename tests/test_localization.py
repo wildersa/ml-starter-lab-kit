@@ -24,7 +24,7 @@ class TestLocalization(unittest.TestCase):
             package_name=self.package_name,
             output_dir=self.test_dir,
             optional_profile="4", # custom
-            optionals=["n"] * 9 + ["y"] # only advisor
+            optionals=["y"] + ["n"] * 8 + ["y"] # eda and advisor
         )
 
         # CLI Output
@@ -57,6 +57,14 @@ class TestLocalization(unittest.TestCase):
             import numpy
             import sklearn
 
+            # P0.1: Must run EDA first
+            subprocess.run(
+                [sys.executable, "-m", f"{self.package_name}.eda"],
+                cwd=self.test_dir,
+                env=env,
+                check=True
+            )
+
             # We need to make sure we have pandas and numpy to run advisor,
             # but the environment should already have them if they are in the current sys.path
             result = subprocess.run(
@@ -85,7 +93,7 @@ class TestLocalization(unittest.TestCase):
             package_name=self.package_name,
             output_dir=self.test_dir,
             optional_profile="4", # custom
-            optionals=["n"] * 9 + ["y"] # only advisor
+            optionals=["y"] + ["n"] * 8 + ["y"] # eda and advisor
         )
 
         # CLI Output
@@ -116,6 +124,14 @@ class TestLocalization(unittest.TestCase):
             import pandas
             import numpy
             import sklearn
+
+            # P0.1: Must run EDA first
+            subprocess.run(
+                [sys.executable, "-m", f"{self.package_name}.eda"],
+                cwd=self.test_dir,
+                env=env,
+                check=True
+            )
 
             result = subprocess.run(
                 [sys.executable, "-m", f"{self.package_name}.advisor"],

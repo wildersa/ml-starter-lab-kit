@@ -57,7 +57,7 @@ class TestAdvisor(unittest.TestCase):
         package_name = "advisor_exec_pkg"
         output_dir = self.test_dir / project_name
 
-        optionals = ["n", "n", "n", "n", "n", "n", "n", "n", "n", "y"]
+        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "y"]
 
         run_generator(
             project_name=project_name,
@@ -89,6 +89,14 @@ class TestAdvisor(unittest.TestCase):
         # Run the advisor
         env = os.environ.copy()
         env["PYTHONPATH"] = str(output_dir / "src")
+
+        # P0.1: Must run EDA first
+        subprocess.run(
+            [sys.executable, "-m", f"{package_name}.eda"],
+            cwd=output_dir,
+            env=env,
+            check=True
+        )
 
         result = subprocess.run(
             [sys.executable, "-m", f"{package_name}.advisor"],
