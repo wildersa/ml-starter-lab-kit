@@ -732,6 +732,7 @@ def main() -> None:
     if experience_mode == "guided":
         optional_options["eda"] = True
         optional_options["advisor"] = True
+        optional_options["learning_workspace"] = True
 
     if optional_options.get("advisor") and not include_ml_basics:
         if experience_mode != "guided":
