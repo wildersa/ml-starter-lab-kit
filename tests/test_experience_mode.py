@@ -64,13 +64,13 @@ class TestExperienceMode(unittest.TestCase):
 
     def test_guided_learning_custom_profile_override(self):
         # Even with custom profile, guided should force eda and advisor
-        optionals = ["n"] * 11
+        optionals = ["n"] * 13
         run_generator(
             project_name="guided_custom",
             experience_mode="2",
             output_dir=self.test_dir,
             optional_profile="4",
-            optionals=optionals + ["n"]
+            optionals=optionals
         )
 
         pkg_path = self.test_dir / "src/guided_custom"

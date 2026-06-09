@@ -109,6 +109,7 @@ TRANSLATIONS = {
         "include_advisor": "Include explainable Dataset Advisor?",
         "include_learning": "Include dataset-contextual learning notes?",
         "include_baseline_lab": "Include educational Baseline Lab?",
+        "include_bandit_lab": "Include educational Multi-Armed Bandit Lab?",
         "dependency_note_title": "Dependency Note",
         "dependency_note_text": "Dataset Advisor and Baseline Lab require basic ML dependencies (pandas, scikit-learn).",
         "enable_ml_basics": "Enable basic ML dependencies now?",
@@ -249,6 +250,7 @@ TRANSLATIONS = {
         "include_advisor": "Incluir Dataset Advisor explicável?",
         "include_learning": "Incluir notas de aprendizado contextuais ao dataset?",
         "include_baseline_lab": "Incluir Baseline Lab educacional?",
+        "include_bandit_lab": "Incluir Bandit Lab educacional (Multi-Armed Bandit)?",
         "dependency_note_title": "Nota de Dependência",
         "dependency_note_text": "O Dataset Advisor e o Baseline Lab requerem dependências básicas de ML (pandas, scikit-learn).",
         "enable_ml_basics": "Ativar dependências básicas de ML agora?",
@@ -502,6 +504,7 @@ def get_options_by_profile(profile: str) -> dict[str, bool]:
         "advisor": False,
         "learning": False,
         "baseline_lab": False,
+        "bandit_lab": False,
     }
 
     if profile == "minimal":
@@ -754,6 +757,7 @@ def main() -> None:
             "advisor": ask_yes_no(t["include_advisor"], False, lang=lang),
             "learning": ask_yes_no(t["include_learning"], False, lang=lang),
             "baseline_lab": ask_yes_no(t["include_baseline_lab"], False, lang=lang),
+            "bandit_lab": ask_yes_no(t["include_bandit_lab"], False, lang=lang),
         }
     else:
         optional_options = get_options_by_profile(profile)
@@ -763,6 +767,7 @@ def main() -> None:
         optional_options["advisor"] = True
         optional_options["learning"] = True
         optional_options["baseline_lab"] = True
+        optional_options["bandit_lab"] = True
         optional_options["learning_workspace"] = True
 
     needs_ml_basics = (optional_options.get("advisor") or optional_options.get("baseline_lab"))
@@ -851,6 +856,7 @@ def main() -> None:
         "GENERATE_ADVISOR": "true" if optional_options.get("advisor") else "false",
         "GENERATE_LEARNING": "true" if optional_options.get("learning") else "false",
         "GENERATE_BASELINE": "true" if optional_options.get("baseline_lab") else "false",
+        "GENERATE_BANDIT": "true" if optional_options.get("bandit_lab") else "false",
     }
 
     UI.section(t["final_summary"], 7)

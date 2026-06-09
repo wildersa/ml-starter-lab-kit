@@ -153,6 +153,8 @@ def create_optional_files(
         "learning": package_path / "learning.py",
         "baseline_lab": package_path / "baseline_lab.py",
         "learning_workspace": package_path / "learning_workspace.py",
+        "bandit_lab": package_path / "bandit_lab.py",
+        "bandit_config": root / "configs/bandit_config.json",
     }
 
     template_names = {
@@ -169,12 +171,19 @@ def create_optional_files(
         "learning": "learning.py.tpl",
         "baseline_lab": "baseline_lab.py.tpl",
         "learning_workspace": "learning_workspace.py",
+        "bandit_lab": "bandit_lab.py.tpl",
+        "bandit_config": "bandit_config.json.tpl",
     }
 
     for key, enabled in options.items():
         if enabled and key in mapping:
             content = load_template(template_names[key], values)
             write_text(mapping[key], content, force=force)
+
+    # Special wiring for Bandit Lab which also needs a config
+    if options.get("bandit_lab"):
+        content = load_template(template_names["bandit_config"], values)
+        write_text(mapping["bandit_config"], content, force=force)
 
 
 def create_demo_data(
