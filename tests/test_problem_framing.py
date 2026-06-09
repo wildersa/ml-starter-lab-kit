@@ -97,14 +97,14 @@ class TestProblemFraming(unittest.TestCase):
         output_dir = self.test_dir / project_name
 
         # Include eda and advisor template
-        optionals = ["y"] + ["n"] * 8 + ["y"]
+        optionals = ["y"] + ["n"] * 8 + ["y", "n", "n"]
 
         run_generator(
             project_name=project_name,
             package_name=package_name,
             output_dir=output_dir,
             optional_profile="4",
-            optionals=optionals + ["n"],
+            optionals=optionals,
             include_ml_basics="y",
             problem_goal="predict a category",
             problem_priority="imbalanced classes",

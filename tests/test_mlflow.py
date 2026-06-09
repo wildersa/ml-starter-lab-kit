@@ -56,7 +56,7 @@ class TestMLflowIntegration(unittest.TestCase):
             output_dir=self.test_dir,
             optional_profile="4", # Custom
             include_mlflow="y",
-            optionals=["n"] * 11
+            optionals=["n"] * 12
         )
 
         # P0.3: config records tracking setting
