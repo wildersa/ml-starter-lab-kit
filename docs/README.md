@@ -27,8 +27,10 @@ The documentation is intentionally short. It should help you start a project, no
 | What should I check before training? | [Before training checklist](checklists/before-training.md) |
 | What can go wrong? | [Common mistakes](common-mistakes/README.md) |
 | What does this term mean? | [Glossary](glossary/README.md) |
+| How is Multi-Armed Bandit different from normal training? | [Multi-Armed Bandit Lab reference](mab-lab.md) |
 
 ## Project usage
 
 - [Starter and generated project layout](usage/project-layout.md)
 - [Experiment visualization strategy](experiment-visualization.md)
+- [Multi-Armed Bandit Lab reference](mab-lab.md)
