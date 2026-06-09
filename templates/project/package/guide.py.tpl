@@ -71,16 +71,20 @@ def main() -> None:
             print("Please update 'target.column' in configs/config.json if needed.")
 
     print("\nRecommended next commands:")
-    print(f"  1. python -m {{PACKAGE_NAME}}.data      (Process your data)")
-
-    advisor_cmd = "{{ADVISOR_COMMAND}}"
-    if advisor_cmd:
-        print(f"  2. {advisor_cmd}   (Get detailed analysis)")
-        print(f"  3. python -m {{PACKAGE_NAME}}.train     (Train baseline model)")
-        print(f"  4. python -m {{PACKAGE_NAME}}.evaluate  (Evaluate performance)")
-    else:
-        print(f"  2. python -m {{PACKAGE_NAME}}.train     (Train baseline model)")
-        print(f"  3. python -m {{PACKAGE_NAME}}.evaluate  (Evaluate performance)")
+    pkg = "{{PACKAGE_NAME}}"
+    {% if LEARNING_ENABLED == "true" %}
+    print(f"  1. python -m {pkg}.lab workspace (Visual insights)")
+    print(f"  2. python -m {pkg}.lab eda       (Generate dataset summary)")
+    {% else %}
+    {% if GENERATE_EDA == "true" %}
+    print(f"  1. python -m {pkg}.lab eda       (Run exploratory analysis)")
+    {% else %}
+    print(f"  1. python -m {pkg}.lab train     (Train baseline model)")
+    {% endif %}
+    {% if GENERATE_ADVISOR == "true" %}
+    print(f"  2. python -m {pkg}.lab advisor   (Get modeling suggestions)")
+    {% endif %}
+    {% endif %}
 
 if __name__ == "__main__":
     main()

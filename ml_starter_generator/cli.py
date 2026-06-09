@@ -152,6 +152,8 @@ TRANSLATIONS = {
         "next_step_4_train": "Step 2 (Train)",
         "next_step_4_eval": "Step 3 (Evaluate)",
         "next_step_guide": "Run the Project Guide (readiness check)",
+        "next_step_workspace": "Interactive Learning Workspace (Visual-first)",
+        "next_step_eda_first": "IMPORTANT: Run EDA before Advisor, Baseline, or Learning Notes",
         "next_step_advisor": "Dataset Advice (modeling suggestions)",
         "next_step_demo": "Check the demo scenario and data dictionary in docs/demo-scenario.md",
         "summary_mlflow": "MLflow Tracking",
@@ -290,6 +292,8 @@ TRANSLATIONS = {
         "next_step_4_train": "Passo 2 (Treino)",
         "next_step_4_eval": "Passo 3 (Avaliação)",
         "next_step_guide": "Execute o Guia do Projeto (valida prontidão)",
+        "next_step_workspace": "Workspace de Aprendizado Interativo (Visual-first)",
+        "next_step_eda_first": "IMPORTANTE: Execute a EDA antes do Advisor, Baseline ou Notas de Aprendizado",
         "next_step_advisor": "Conselhos sobre o Dataset (sugestões de modelagem)",
         "next_step_demo": "Consulte o cenário de demo e o dicionário de dados em docs/demo-scenario.md",
         "summary_mlflow": "Rastreamento MLflow",
@@ -642,15 +646,32 @@ def print_summary(root: Path, values: dict[str, str], t: dict[str, str], include
     steps.append(f"{next_idx+2}. {t['next_step_3']}: src/{values['PACKAGE_NAME']}/features.py")
     steps.append(f"{next_idx+3}. {t['next_step_guide']}: python -m {values['PACKAGE_NAME']}.lab check")
 
-    # 5. Pipeline
+    # 5. Pipeline or Workspace
     run_idx = next_idx + 4
-    steps.append(f"{run_idx}. {t['next_step_4']}:")
-    steps.append(f"   - {t['next_step_4_data']}:     python -m {values['PACKAGE_NAME']}.lab eda")
-    steps.append(f"   - {t['next_step_4_train']}:    python -m {values['PACKAGE_NAME']}.lab train")
-    steps.append(f"   - {t['next_step_4_eval']}: python -m {values['PACKAGE_NAME']}.lab evaluate")
+    pkg = values['PACKAGE_NAME']
+    if values.get("LEARNING_MODE") == "guided":
+        steps.append(f"{run_idx}. {t['next_step_workspace']}:")
+        steps.append(f"   python -m {pkg}.lab workspace")
+        steps.append(f"   ({t['next_step_eda_first']})")
 
-    if values.get("ADVISOR_COMMAND"):
-        steps.append(f"   - {t['next_step_advisor']}:   python -m {values['PACKAGE_NAME']}.lab advisor")
+        steps.append(f"\n   {t['next_step_4']} (CLI):")
+        if values.get("GENERATE_EDA") == "true":
+            steps.append(f"   - {t['next_step_4_data']}:     python -m {pkg}.lab eda")
+        if values.get("GENERATE_ADVISOR") == "true":
+            steps.append(f"   - {t['next_step_advisor']}:   python -m {pkg}.lab advisor")
+        if values.get("GENERATE_BANDIT") == "true":
+            steps.append(f"   - Bandit Lab:     python -m {pkg}.lab bandit")
+        steps.append(f"   - {t['next_step_4_train']}:    python -m {pkg}.lab train")
+        steps.append(f"   - {t['next_step_4_eval']}: python -m {pkg}.lab evaluate")
+    else:
+        steps.append(f"{run_idx}. {t['next_step_4']}:")
+        if values.get("GENERATE_EDA") == "true":
+            steps.append(f"   - {t['next_step_4_data']}:     python -m {pkg}.lab eda")
+        steps.append(f"   - {t['next_step_4_train']}:    python -m {pkg}.lab train")
+        steps.append(f"   - {t['next_step_4_eval']}: python -m {pkg}.lab evaluate")
+
+        if values.get("GENERATE_ADVISOR") == "true":
+            steps.append(f"   - {t['next_step_advisor']}:   python -m {pkg}.lab advisor")
 
     UI.panel(t["next_steps"], "\n".join(steps))
 
@@ -828,6 +849,11 @@ def main() -> None:
         "ENABLE_MLFLOW": "true" if include_mlflow else "false",
         "LEARNING_ENABLED": "true" if experience_mode == "guided" else "false",
         "LEARNING_MODE": experience_mode,
+        "GENERATE_EDA": "true" if optional_options.get("eda") else "false",
+        "GENERATE_ADVISOR": "true" if optional_options.get("advisor") else "false",
+        "GENERATE_LEARNING": "true" if optional_options.get("learning") else "false",
+        "GENERATE_BASELINE": "true" if optional_options.get("baseline_lab") else "false",
+        "GENERATE_BANDIT": "true" if optional_options.get("bandit_lab") else "false",
     }
 
     UI.section(t["final_summary"], 7)

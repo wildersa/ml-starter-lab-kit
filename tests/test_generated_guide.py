@@ -59,8 +59,8 @@ class TestGeneratedGuide(unittest.TestCase):
         self.assertIn("feat1", output, "P0.3: Should list columns")
         self.assertIn("target", output, "P0.4: Should find target")
         self.assertIn("numeric", output.lower(), "P0.3: Should suggest types")
-        self.assertIn(f"python -m {self.package_name}.advisor", output, "P0.6: Should suggest advisor")
-        self.assertIn(f"python -m {self.package_name}.data", output, "P0.6: Should suggest data")
+        self.assertIn(f"python -m {self.package_name}.lab advisor", output, "P0.6: Should suggest advisor")
+        self.assertIn(f"python -m {self.package_name}.lab eda", output, "P0.6: Should suggest eda")
 
     def test_guide_missing_target(self):
         """P0.5"""
@@ -123,7 +123,7 @@ class TestGeneratedGuide(unittest.TestCase):
         result = self.run_guide(self.test_dir)
         output = result.stdout
 
-        self.assertNotIn(f"python -m {self.package_name}.advisor", output, "P0.6: Should NOT suggest advisor")
+        self.assertNotIn(f"python -m {self.package_name}.lab advisor", output, "P0.6: Should NOT suggest advisor")
 
 if __name__ == "__main__":
     unittest.main()
