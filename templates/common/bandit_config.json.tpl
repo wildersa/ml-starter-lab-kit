@@ -1,7 +1,7 @@
 {
   "lab": "multi_armed_bandit",
-  "status": "planned",
-  "description": "Educational Bernoulli Multi-Armed Bandit simulation config. This template is not wired into project generation yet.",
+  "status": "active",
+  "description": "Educational Bernoulli Multi-Armed Bandit simulation config.",
   "n_rounds": 1000,
   "seed": 42,
   "reward_model": "bernoulli",
@@ -21,9 +21,7 @@
   ],
   "policies": [
     "random",
-    "epsilon_greedy",
-    "ucb1",
-    "thompson_sampling"
+    "epsilon_greedy"
   ],
   "epsilon": 0.1,
   "expected_outputs": [
