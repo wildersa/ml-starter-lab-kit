@@ -129,21 +129,70 @@ class BanditLab:
         return translations.get(lang, translations["en"])
 
     def validate_config(self) -> None:
-        """Validates that the configuration contains all required fields."""
-        required = ["n_rounds", "seed", "arms", "policies"]
-        for field in required:
+        """Validates that the configuration contains all required fields and correct types."""
+        # Required fields and their expected types
+        required_types = {
+            "n_rounds": int,
+            "seed": int,
+            "arms": list,
+            "policies": list
+        }
+
+        for field, expected_type in required_types.items():
             if field not in self.config:
                 print(f"Error: Missing required field '{field}' in bandit_config.json")
                 sys.exit(1)
+            if not isinstance(self.config[field], expected_type):
+                print(f"Error: Field '{field}' must be of type {expected_type.__name__}")
+                sys.exit(1)
+
+        if self.config["n_rounds"] <= 0:
+            print("Error: 'n_rounds' must be a positive integer.")
+            sys.exit(1)
 
         if not self.arms:
             print("Error: 'arms' list cannot be empty in bandit_config.json")
             sys.exit(1)
 
-        for arm in self.arms:
-            if "name" not in arm or "true_reward_probability" not in arm:
-                print("Error: Each arm must have 'name' and 'true_reward_probability'.")
+        # Arms validation
+        for i, arm in enumerate(self.arms):
+            if not isinstance(arm, dict):
+                print(f"Error: Arm at index {i} must be a dictionary.")
                 sys.exit(1)
+            if "name" not in arm or "true_reward_probability" not in arm:
+                print(f"Error: Arm at index {i} must have 'name' and 'true_reward_probability'.")
+                sys.exit(1)
+
+            p = arm["true_reward_probability"]
+            if not isinstance(p, (int, float)) or not (0 <= p <= 1):
+                print(f"Error: 'true_reward_probability' for arm '{arm['name']}' must be a number between 0 and 1.")
+                sys.exit(1)
+
+        # Policies validation
+        valid_policies = ["random", "epsilon_greedy"]
+        if not self.config["policies"]:
+            print("Error: 'policies' list cannot be empty.")
+            sys.exit(1)
+
+        for policy in self.config["policies"]:
+            if policy not in valid_policies:
+                print(f"Error: Unsupported policy '{policy}'. Supported: {valid_policies}")
+                sys.exit(1)
+
+        if "epsilon_greedy" in self.config["policies"]:
+            epsilon = self.config.get("epsilon")
+            if epsilon is None:
+                print("Error: 'epsilon' is required when using 'epsilon_greedy' policy.")
+                sys.exit(1)
+            if not isinstance(epsilon, (int, float)) or not (0 <= epsilon <= 1):
+                print("Error: 'epsilon' must be a number between 0 and 1.")
+                sys.exit(1)
+
+        # Reward model validation
+        reward_model = self.config.get("reward_model", "bernoulli")
+        if reward_model != "bernoulli":
+            print(f"Error: Unsupported reward_model '{reward_model}'. Only 'bernoulli' is supported.")
+            sys.exit(1)
 
     def run(self) -> Tuple[Dict[str, Any], List[Dict[str, Any]], str]:
         """Runs the simulation for all configured policies."""

@@ -157,5 +157,69 @@ class TestBanditWiring(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("Missing required field 'n_rounds'", result.stdout)
 
+    def test_bandit_invalid_policy_fails(self):
+        """P0.1: Unsupported policy fails."""
+        package_name = "bandit_policy_fail_pkg"
+        output_dir = self.test_dir / "bandit_policy_fail_project"
+
+        run_generator(
+            project_name="Bandit Policy Fail Project",
+            package_name=package_name,
+            output_dir=output_dir,
+            experience_mode="2"
+        )
+
+        config_path = output_dir / "configs/bandit_config.json"
+        with open(config_path, "r") as f:
+            config = json.load(f)
+        config["policies"] = ["non_existent_policy"]
+        with open(config_path, "w") as f:
+            json.dump(config, f)
+
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(output_dir / "src")
+        result = subprocess.run(
+            [sys.executable, "-m", f"{package_name}.lab", "bandit"],
+            cwd=output_dir,
+            env=env,
+            capture_output=True,
+            text=True
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Unsupported policy 'non_existent_policy'", result.stdout)
+
+    def test_bandit_invalid_probability_fails(self):
+        """P0.1: Invalid reward probability fails."""
+        package_name = "bandit_prob_fail_pkg"
+        output_dir = self.test_dir / "bandit_prob_fail_project"
+
+        run_generator(
+            project_name="Bandit Prob Fail Project",
+            package_name=package_name,
+            output_dir=output_dir,
+            experience_mode="2"
+        )
+
+        config_path = output_dir / "configs/bandit_config.json"
+        with open(config_path, "r") as f:
+            config = json.load(f)
+        config["arms"][0]["true_reward_probability"] = 1.5 # Invalid
+        with open(config_path, "w") as f:
+            json.dump(config, f)
+
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(output_dir / "src")
+        result = subprocess.run(
+            [sys.executable, "-m", f"{package_name}.lab", "bandit"],
+            cwd=output_dir,
+            env=env,
+            capture_output=True,
+            text=True
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("must be a number between 0 and 1", result.stdout)
+
 if __name__ == "__main__":
     unittest.main()
