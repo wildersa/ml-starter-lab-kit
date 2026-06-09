@@ -69,7 +69,7 @@ class TestGenerator(unittest.TestCase):
             dataset_path="data/raw/train.csv",
             target_column="target",
             output_dir=self.test_dir,
-            optionals=["y"] * 11
+            optionals=["y"] * 12
         )
 
         pkg_path = self.test_dir / "src/opt_pkg"
@@ -270,12 +270,13 @@ class TestGenerator(unittest.TestCase):
         self.assertTrue((pkg_path / "feature_measurement.py").exists())
         self.assertTrue((pkg_path / "visualization.py").exists())
         self.assertTrue((pkg_path / "notebook_factory.py").exists())
+        self.assertTrue((pkg_path / "baseline_lab.py").exists())
         self.assertTrue((reports_path / "model-report.md").exists())
         self.assertTrue((reports_path / "experiment-log.md").exists())
 
     def test_custom_profile(self):
         # Custom profile, selecting only eda and metrics
-        optionals = ["y", "n", "y", "n", "n", "n", "n", "n", "n", "n", "n"]
+        optionals = ["y", "n", "y", "n", "n", "n", "n", "n", "n", "n", "n", "n"]
         run_generator(
             project_name="custom_proj",
             package_name="custom_pkg",
@@ -308,6 +309,7 @@ class TestGenerator(unittest.TestCase):
         self.assertTrue((pkg_path / "preprocessing.py").exists())
         self.assertTrue((pkg_path / "metrics.py").exists())
         self.assertTrue((pkg_path / "visualization.py").exists())
+        self.assertTrue((pkg_path / "baseline_lab.py").exists())
 
         # Should NOT generate
         self.assertFalse((pkg_path / "optimization.py").exists())
@@ -439,6 +441,30 @@ class TestGenerator(unittest.TestCase):
         with open(req_path) as f:
             content = f.read()
             self.assertNotIn("streamlit", content)
+
+    def test_train_evaluate_preserved(self):
+        """P0.5: train.py and evaluate.py are preserved and not replaced by baseline lab."""
+        package_name = "preserve_pkg"
+        output_dir = self.test_dir / "preserve_project"
+
+        run_generator(
+            project_name="Preserve Project",
+            package_name=package_name,
+            output_dir=output_dir,
+            experience_mode="2" # guided, includes baseline_lab
+        )
+
+        pkg_path = output_dir / f"src/{package_name}"
+        self.assertTrue((pkg_path / "baseline_lab.py").exists())
+        self.assertTrue((pkg_path / "train.py").exists())
+        self.assertTrue((pkg_path / "evaluate.py").exists())
+
+        train_content = (pkg_path / "train.py").read_text()
+        self.assertIn("def train_baseline_classifier", train_content)
+        self.assertNotIn("class BaselineLab", train_content)
+
+        evaluate_content = (pkg_path / "evaluate.py").read_text()
+        self.assertIn("def evaluate_majority_baseline", evaluate_content)
 
 if __name__ == "__main__":
     unittest.main()

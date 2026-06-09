@@ -102,6 +102,23 @@ python -m {{PACKAGE_NAME}}.lab check
 ```
 O guia verifica se o CSV existe e se a coluna alvo foi identificada corretamente.
 
+{% if LEARNING_ENABLED == "true" %}
+## Workspace de Aprendizado Interativo (Recomendado)
+
+Este projeto inclui um workspace visual para guiar você pelo processo de ML.
+
+```bash
+python -m {{PACKAGE_NAME}}.lab workspace
+```
+
+**IMPORTANTE**: Você deve executar a etapa de **Análise Exploratória de Dados (EDA)** antes que o workspace possa mostrar sugestões de modelos, baselines ou notas de aprendizado.
+
+### Fluxo Visual
+1. **Check**: Valida se os dados estão prontos.
+2. **Explore (EDA)**: Gera o resumo do dataset.
+3. **Workspace**: Abre o app Streamlit para insights interativos.
+{% else %}
+{% if GENERATE_ADVISOR == "true" %}
 ### 4. Execute o Dataset Advisor
 Se ativado, o Advisor realiza uma análise heurística mais profunda dos seus dados para sugerir estratégias de modelagem:
 ```bash
@@ -110,19 +127,21 @@ python -m {{PACKAGE_NAME}}.lab advisor
 Ele cria o relatório `reports/dataset-advice.md` e um ponto de partida em `src/{{PACKAGE_NAME}}/suggested_pipeline.py`.
 
 Nota: O **Guia do Projeto** é uma verificação de prontidão/validação, enquanto o **Dataset Advisor** fornece sugestões de modelagem explicáveis.
+{% endif %}
 
 ### 5. Engenharia de Features
 Edite `src/{{PACKAGE_NAME}}/features.py` para adicionar features calculadas.
 
 ### 6. Treinamento e Baselines
 O arquivo `src/{{PACKAGE_NAME}}/train.py` gerado é um **baseline simples**, não um modelo final. Ele estabelece um desempenho mínimo a ser superado.
+{% endif %}
 
 ## Fluxo sugerido
 
 1. Coloque o dataset em `data/raw/`
 2. Ajuste `configs/config.json`
 3. Execute `python -m {{PACKAGE_NAME}}.lab check` para validar a prontidão
-4. Realize a EDA no notebook (ou execute `python -m {{PACKAGE_NAME}}.lab eda`)
+4. Realize a EDA no notebook{% if GENERATE_EDA == "true" %} (ou execute `python -m {{PACKAGE_NAME}}.lab eda`{% if LEARNING_ENABLED == "true" %} ou use o workspace{% endif %}){% endif %}
 5. Edite `src/{{PACKAGE_NAME}}/features.py`
 6. Treine o modelo (baseline)
 7. Avalie os resultados
@@ -130,16 +149,37 @@ O arquivo `src/{{PACKAGE_NAME}}/train.py` gerado é um **baseline simples**, nã
 
 ## Comandos sugeridos
 
+{% if LEARNING_ENABLED == "true" %}
+**Workspace Visual:**
+```bash
+python -m {{PACKAGE_NAME}}.lab workspace
+```
+
+**Alternativas CLI:**
+{% endif %}
 ```bash
 # Validar prontidão
 python -m {{PACKAGE_NAME}}.lab check
 
-# (Opcional) Executar EDA
+{% if GENERATE_EDA == "true" %}
+# Executar EDA (Gera artefatos necessários para Advisor/Baseline/Notas)
 python -m {{PACKAGE_NAME}}.lab eda
+{% endif %}
 
+{% if GENERATE_ADVISOR == "true" %}
 # (Opcional) Obter sugestões de modelagem
 python -m {{PACKAGE_NAME}}.lab advisor
+{% endif %}
 
+{% if GENERATE_LEARNING == "true" %}
+# (Opcional) Gerar notas de aprendizado
+python -m {{PACKAGE_NAME}}.lab learn
+{% endif %}
+
+{% if GENERATE_BASELINE == "true" %}
+# (Opcional) Executar baseline lab educacional
+python -m {{PACKAGE_NAME}}.lab baseline
+{% endif %}
 # Treinar baseline
 python -m {{PACKAGE_NAME}}.lab train
 

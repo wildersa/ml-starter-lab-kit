@@ -30,7 +30,7 @@ def run_generator(
     output_dir_sequence=None
 ):
     if optionals is None:
-        optionals = ["n"] * 11
+        optionals = ["n"] * 12
 
     is_guided = (experience_mode == "2" or experience_mode == "guided")
 
@@ -80,6 +80,30 @@ def run_generator(
             # The number of custom options might change.
             # We take what was provided.
             inputs.extend(optionals)
+
+    # Dependency check for advisor/baseline_lab happens AFTER section 5 selection
+    if not is_guided:
+        # Check if advisor or baseline_lab was enabled in the provided optionals
+        # Profile recommended (2) includes them, profile full (3) includes them.
+        # Profile custom (4) depends on optionals list.
+        # Index mapping in cli.py: eda(0), preproc(1), metrics(2), opt(3), feat(4), viz(5), nb(6), rep(7), exp(8), advisor(9), learn(10), baseline(11)
+
+        has_advisor = False
+        has_baseline = False
+
+        if optional_profile == "2": # recommended
+            has_advisor = True
+            has_baseline = True
+        elif optional_profile == "3": # full
+            has_advisor = True
+            has_baseline = True
+        elif optional_profile == "4" or optional_profile == "custom":
+            if optionals[9] == "y": has_advisor = True
+            if optionals[11] == "y": has_baseline = True
+
+        if (has_advisor or has_baseline) and include_ml_basics == "n":
+            # The wizard will prompt to enable ML basics
+            inputs.append("y")
 
     # Output location
     if output_dir_sequence:

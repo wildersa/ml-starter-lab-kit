@@ -192,6 +192,9 @@ def main():
         st.write("Start with simple models to establish a 'floor' for performance.")
 
         eda_summary_path = project_root() / "configs/eda_summary.json"
+        baseline_results_path = project_root() / "configs/baseline_results.json"
+        baseline_report_path = project_root() / "reports/baseline-results.md"
+
         if not eda_summary_path.exists():
             st.warning("📊 **EDA Required**: We recommend running EDA before starting your baseline experiments.")
             st.markdown(f"""
@@ -200,11 +203,23 @@ def main():
             python -m {{PACKAGE_NAME}}.lab eda
             ```
             """)
+        elif baseline_report_path.exists():
+            st.success("Baseline results found.")
+            st.markdown(baseline_report_path.read_text())
+
+            if baseline_results_path.exists():
+                with open(baseline_results_path, "r") as f:
+                    baseline_results = json.load(f)
+                st.subheader("Raw Metrics")
+                st.json(baseline_results)
         else:
+            st.info("Run the Baseline Lab to establish a performance benchmark:")
+            st.code(f"python -m {{PACKAGE_NAME}}.lab baseline")
+
             st.markdown("""
             **Why a baseline?**
             You should always know how a simple model (like a Mean/Mode predictor or a Linear Regression)
-            performs before trying complex algorithms.
+            performs before trying complex algorithms. Any real model must significantly outperform this baseline.
             """)
 
     elif section == "Train & Evaluate":

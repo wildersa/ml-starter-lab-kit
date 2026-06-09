@@ -73,7 +73,7 @@ class TestOutputLogic(unittest.TestCase):
         output_dir = self.test_dir / "eda_project"
 
         # eda is the 1st optional tool
-        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n"]
+        optionals = ["y"] + ["n"] * 11
 
         run_generator(
             project_name="EDA Project",
@@ -141,7 +141,7 @@ class TestOutputLogic(unittest.TestCase):
             package_name=package_name,
             output_dir=output_dir,
             optional_profile="4",
-            optionals=["y"] + ["n"]*10
+            optionals=["y"] + ["n"]*11
         )
 
         # Ensure no dataset exists
@@ -171,7 +171,7 @@ class TestOutputLogic(unittest.TestCase):
         output_dir = self.test_dir / "advisor_block_project"
 
         # eda is 1st, advisor is 10th
-        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "y", "n"]
+        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "y", "n", "n"]
 
         run_generator(
             project_name="Advisor Block Project",
@@ -211,7 +211,7 @@ class TestOutputLogic(unittest.TestCase):
         package_name = "advisor_success_pkg"
         output_dir = self.test_dir / "advisor_success_project"
 
-        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "y", "n"]
+        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "y", "n", "n"]
 
         run_generator(
             project_name="Advisor Success Project",
@@ -291,6 +291,11 @@ class TestOutputLogic(unittest.TestCase):
         )
 
         # 1. Create dummy data and EDA artifact
+        configs_dir = output_dir / "configs"
+        configs_dir.mkdir(parents=True, exist_ok=True)
+        with open(configs_dir / "problem_profile.json", "w") as f:
+            json.dump({"goal": "classify customers", "language": "en"}, f)
+
         data_dir = output_dir / "data/raw"
         data_dir.mkdir(parents=True, exist_ok=True)
         with open(data_dir / "dataset.csv", "w", newline="") as f:
@@ -335,6 +340,197 @@ class TestOutputLogic(unittest.TestCase):
 
         report_md = (output_dir / "reports/learning-notes.md").read_text()
         self.assertIn("my_target", report_md)
+
+    def test_baseline_blocked_without_eda(self):
+        """P0.1: Baseline Lab is blocked without EDA artifact."""
+        package_name = "baseline_block_pkg"
+        output_dir = self.test_dir / "baseline_block_project"
+
+        run_generator(
+            project_name="Baseline Block Project",
+            package_name=package_name,
+            output_dir=output_dir,
+            optional_profile="2" # recommended includes baseline_lab
+        )
+
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(output_dir / "src")
+        result = subprocess.run(
+            [sys.executable, "-m", f"{package_name}.lab", "baseline"],
+            cwd=output_dir,
+            env=env,
+            capture_output=True,
+            text=True
+        )
+
+        self.assertFalse((output_dir / "configs/baseline_results.json").exists())
+        self.assertIn("requires an EDA summary", result.stdout)
+
+    def test_baseline_artifacts_generated(self):
+        """P0.2, P0.3: Baseline artifacts generated and contain metrics."""
+        package_name = "baseline_success_pkg"
+        output_dir = self.test_dir / "baseline_success_project"
+
+        run_generator(
+            project_name="Baseline Success Project",
+            package_name=package_name,
+            output_dir=output_dir,
+            optional_profile="2",
+            include_ml_basics="y"
+        )
+
+        # 1. Create dummy data and EDA artifact
+        configs_dir = output_dir / "configs"
+        configs_dir.mkdir(parents=True, exist_ok=True)
+        with open(configs_dir / "problem_profile.json", "w") as f:
+            json.dump({"goal": "churn classification", "language": "en"}, f)
+
+        data_dir = output_dir / "data/raw"
+        data_dir.mkdir(parents=True, exist_ok=True)
+        dataset_path = data_dir / "dataset.csv"
+        with open(dataset_path, "w", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(["feat1", "target"])
+            writer.writerow(["1.0", "0"])
+            writer.writerow(["2.0", "1"])
+
+        eda_summary = {
+            "rows": 2,
+            "columns": ["feat1", "target"],
+            "target_column": "target",
+            "target_exists": True,
+            "missing_summary": {"feat1": 0, "target": 0},
+            "unique_counts": {"feat1": 2, "target": 2},
+            "target_distribution": {"0": 1, "1": 1}
+        }
+        eda_path = output_dir / "configs/eda_summary.json"
+        eda_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(eda_path, "w") as f:
+            json.dump(eda_summary, f)
+
+        # 2. Run Baseline Lab
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(output_dir / "src")
+        result = subprocess.run(
+            [sys.executable, "-m", f"{package_name}.lab", "baseline"],
+            cwd=output_dir,
+            env=env,
+            capture_output=True,
+            text=True
+        )
+
+        self.assertEqual(result.returncode, 0, f"Baseline Lab failed: {result.stdout}\n{result.stderr}")
+        self.assertTrue((output_dir / "configs/baseline_results.json").exists())
+        self.assertTrue((output_dir / "reports/baseline-results.md").exists())
+
+        # P0.3: Verify metrics
+        with open(output_dir / "configs/baseline_results.json", "r") as f:
+            results = json.load(f)
+            self.assertIn("model_type", results)
+            self.assertIn("metrics", results)
+            self.assertIn("accuracy", results["metrics"])
+
+        report_md = (output_dir / "reports/baseline-results.md").read_text()
+        self.assertIn("Resultados do Baseline Lab", report_md) if "pt-BR" in report_md else self.assertIn("Baseline Lab Results", report_md)
+
+    def test_baseline_regression_artifacts_generated(self):
+        """P0.2, P0.3: Baseline regression artifacts generated and contain metrics."""
+        package_name = "baseline_reg_pkg"
+        output_dir = self.test_dir / "baseline_reg_project"
+
+        run_generator(
+            project_name="Baseline Reg Project",
+            package_name=package_name,
+            output_dir=output_dir,
+            optional_profile="2",
+            include_ml_basics="y"
+        )
+
+        # 1. Create dummy data and EDA artifact
+        configs_dir = output_dir / "configs"
+        configs_dir.mkdir(parents=True, exist_ok=True)
+        # Testing robust detection with a different goal keyword
+        with open(configs_dir / "problem_profile.json", "w") as f:
+            json.dump({"goal": "predict price", "language": "en"}, f)
+
+        data_dir = output_dir / "data/raw"
+        data_dir.mkdir(parents=True, exist_ok=True)
+        dataset_path = data_dir / "dataset.csv"
+        with open(dataset_path, "w", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(["feat1", "target"])
+            writer.writerow(["1.0", "100.0"])
+            writer.writerow(["2.0", "200.0"])
+            writer.writerow(["3.0", "150.0"])
+
+        eda_summary = {
+            "rows": 3,
+            "columns": ["feat1", "target"],
+            "target_column": "target",
+            "target_exists": True,
+            "missing_summary": {"feat1": 0, "target": 0},
+            "unique_counts": {"feat1": 3, "target": 3},
+            "target_distribution": {"100.0": 1, "200.0": 1, "150.0": 1}
+        }
+        eda_path = output_dir / "configs/eda_summary.json"
+        eda_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(eda_path, "w") as f:
+            json.dump(eda_summary, f)
+
+        # 2. Run Baseline Lab
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(output_dir / "src")
+        result = subprocess.run(
+            [sys.executable, "-m", f"{package_name}.lab", "baseline"],
+            cwd=output_dir,
+            env=env,
+            capture_output=True,
+            text=True
+        )
+
+        self.assertEqual(result.returncode, 0, f"Baseline Lab failed: {result.stdout}\n{result.stderr}")
+        self.assertTrue((output_dir / "configs/baseline_results.json").exists())
+        self.assertTrue((output_dir / "reports/baseline-results.md").exists())
+
+        # P0.3: Verify regression metrics
+        with open(output_dir / "configs/baseline_results.json", "r") as f:
+            results = json.load(f)
+            self.assertIn("DummyRegressor", results["model_type"])
+            self.assertIn("mae", results["metrics"])
+            self.assertIn("r2", results["metrics"])
+
+        report_md = (output_dir / "reports/baseline-results.md").read_text()
+        self.assertIn("MAE", report_md)
+        self.assertIn("R2", report_md)
+
+    def test_baseline_dependency_gating(self):
+        """Verify the wizard prompts for ML basics if baseline_lab is enabled without advisor."""
+        package_name = "dep_gate_pkg"
+        output_dir = self.test_dir / "dep_gate_project"
+
+        # custom profile:
+        # eda=y, preprocessing=n, metrics=n, optimization=n, feature_measurement=n,
+        # visualization=n, notebook_factory=n, model_report=n, experiment_log=n,
+        # advisor=n, learning=n, baseline_lab=y
+        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "y"]
+
+        # include_ml_basics="n" initially, but should be prompted/enabled
+        run_generator(
+            project_name="Dep Gate Project",
+            package_name=package_name,
+            output_dir=output_dir,
+            include_ml_basics="n",
+            optional_profile="4",
+            optionals=optionals
+        )
+
+        # Check if requirements-ml.txt exists
+        self.assertTrue((output_dir / "requirements-ml.txt").exists())
+
+        # Check config.json to see if advisor is disabled but baseline_lab would have been enabled
+        # (Actually, we just care that it was generated)
+        self.assertTrue((output_dir / f"src/{package_name}/baseline_lab.py").exists())
+        self.assertFalse((output_dir / f"src/{package_name}/advisor.py").exists())
 
 if __name__ == "__main__":
     unittest.main()

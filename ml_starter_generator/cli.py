@@ -108,8 +108,9 @@ TRANSLATIONS = {
         "include_experiment_log": "Include experiment log template?",
         "include_advisor": "Include explainable Dataset Advisor?",
         "include_learning": "Include dataset-contextual learning notes?",
+        "include_baseline_lab": "Include educational Baseline Lab?",
         "dependency_note_title": "Dependency Note",
-        "dependency_note_text": "Dataset Advisor requires basic ML dependencies (pandas, scikit-learn).",
+        "dependency_note_text": "Dataset Advisor and Baseline Lab require basic ML dependencies (pandas, scikit-learn).",
         "enable_ml_basics": "Enable basic ML dependencies now?",
         "output_location": "Output location",
         "dir_current": "Current directory",
@@ -151,6 +152,8 @@ TRANSLATIONS = {
         "next_step_4_train": "Step 2 (Train)",
         "next_step_4_eval": "Step 3 (Evaluate)",
         "next_step_guide": "Run the Project Guide (readiness check)",
+        "next_step_workspace": "Interactive Learning Workspace (Visual-first)",
+        "next_step_eda_first": "IMPORTANT: Run EDA before Advisor, Baseline, or Learning Notes",
         "next_step_advisor": "Dataset Advice (modeling suggestions)",
         "next_step_demo": "Check the demo scenario and data dictionary in docs/demo-scenario.md",
         "summary_mlflow": "MLflow Tracking",
@@ -245,8 +248,9 @@ TRANSLATIONS = {
         "include_experiment_log": "Incluir template de log de experimentos?",
         "include_advisor": "Incluir Dataset Advisor explicável?",
         "include_learning": "Incluir notas de aprendizado contextuais ao dataset?",
+        "include_baseline_lab": "Incluir Baseline Lab educacional?",
         "dependency_note_title": "Nota de Dependência",
-        "dependency_note_text": "O Dataset Advisor requer dependências básicas de ML (pandas, scikit-learn).",
+        "dependency_note_text": "O Dataset Advisor e o Baseline Lab requerem dependências básicas de ML (pandas, scikit-learn).",
         "enable_ml_basics": "Ativar dependências básicas de ML agora?",
         "output_location": "Local de saída",
         "dir_current": "Diretório atual",
@@ -288,6 +292,8 @@ TRANSLATIONS = {
         "next_step_4_train": "Passo 2 (Treino)",
         "next_step_4_eval": "Passo 3 (Avaliação)",
         "next_step_guide": "Execute o Guia do Projeto (valida prontidão)",
+        "next_step_workspace": "Workspace de Aprendizado Interativo (Visual-first)",
+        "next_step_eda_first": "IMPORTANTE: Execute a EDA antes do Advisor, Baseline ou Notas de Aprendizado",
         "next_step_advisor": "Conselhos sobre o Dataset (sugestões de modelagem)",
         "next_step_demo": "Consulte o cenário de demo e o dicionário de dados em docs/demo-scenario.md",
         "summary_mlflow": "Rastreamento MLflow",
@@ -495,6 +501,7 @@ def get_options_by_profile(profile: str) -> dict[str, bool]:
         "experiment_log": False,
         "advisor": False,
         "learning": False,
+        "baseline_lab": False,
     }
 
     if profile == "minimal":
@@ -507,6 +514,7 @@ def get_options_by_profile(profile: str) -> dict[str, bool]:
         options["visualization"] = True
         options["advisor"] = True
         options["learning"] = True
+        options["baseline_lab"] = True
         return options
 
     if profile == "full":
@@ -638,15 +646,30 @@ def print_summary(root: Path, values: dict[str, str], t: dict[str, str], include
     steps.append(f"{next_idx+2}. {t['next_step_3']}: src/{values['PACKAGE_NAME']}/features.py")
     steps.append(f"{next_idx+3}. {t['next_step_guide']}: python -m {values['PACKAGE_NAME']}.lab check")
 
-    # 5. Pipeline
+    # 5. Pipeline or Workspace
     run_idx = next_idx + 4
-    steps.append(f"{run_idx}. {t['next_step_4']}:")
-    steps.append(f"   - {t['next_step_4_data']}:     python -m {values['PACKAGE_NAME']}.lab eda")
-    steps.append(f"   - {t['next_step_4_train']}:    python -m {values['PACKAGE_NAME']}.lab train")
-    steps.append(f"   - {t['next_step_4_eval']}: python -m {values['PACKAGE_NAME']}.lab evaluate")
+    pkg = values['PACKAGE_NAME']
+    if values.get("LEARNING_MODE") == "guided":
+        steps.append(f"{run_idx}. {t['next_step_workspace']}:")
+        steps.append(f"   python -m {pkg}.lab workspace")
+        steps.append(f"   ({t['next_step_eda_first']})")
 
-    if values.get("ADVISOR_COMMAND"):
-        steps.append(f"   - {t['next_step_advisor']}:   python -m {values['PACKAGE_NAME']}.lab advisor")
+        steps.append(f"\n   {t['next_step_4']} (CLI):")
+        if values.get("GENERATE_EDA") == "true":
+            steps.append(f"   - {t['next_step_4_data']}:     python -m {pkg}.lab eda")
+        if values.get("GENERATE_ADVISOR") == "true":
+            steps.append(f"   - {t['next_step_advisor']}:   python -m {pkg}.lab advisor")
+        steps.append(f"   - {t['next_step_4_train']}:    python -m {pkg}.lab train")
+        steps.append(f"   - {t['next_step_4_eval']}: python -m {pkg}.lab evaluate")
+    else:
+        steps.append(f"{run_idx}. {t['next_step_4']}:")
+        if values.get("GENERATE_EDA") == "true":
+            steps.append(f"   - {t['next_step_4_data']}:     python -m {pkg}.lab eda")
+        steps.append(f"   - {t['next_step_4_train']}:    python -m {pkg}.lab train")
+        steps.append(f"   - {t['next_step_4_eval']}: python -m {pkg}.lab evaluate")
+
+        if values.get("GENERATE_ADVISOR") == "true":
+            steps.append(f"   - {t['next_step_advisor']}:   python -m {pkg}.lab advisor")
 
     UI.panel(t["next_steps"], "\n".join(steps))
 
@@ -730,6 +753,7 @@ def main() -> None:
             "experiment_log": ask_yes_no(t["include_experiment_log"], False, lang=lang),
             "advisor": ask_yes_no(t["include_advisor"], False, lang=lang),
             "learning": ask_yes_no(t["include_learning"], False, lang=lang),
+            "baseline_lab": ask_yes_no(t["include_baseline_lab"], False, lang=lang),
         }
     else:
         optional_options = get_options_by_profile(profile)
@@ -738,9 +762,11 @@ def main() -> None:
         optional_options["eda"] = True
         optional_options["advisor"] = True
         optional_options["learning"] = True
+        optional_options["baseline_lab"] = True
         optional_options["learning_workspace"] = True
 
-    if optional_options.get("advisor") and not include_ml_basics:
+    needs_ml_basics = (optional_options.get("advisor") or optional_options.get("baseline_lab"))
+    if needs_ml_basics and not include_ml_basics:
         if experience_mode != "guided":
             UI.panel(t["dependency_note_title"], t["dependency_note_text"])
             if ask_yes_no(t["enable_ml_basics"], True, lang=lang):
@@ -821,6 +847,10 @@ def main() -> None:
         "ENABLE_MLFLOW": "true" if include_mlflow else "false",
         "LEARNING_ENABLED": "true" if experience_mode == "guided" else "false",
         "LEARNING_MODE": experience_mode,
+        "GENERATE_EDA": "true" if optional_options.get("eda") else "false",
+        "GENERATE_ADVISOR": "true" if optional_options.get("advisor") else "false",
+        "GENERATE_LEARNING": "true" if optional_options.get("learning") else "false",
+        "GENERATE_BASELINE": "true" if optional_options.get("baseline_lab") else "false",
     }
 
     UI.section(t["final_summary"], 7)
