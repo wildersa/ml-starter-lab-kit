@@ -503,5 +503,34 @@ class TestOutputLogic(unittest.TestCase):
         self.assertIn("MAE", report_md)
         self.assertIn("R2", report_md)
 
+    def test_baseline_dependency_gating(self):
+        """Verify the wizard prompts for ML basics if baseline_lab is enabled without advisor."""
+        package_name = "dep_gate_pkg"
+        output_dir = self.test_dir / "dep_gate_project"
+
+        # custom profile:
+        # eda=y, preprocessing=n, metrics=n, optimization=n, feature_measurement=n,
+        # visualization=n, notebook_factory=n, model_report=n, experiment_log=n,
+        # advisor=n, learning=n, baseline_lab=y
+        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "y"]
+
+        # include_ml_basics="n" initially, but should be prompted/enabled
+        run_generator(
+            project_name="Dep Gate Project",
+            package_name=package_name,
+            output_dir=output_dir,
+            include_ml_basics="n",
+            optional_profile="4",
+            optionals=optionals
+        )
+
+        # Check if requirements-ml.txt exists
+        self.assertTrue((output_dir / "requirements-ml.txt").exists())
+
+        # Check config.json to see if advisor is disabled but baseline_lab would have been enabled
+        # (Actually, we just care that it was generated)
+        self.assertTrue((output_dir / f"src/{package_name}/baseline_lab.py").exists())
+        self.assertFalse((output_dir / f"src/{package_name}/advisor.py").exists())
+
 if __name__ == "__main__":
     unittest.main()

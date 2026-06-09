@@ -4,13 +4,13 @@ import json
 import sys
 from typing import Any
 
-import pandas as pd
 try:
+    import pandas as pd
     from sklearn.dummy import DummyClassifier, DummyRegressor
     from sklearn.metrics import accuracy_score, mean_absolute_error, r2_score
-    SKLEARN_AVAILABLE = True
+    DEPENDENCIES_AVAILABLE = True
 except ImportError:
-    SKLEARN_AVAILABLE = False
+    DEPENDENCIES_AVAILABLE = False
 
 from .core.config import load_config, project_root
 
@@ -27,7 +27,7 @@ class BaselineLab:
                 "status_running": "Running baseline for {task}...",
                 "status_complete": "Baseline results saved.",
                 "eda_prerequisite": "Baseline Lab requires an EDA summary. Please run EDA first:\n  python -m {pkg}.lab eda",
-                "sklearn_missing": "scikit-learn is required for Baseline Lab. Please install it with 'pip install scikit-learn'.",
+                "sklearn_missing": "pandas and scikit-learn are required for Baseline Lab. Please install them with 'pip install pandas scikit-learn'.",
                 "task_unsupported": "Baseline Lab currently supports classification and regression tasks.",
                 "model_name": "Baseline Model",
                 "metric_name": "Metric",
@@ -43,7 +43,7 @@ class BaselineLab:
                 "status_running": "Executando baseline para {task}...",
                 "status_complete": "Resultados do baseline salvos.",
                 "eda_prerequisite": "O Baseline Lab exige um resumo de EDA. Por favor, execute a EDA primeiro:\n  python -m {pkg}.lab eda",
-                "sklearn_missing": "O scikit-learn é necessário para o Baseline Lab. Instale-o com 'pip install scikit-learn'.",
+                "sklearn_missing": "O pandas e o scikit-learn são necessários para o Baseline Lab. Instale-os com 'pip install pandas scikit-learn'.",
                 "task_unsupported": "O Baseline Lab atualmente suporta tarefas de classificação e regressão.",
                 "model_name": "Modelo Baseline",
                 "metric_name": "Métrica",
@@ -56,7 +56,7 @@ class BaselineLab:
         }[self.lang]
 
     def run(self) -> tuple[dict[str, Any], str]:
-        if not SKLEARN_AVAILABLE:
+        if not DEPENDENCIES_AVAILABLE:
             print(self.t["sklearn_missing"])
             sys.exit(1)
 

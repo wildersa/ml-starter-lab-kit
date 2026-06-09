@@ -110,7 +110,7 @@ TRANSLATIONS = {
         "include_learning": "Include dataset-contextual learning notes?",
         "include_baseline_lab": "Include educational Baseline Lab?",
         "dependency_note_title": "Dependency Note",
-        "dependency_note_text": "Dataset Advisor requires basic ML dependencies (pandas, scikit-learn).",
+        "dependency_note_text": "Dataset Advisor and Baseline Lab require basic ML dependencies (pandas, scikit-learn).",
         "enable_ml_basics": "Enable basic ML dependencies now?",
         "output_location": "Output location",
         "dir_current": "Current directory",
@@ -248,7 +248,7 @@ TRANSLATIONS = {
         "include_learning": "Incluir notas de aprendizado contextuais ao dataset?",
         "include_baseline_lab": "Incluir Baseline Lab educacional?",
         "dependency_note_title": "Nota de Dependência",
-        "dependency_note_text": "O Dataset Advisor requer dependências básicas de ML (pandas, scikit-learn).",
+        "dependency_note_text": "O Dataset Advisor e o Baseline Lab requerem dependências básicas de ML (pandas, scikit-learn).",
         "enable_ml_basics": "Ativar dependências básicas de ML agora?",
         "output_location": "Local de saída",
         "dir_current": "Diretório atual",
@@ -746,7 +746,8 @@ def main() -> None:
         optional_options["baseline_lab"] = True
         optional_options["learning_workspace"] = True
 
-    if optional_options.get("advisor") and not include_ml_basics:
+    needs_ml_basics = (optional_options.get("advisor") or optional_options.get("baseline_lab"))
+    if needs_ml_basics and not include_ml_basics:
         if experience_mode != "guided":
             UI.panel(t["dependency_note_title"], t["dependency_note_text"])
             if ask_yes_no(t["enable_ml_basics"], True, lang=lang):
