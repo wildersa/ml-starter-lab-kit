@@ -73,7 +73,7 @@ class TestOutputLogic(unittest.TestCase):
         output_dir = self.test_dir / "eda_project"
 
         # eda is the 1st optional tool
-        optionals = ["y"] + ["n"] * 11
+        optionals = ["y"] + ["n"] * 12
 
         run_generator(
             project_name="EDA Project",
@@ -141,7 +141,7 @@ class TestOutputLogic(unittest.TestCase):
             package_name=package_name,
             output_dir=output_dir,
             optional_profile="4",
-            optionals=["y"] + ["n"]*11
+            optionals=["y"] + ["n"]*12
         )
 
         # Ensure no dataset exists
@@ -171,7 +171,7 @@ class TestOutputLogic(unittest.TestCase):
         output_dir = self.test_dir / "advisor_block_project"
 
         # eda is 1st, advisor is 10th
-        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "y", "n", "n"]
+        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "y", "n", "n", "n"]
 
         run_generator(
             project_name="Advisor Block Project",
@@ -211,7 +211,7 @@ class TestOutputLogic(unittest.TestCase):
         package_name = "advisor_success_pkg"
         output_dir = self.test_dir / "advisor_success_project"
 
-        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "y", "n", "n"]
+        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "y", "n", "n", "n"]
 
         run_generator(
             project_name="Advisor Success Project",
@@ -511,8 +511,8 @@ class TestOutputLogic(unittest.TestCase):
         # custom profile:
         # eda=y, preprocessing=n, metrics=n, optimization=n, feature_measurement=n,
         # visualization=n, notebook_factory=n, model_report=n, experiment_log=n,
-        # advisor=n, learning=n, baseline_lab=y
-        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "y"]
+        # advisor=n, learning=n, baseline_lab=y, bandit_lab=n
+        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "y", "n"]
 
         # include_ml_basics="n" initially, but should be prompted/enabled
         run_generator(

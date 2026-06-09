@@ -180,6 +180,12 @@ python -m {{PACKAGE_NAME}}.lab learn
 # (Optional) Run educational baseline lab
 python -m {{PACKAGE_NAME}}.lab baseline
 {% endif %}
+
+{% if GENERATE_BANDIT == "true" %}
+# (Optional) Run educational Multi-Armed Bandit Lab
+python -m {{PACKAGE_NAME}}.lab bandit
+{% endif %}
+
 # Train baseline
 python -m {{PACKAGE_NAME}}.lab train
 

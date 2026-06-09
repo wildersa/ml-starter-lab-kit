@@ -40,6 +40,14 @@ def run_baseline():
         print("\n[INFO] Baseline Lab is not enabled in this project.")
         print("To enable it, generate a project with the 'guided' mode or 'recommended' profile.")
 
+def run_bandit():
+    try:
+        bandit = importlib.import_module(".bandit_lab", package=__package__)
+        bandit.main()
+    except ImportError:
+        print("\n[INFO] Multi-Armed Bandit Lab is not enabled in this project.")
+        print("To enable it, generate a project with the 'guided' mode or 'full' profile.")
+
 def run_train():
     from . import train
     train.main()
@@ -91,6 +99,7 @@ def main():
     subparsers.add_parser("advisor", help="Run Dataset Advisor for modeling suggestions")
     subparsers.add_parser("learn", help="Generate dataset-contextual learning notes")
     subparsers.add_parser("baseline", help="Run Baseline Lab for simple model benchmarking")
+    subparsers.add_parser("bandit", help="Run educational Multi-Armed Bandit Lab")
     subparsers.add_parser("train", help="Train the baseline model")
     subparsers.add_parser("evaluate", help="Evaluate the model performance")
     subparsers.add_parser("all", help="Run the full pipeline (check, eda, train, evaluate)")
@@ -108,6 +117,8 @@ def main():
         run_learn()
     elif args.command == "baseline":
         run_baseline()
+    elif args.command == "bandit":
+        run_bandit()
     elif args.command == "train":
         run_train()
     elif args.command == "evaluate":
