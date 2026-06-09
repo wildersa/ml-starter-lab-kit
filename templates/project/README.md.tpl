@@ -118,6 +118,7 @@ python -m {{PACKAGE_NAME}}.lab workspace
 2. **Explore (EDA)**: Generate the dataset summary.
 3. **Workspace**: Open the Streamlit app for interactive insights.
 {% else %}
+{% if GENERATE_ADVISOR == "true" %}
 ### 4. Run the Dataset Advisor
 If enabled, the Advisor performs a deeper heuristic analysis of your data to suggest modeling strategies:
 ```bash
@@ -126,6 +127,7 @@ python -m {{PACKAGE_NAME}}.lab advisor
 It creates `reports/dataset-advice.md` and a starting `src/{{PACKAGE_NAME}}/suggested_pipeline.py`.
 
 Note: The **Project Guide** is a readiness/validation check, while the **Dataset Advisor** provides explainable modeling suggestions.
+{% endif %}
 
 ### 5. Feature Engineering
 Edit `src/{{PACKAGE_NAME}}/features.py` to add calculated features.
@@ -139,7 +141,7 @@ The generated `src/{{PACKAGE_NAME}}/train.py` is a **simple baseline**, not a fi
 1. Place the dataset in `data/raw/`
 2. Adjust `configs/config.json`
 3. Run `python -m {{PACKAGE_NAME}}.lab check` to validate readiness
-4. Perform EDA (run `python -m {{PACKAGE_NAME}}.lab eda`{% if LEARNING_ENABLED == "true" %} or use the workspace{% endif %})
+4. Perform EDA in the notebook{% if GENERATE_EDA == "true" %} (or run `python -m {{PACKAGE_NAME}}.lab eda`{% if LEARNING_ENABLED == "true" %} or use the workspace{% endif %}){% endif %}
 5. Edit `src/{{PACKAGE_NAME}}/features.py`
 6. Train the model (baseline)
 7. Evaluate results
@@ -159,19 +161,24 @@ python -m {{PACKAGE_NAME}}.lab workspace
 # Validate readiness
 python -m {{PACKAGE_NAME}}.lab check
 
+{% if GENERATE_EDA == "true" %}
 # Run EDA (Generates required artifacts for Advisor/Baseline/Notes)
 python -m {{PACKAGE_NAME}}.lab eda
+{% endif %}
 
+{% if GENERATE_ADVISOR == "true" %}
 # (Optional) Get modeling advice
 python -m {{PACKAGE_NAME}}.lab advisor
+{% endif %}
 
-{% if LEARNING_ENABLED == "true" %}
+{% if GENERATE_LEARNING == "true" %}
 # (Optional) Generate learning notes
 python -m {{PACKAGE_NAME}}.lab learn
+{% endif %}
 
+{% if GENERATE_BASELINE == "true" %}
 # (Optional) Run educational baseline lab
 python -m {{PACKAGE_NAME}}.lab baseline
-
 {% endif %}
 # Train baseline
 python -m {{PACKAGE_NAME}}.lab train

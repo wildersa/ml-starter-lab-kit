@@ -19,7 +19,8 @@ class TestGuideOnboarding(unittest.TestCase):
             project_name=self.project_name,
             package_name=self.package_name,
             output_dir=self.test_dir,
-            include_pyproject="y"
+            include_pyproject="y",
+            optional_profile="3" # full
         )
 
         # We need to find the occurrence within [Next steps] panel
@@ -95,7 +96,8 @@ class TestGuideOnboarding(unittest.TestCase):
             project_name=self.project_name,
             package_name=self.package_name,
             output_dir=self.test_dir,
-            include_pyproject="y"
+            include_pyproject="y",
+            optional_profile="3" # full
         )
 
         next_steps_output = output.split("[Próximos passos]")[1]

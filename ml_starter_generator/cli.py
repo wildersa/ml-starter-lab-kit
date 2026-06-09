@@ -648,24 +648,28 @@ def print_summary(root: Path, values: dict[str, str], t: dict[str, str], include
 
     # 5. Pipeline or Workspace
     run_idx = next_idx + 4
+    pkg = values['PACKAGE_NAME']
     if values.get("LEARNING_MODE") == "guided":
         steps.append(f"{run_idx}. {t['next_step_workspace']}:")
-        steps.append(f"   python -m {values['PACKAGE_NAME']}.lab workspace")
+        steps.append(f"   python -m {pkg}.lab workspace")
         steps.append(f"   ({t['next_step_eda_first']})")
 
         steps.append(f"\n   {t['next_step_4']} (CLI):")
-        steps.append(f"   - {t['next_step_4_data']}:     python -m {values['PACKAGE_NAME']}.lab eda")
-        steps.append(f"   - {t['next_step_advisor']}:   python -m {values['PACKAGE_NAME']}.lab advisor")
-        steps.append(f"   - {t['next_step_4_train']}:    python -m {values['PACKAGE_NAME']}.lab train")
-        steps.append(f"   - {t['next_step_4_eval']}: python -m {values['PACKAGE_NAME']}.lab evaluate")
+        if values.get("GENERATE_EDA") == "true":
+            steps.append(f"   - {t['next_step_4_data']}:     python -m {pkg}.lab eda")
+        if values.get("GENERATE_ADVISOR") == "true":
+            steps.append(f"   - {t['next_step_advisor']}:   python -m {pkg}.lab advisor")
+        steps.append(f"   - {t['next_step_4_train']}:    python -m {pkg}.lab train")
+        steps.append(f"   - {t['next_step_4_eval']}: python -m {pkg}.lab evaluate")
     else:
         steps.append(f"{run_idx}. {t['next_step_4']}:")
-        steps.append(f"   - {t['next_step_4_data']}:     python -m {values['PACKAGE_NAME']}.lab eda")
-        steps.append(f"   - {t['next_step_4_train']}:    python -m {values['PACKAGE_NAME']}.lab train")
-        steps.append(f"   - {t['next_step_4_eval']}: python -m {values['PACKAGE_NAME']}.lab evaluate")
+        if values.get("GENERATE_EDA") == "true":
+            steps.append(f"   - {t['next_step_4_data']}:     python -m {pkg}.lab eda")
+        steps.append(f"   - {t['next_step_4_train']}:    python -m {pkg}.lab train")
+        steps.append(f"   - {t['next_step_4_eval']}: python -m {pkg}.lab evaluate")
 
-        if values.get("ADVISOR_COMMAND"):
-            steps.append(f"   - {t['next_step_advisor']}:   python -m {values['PACKAGE_NAME']}.lab advisor")
+        if values.get("GENERATE_ADVISOR") == "true":
+            steps.append(f"   - {t['next_step_advisor']}:   python -m {pkg}.lab advisor")
 
     UI.panel(t["next_steps"], "\n".join(steps))
 
@@ -843,6 +847,10 @@ def main() -> None:
         "ENABLE_MLFLOW": "true" if include_mlflow else "false",
         "LEARNING_ENABLED": "true" if experience_mode == "guided" else "false",
         "LEARNING_MODE": experience_mode,
+        "GENERATE_EDA": "true" if optional_options.get("eda") else "false",
+        "GENERATE_ADVISOR": "true" if optional_options.get("advisor") else "false",
+        "GENERATE_LEARNING": "true" if optional_options.get("learning") else "false",
+        "GENERATE_BASELINE": "true" if optional_options.get("baseline_lab") else "false",
     }
 
     UI.section(t["final_summary"], 7)

@@ -30,6 +30,10 @@ class TestOnboardingPolish(unittest.TestCase):
         content = readme_path.read_text()
         self.assertNotIn("Interactive Learning Workspace", content)
         self.assertNotIn("python -m min_pkg.lab workspace", content)
+        self.assertNotIn("python -m min_pkg.lab eda", content)
+        self.assertNotIn("python -m min_pkg.lab advisor", content)
+        self.assertNotIn("python -m min_pkg.lab learn", content)
+        self.assertNotIn("python -m min_pkg.lab baseline", content)
 
     def test_guided_visual_first_onboarding(self):
         """P0.2 - Guided Learning onboarding makes Streamlit workspace the main path."""
