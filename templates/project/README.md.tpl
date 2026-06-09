@@ -102,6 +102,23 @@ python -m {{PACKAGE_NAME}}.lab check
 ```
 The guide checks if the CSV exists and if the target column is correctly identified.
 
+{% if LEARNING_ENABLED == "true" %}
+## Interactive Learning Workspace (Recommended)
+
+This project includes a visual workspace to guide you through the ML process.
+
+```bash
+python -m {{PACKAGE_NAME}}.lab workspace
+```
+
+**IMPORTANT**: You must run the **Exploratory Data Analysis (EDA)** step before the workspace can show model suggestions, baselines, or learning notes.
+
+### Visual Flow
+1. **Check**: Validate data readiness.
+2. **Explore (EDA)**: Generate the dataset summary.
+3. **Workspace**: Open the Streamlit app for interactive insights.
+{% else %}
+{% if GENERATE_ADVISOR == "true" %}
 ### 4. Run the Dataset Advisor
 If enabled, the Advisor performs a deeper heuristic analysis of your data to suggest modeling strategies:
 ```bash
@@ -110,19 +127,21 @@ python -m {{PACKAGE_NAME}}.lab advisor
 It creates `reports/dataset-advice.md` and a starting `src/{{PACKAGE_NAME}}/suggested_pipeline.py`.
 
 Note: The **Project Guide** is a readiness/validation check, while the **Dataset Advisor** provides explainable modeling suggestions.
+{% endif %}
 
 ### 5. Feature Engineering
 Edit `src/{{PACKAGE_NAME}}/features.py` to add calculated features.
 
 ### 6. Training and Baselines
 The generated `src/{{PACKAGE_NAME}}/train.py` is a **simple baseline**, not a final model. It establishes a minimum performance to beat.
+{% endif %}
 
 ## Suggested flow
 
 1. Place the dataset in `data/raw/`
 2. Adjust `configs/config.json`
 3. Run `python -m {{PACKAGE_NAME}}.lab check` to validate readiness
-4. Perform EDA in the notebook (or run `python -m {{PACKAGE_NAME}}.lab eda`)
+4. Perform EDA in the notebook{% if GENERATE_EDA == "true" %} (or run `python -m {{PACKAGE_NAME}}.lab eda`{% if LEARNING_ENABLED == "true" %} or use the workspace{% endif %}){% endif %}
 5. Edit `src/{{PACKAGE_NAME}}/features.py`
 6. Train the model (baseline)
 7. Evaluate results
@@ -130,16 +149,37 @@ The generated `src/{{PACKAGE_NAME}}/train.py` is a **simple baseline**, not a fi
 
 ## Suggested commands
 
+{% if LEARNING_ENABLED == "true" %}
+**Visual Workspace:**
+```bash
+python -m {{PACKAGE_NAME}}.lab workspace
+```
+
+**CLI Alternatives:**
+{% endif %}
 ```bash
 # Validate readiness
 python -m {{PACKAGE_NAME}}.lab check
 
-# (Optional) Run EDA
+{% if GENERATE_EDA == "true" %}
+# Run EDA (Generates required artifacts for Advisor/Baseline/Notes)
 python -m {{PACKAGE_NAME}}.lab eda
+{% endif %}
 
+{% if GENERATE_ADVISOR == "true" %}
 # (Optional) Get modeling advice
 python -m {{PACKAGE_NAME}}.lab advisor
+{% endif %}
 
+{% if GENERATE_LEARNING == "true" %}
+# (Optional) Generate learning notes
+python -m {{PACKAGE_NAME}}.lab learn
+{% endif %}
+
+{% if GENERATE_BASELINE == "true" %}
+# (Optional) Run educational baseline lab
+python -m {{PACKAGE_NAME}}.lab baseline
+{% endif %}
 # Train baseline
 python -m {{PACKAGE_NAME}}.lab train
 

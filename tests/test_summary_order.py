@@ -20,7 +20,8 @@ class TestCLISummaryOrder(unittest.TestCase):
             project_name=self.project_name,
             package_name=self.package_name,
             output_dir=self.test_dir,
-            include_pyproject="y"
+            include_pyproject="y",
+            optional_profile="2" # recommended (includes EDA)
         )
 
         # Verify Navigation
