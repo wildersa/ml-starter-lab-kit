@@ -22,6 +22,14 @@ def render(content: str, values: dict[str, str]) -> str:
         target_value = match.group(2)
         inner_content = match.group(3)
 
+        # Handle {% else %} if present
+        if "{% else %}" in inner_content:
+            if_part, else_part = inner_content.split("{% else %}", 1)
+            if values.get(key) == target_value:
+                return if_part
+            else:
+                return else_part
+
         if values.get(key) == target_value:
             return inner_content
         return ""
