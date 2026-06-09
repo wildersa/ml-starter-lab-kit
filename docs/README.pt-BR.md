@@ -27,8 +27,10 @@ A documentação é intencionalmente curta. Ela deve ajudar a começar um projet
 | O que checar antes de treinar? | [Checklist antes do treino](checklists/before-training.pt-BR.md) |
 | O que pode dar errado? | [Erros comuns](common-mistakes/README.pt-BR.md) |
 | O que esse termo significa? | [Glossário](glossary/README.pt-BR.md) |
+| Como Multi-Armed Bandit difere de treino supervisionado? | [Referência do Multi-Armed Bandit Lab](mab-lab.md) |
 
 ## Uso do projeto
 
 - [Layout do starter e do projeto gerado](usage/project-layout.pt-BR.md)
 - [Estratégia de visualização de experimentos](experiment-visualization.md)
+- [Referência do Multi-Armed Bandit Lab](mab-lab.md)
