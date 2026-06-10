@@ -3,6 +3,7 @@ import pandas as pd
 import json
 from pathlib import Path
 import sys
+from typing import Dict, Any, Optional, Tuple
 
 # Setup path for local imports
 # We expect to be in src/{{PACKAGE_NAME}}/bandit_dashboard.py
@@ -21,6 +22,26 @@ except ImportError:
         # Fallback if not in package structure
         def project_root():
             return Path(__file__).resolve().parents[2]
+
+def get_bandit_outputs(root: Path) -> Tuple[str, Optional[Dict[str, Any]], Optional[pd.DataFrame]]:
+    """
+    Loads Bandit Lab results and history.
+    Returns: (status, results_json, history_df)
+    Status can be: "OK", "MISSING", "ERROR"
+    """
+    results_path = root / "configs/bandit_results.json"
+    history_path = root / "reports/bandit-history.csv"
+
+    if not results_path.exists() or not history_path.exists():
+        return "MISSING", None, None
+
+    try:
+        with open(results_path, "r", encoding="utf-8") as f:
+            results = json.load(f)
+        df = pd.read_csv(history_path)
+        return "OK", results, df
+    except Exception:
+        return "ERROR", None, None
 
 # Page config
 st.set_page_config(
@@ -42,6 +63,7 @@ def main():
             "arm_selection": "Arm Selection Counts",
             "missing_data": "No Bandit Lab results found.",
             "run_instruction": "Please run the Bandit Lab simulation first:",
+            "load_error": "Error loading results. Please check if output files are valid.",
             "round": "Round",
             "policy": "Policy",
             "reward": "Reward",
@@ -59,6 +81,7 @@ def main():
             "arm_selection": "Contagem de Escolha dos Arms",
             "missing_data": "Resultados do Bandit Lab não encontrados.",
             "run_instruction": "Por favor, execute a simulação do Bandit Lab primeiro:",
+            "load_error": "Erro ao carregar resultados. Verifique se os arquivos de saída são válidos.",
             "round": "Rodada",
             "policy": "Política",
             "reward": "Recompensa",
@@ -74,21 +97,16 @@ def main():
     st.title(t["title"])
 
     root = project_root()
-    results_path = root / "configs/bandit_results.json"
-    history_path = root / "reports/bandit-history.csv"
+    status, results, df = get_bandit_outputs(root)
 
-    if not results_path.exists() or not history_path.exists():
+    if status == "MISSING":
         st.warning(t["missing_data"])
         st.info(t["run_instruction"])
         st.code(f"python -m {{PACKAGE_NAME}}.lab bandit")
         return
 
-    # Load results
-    try:
-        with open(results_path, "r", encoding="utf-8") as f:
-            results = json.load(f)
-    except Exception as e:
-        st.error(f"Error loading results: {e}")
+    if status == "ERROR" or results is None or df is None:
+        st.error(t["load_error"])
         return
 
     # Summary section
@@ -110,8 +128,6 @@ def main():
     st.header(t["history"])
 
     try:
-        df = pd.read_csv(history_path)
-
         col1, col2 = st.columns(2)
 
         with col1:
@@ -133,7 +149,7 @@ def main():
         st.bar_chart(arm_pivot)
 
     except Exception as e:
-        st.error(f"Error loading history: {e}")
+        st.error(f"Error rendering charts: {e}")
 
 if __name__ == "__main__":
     main()

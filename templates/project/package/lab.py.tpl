@@ -48,6 +48,7 @@ def run_bandit():
         print("\n[INFO] Multi-Armed Bandit Lab is not enabled in this project.")
         print("To enable it, generate a project with the 'guided' mode or 'full' profile.")
 
+{% if GENERATE_BANDIT == "true" %}
 def run_bandit_dashboard():
     # Bandit Dashboard is a Streamlit app named bandit_dashboard.py inside the package
     pkg_dir = Path(__file__).parent
@@ -60,6 +61,7 @@ def run_bandit_dashboard():
     else:
         print("\n[INFO] Bandit Lab dashboard is not available in this project.")
         print("To enable it, generate a project with 'Guided Learning Mode' or the 'full' profile.")
+{% endif %}
 
 def run_train():
     from . import train
@@ -113,7 +115,9 @@ def main():
     subparsers.add_parser("learn", help="Generate dataset-contextual learning notes")
     subparsers.add_parser("baseline", help="Run Baseline Lab for simple model benchmarking")
     subparsers.add_parser("bandit", help="Run educational Multi-Armed Bandit Lab")
+    {% if GENERATE_BANDIT == "true" %}
     subparsers.add_parser("bandit-dashboard", help="Visual explorer for Bandit Lab results")
+    {% endif %}
     subparsers.add_parser("train", help="Train the baseline model")
     subparsers.add_parser("evaluate", help="Evaluate the model performance")
     subparsers.add_parser("all", help="Run the full pipeline (check, eda, train, evaluate)")
@@ -133,8 +137,10 @@ def main():
         run_baseline()
     elif args.command == "bandit":
         run_bandit()
+    {% if GENERATE_BANDIT == "true" %}
     elif args.command == "bandit-dashboard":
         run_bandit_dashboard()
+    {% endif %}
     elif args.command == "train":
         run_train()
     elif args.command == "evaluate":
