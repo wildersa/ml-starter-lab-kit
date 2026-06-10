@@ -10,7 +10,8 @@ Escolha uma trilha com base no que você quer fazer.
 4. [Pré-processamento](workflows/preprocessing.pt-BR.md)
 5. [Feature engineering](models/feature-engineering.pt-BR.md)
 6. [Visão geral de métricas](metrics/README.pt-BR.md)
-7. [Checklist antes da avaliação](checklists/before-evaluation.pt-BR.md)
+7. [Básico de avaliação e monitoramento](concepts/evaluation-and-monitoring.pt-BR.md)
+8. [Checklist antes da avaliação](checklists/before-evaluation.pt-BR.md)
 
 ## Trilha 2 — Modelo tabular supervisionado
 
@@ -19,7 +20,8 @@ Escolha uma trilha com base no que você quer fazer.
 3. [Pré-processamento](workflows/preprocessing.pt-BR.md)
 4. [Medição de features](workflows/feature-measurement.pt-BR.md)
 5. [Métricas de classificação](metrics/classification.pt-BR.md) ou [métricas de regressão](metrics/regression.pt-BR.md)
-6. [Overfitting](common-mistakes/overfitting.pt-BR.md)
+6. [Básico de avaliação e monitoramento](concepts/evaluation-and-monitoring.pt-BR.md)
+7. [Overfitting](common-mistakes/overfitting.md)
 
 ## Trilha 3 — Modelo não supervisionado
 

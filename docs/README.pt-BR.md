@@ -4,16 +4,28 @@ Use esta página como mapa principal das notas didáticas.
 
 A documentação é intencionalmente curta. Ela deve ajudar a começar um projeto, não substituir livros ou docs completas de frameworks.
 
-## Caminho recomendado
+## Jornada de Aprendizado para Iniciantes
 
-1. [Trilhas de aprendizado](learning-paths.pt-BR.md)
-2. [Arquiteturas de ML](architectures/README.pt-BR.md)
-3. [Workflows](workflows/README.pt-BR.md)
-4. [Famílias de modelos](models/README.pt-BR.md)
-5. [Métricas](metrics/README.pt-BR.md)
-6. [Checklists](checklists/README.pt-BR.md)
-7. [Erros comuns](common-mistakes/README.pt-BR.md)
-8. [Glossário](glossary/README.pt-BR.md)
+Siga este caminho para entender como ir de um conjunto de dados bruto a um modelo monitorado.
+
+1.  **Configuração do Projeto**: [Layout do starter e do projeto gerado](usage/project-layout.pt-BR.md)
+2.  **Entendendo os Dados**: [Análise Exploratória de Dados (EDA)](workflows/eda.md)
+3.  **Estabeleça um Baseline**: [Baselines e Avaliação](concepts/evaluation-and-monitoring.pt-BR.md#2-o-baseline-seu-piso-de-desempenho)
+4.  **Escolha suas Métricas**: [Visão Geral de Métricas](metrics/README.pt-BR.md)
+5.  **Treino e Avaliação**: [Avaliação vs Monitoramento](concepts/evaluation-and-monitoring.pt-BR.md#1-avaliacao-vs-monitoramento)
+6.  **Acompanhamento de Experimentos**: [Visualização de Experimentos](experiment-visualization.md)
+7.  **Produção e Monitoramento**: [Drift e Retreinamento](concepts/evaluation-and-monitoring.pt-BR.md#6-drift-deriva-e-retreinamento)
+8.  **Evite Armadilhas**: [Erros Comuns](common-mistakes/README.pt-BR.md)
+
+## Navegação por Tópico
+
+- [Trilhas de aprendizado](learning-paths.pt-BR.md): Trilhas específicas para tabular, visão e séries temporais.
+- [Arquiteturas de ML](architectures/README.pt-BR.md): Como as peças se encaixam.
+- [Workflows](workflows/README.pt-BR.md): Guias passo a passo para treino e ajuste fino.
+- [Famílias de modelos](models/README.pt-BR.md): Qual modelo escolher para sua tarefa.
+- [Referência de métricas](metrics/README.pt-BR.md): Definições detalhadas de métricas.
+- [Checklists](checklists/README.pt-BR.md): O que verificar antes de avançar para a próxima etapa.
+- [Glossário](glossary/README.pt-BR.md): Terminologia de ML para iniciantes.
 
 ## Por pergunta
 
