@@ -35,6 +35,7 @@ TRANSLATIONS = {
         "task_unsupervised": "PCA/K-Means/clustering",
         "task_timeseries": "time series/LSTM",
         "task_vision": "image classification/detection",
+        "task_bandit": "Multi-Armed Bandit / adaptive decisions",
         "choose_option": "Choose an option",
         "invalid_option": "Invalid option.",
         "dataset_target": "Dataset and target",
@@ -156,6 +157,7 @@ TRANSLATIONS = {
         "next_step_workspace": "Interactive Learning Workspace (Visual-first)",
         "next_step_eda_first": "IMPORTANT: Run EDA before Advisor, Baseline, or Learning Notes",
         "next_step_advisor": "Dataset Advice (modeling suggestions)",
+        "next_step_bandit": "Bandit Lab (adaptive decisions)",
         "next_step_demo": "Check the demo scenario and data dictionary in docs/demo-scenario.md",
         "summary_mlflow": "MLflow Tracking",
         "yes": "yes",
@@ -176,6 +178,7 @@ TRANSLATIONS = {
         "task_unsupervised": "PCA/K-Means/agrupamento",
         "task_timeseries": "séries temporais/LSTM",
         "task_vision": "classificação de imagem/detecção",
+        "task_bandit": "Multi-Armed Bandit / decisões adaptativas",
         "choose_option": "Escolha uma opção",
         "invalid_option": "Opção inválida.",
         "dataset_target": "Dataset e alvo (target)",
@@ -297,6 +300,7 @@ TRANSLATIONS = {
         "next_step_workspace": "Workspace de Aprendizado Interativo (Visual-first)",
         "next_step_eda_first": "IMPORTANTE: Execute a EDA antes do Advisor, Baseline ou Notas de Aprendizado",
         "next_step_advisor": "Conselhos sobre o Dataset (sugestões de modelagem)",
+        "next_step_bandit": "Bandit Lab (decisões adaptativas)",
         "next_step_demo": "Consulte o cenário de demo e o dicionário de dados em docs/demo-scenario.md",
         "summary_mlflow": "Rastreamento MLflow",
         "yes": "sim",
@@ -406,6 +410,7 @@ def choose_task(t: dict[str, str]) -> str:
     print(f"3. unsupervised  - {t['task_unsupervised']}")
     print(f"4. timeseries    - {t['task_timeseries']}")
     print(f"5. vision        - {t['task_vision']}")
+    print(f"6. bandit        - {t['task_bandit']}")
 
     while True:
         choice = ask(t['choose_option'], "2")
@@ -662,6 +667,8 @@ def print_summary(root: Path, values: dict[str, str], t: dict[str, str], include
             steps.append(f"   - {t['next_step_4_data']}:     python -m {pkg}.lab eda")
         if values.get("GENERATE_ADVISOR") == "true":
             steps.append(f"   - {t['next_step_advisor']}:   python -m {pkg}.lab advisor")
+        if values.get("GENERATE_BANDIT") == "true":
+            steps.append(f"   - {t['next_step_bandit']}:   python -m {pkg}.lab bandit")
         steps.append(f"   - {t['next_step_4_train']}:    python -m {pkg}.lab train")
         steps.append(f"   - {t['next_step_4_eval']}: python -m {pkg}.lab evaluate")
     else:
@@ -738,10 +745,7 @@ def main() -> None:
 
     print(f"\n{t['optional_files_templates']}")
 
-    if experience_mode == "guided":
-        profile = "recommended"
-    else:
-        profile = choose_optional_profile(t, experience_mode=experience_mode)
+    profile = choose_optional_profile(t, experience_mode=experience_mode)
 
     if profile == "custom":
         optional_options = {
@@ -767,8 +771,10 @@ def main() -> None:
         optional_options["advisor"] = True
         optional_options["learning"] = True
         optional_options["baseline_lab"] = True
-        optional_options["bandit_lab"] = True
         optional_options["learning_workspace"] = True
+
+    if task == "bandit":
+        optional_options["bandit_lab"] = True
 
     needs_ml_basics = (optional_options.get("advisor") or optional_options.get("baseline_lab"))
     if needs_ml_basics and not include_ml_basics:

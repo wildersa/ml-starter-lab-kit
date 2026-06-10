@@ -19,7 +19,7 @@ class TestBanditWiring(unittest.TestCase):
         shutil.rmtree(self.test_dir)
 
     def test_bandit_lab_generated_in_guided_mode(self):
-        """P0.1: Guided project contains bandit_lab.py and configs/bandit_config.json."""
+        """P0.1: Guided project contains bandit_lab.py and configs/bandit_config.json when task is bandit."""
         package_name = "bandit_guided_pkg"
         output_dir = self.test_dir / "bandit_guided_project"
 
@@ -27,6 +27,7 @@ class TestBanditWiring(unittest.TestCase):
             project_name="Bandit Guided Project",
             package_name=package_name,
             output_dir=output_dir,
+            task="6", # Bandit task
             experience_mode="2" # Guided Learning Mode
         )
 
@@ -66,6 +67,7 @@ class TestBanditWiring(unittest.TestCase):
             project_name="Bandit Run Project",
             package_name=package_name,
             output_dir=output_dir,
+            task="6", # Bandit task
             experience_mode="2"
         )
 
@@ -140,6 +142,7 @@ class TestBanditWiring(unittest.TestCase):
             project_name="Bandit Fail Project",
             package_name=package_name,
             output_dir=output_dir,
+            task="6", # Bandit task
             experience_mode="2"
         )
 
@@ -173,6 +176,7 @@ class TestBanditWiring(unittest.TestCase):
             project_name="Bandit Policy Fail Project",
             package_name=package_name,
             output_dir=output_dir,
+            task="6", # Bandit task
             experience_mode="2"
         )
 
@@ -205,6 +209,7 @@ class TestBanditWiring(unittest.TestCase):
             project_name="Bandit Prob Fail Project",
             package_name=package_name,
             output_dir=output_dir,
+            task="6", # Bandit task
             experience_mode="2"
         )
 

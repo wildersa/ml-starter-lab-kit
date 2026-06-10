@@ -25,6 +25,7 @@ class TestBanditDashboard(unittest.TestCase):
             project_name="Bandit Dashboard Project",
             package_name=package_name,
             output_dir=output_dir,
+            task="6", # bandit task
             experience_mode="2" # Guided
         )
 
@@ -76,6 +77,7 @@ class TestBanditDashboard(unittest.TestCase):
             project_name="Bandit Loader",
             package_name=package_name,
             output_dir=output_dir,
+            task="6", # bandit task
             experience_mode="2"
         )
 
@@ -140,6 +142,7 @@ class TestBanditDashboard(unittest.TestCase):
             project_name="Bandit Syntax",
             package_name=package_name,
             output_dir=output_dir,
+            task="6", # bandit task
             experience_mode="2"
         )
 

@@ -25,6 +25,7 @@ class TestBanditPolicies(unittest.TestCase):
             project_name="Bandit Policies Project",
             package_name=package_name,
             output_dir=output_dir,
+            task="6", # bandit task
             experience_mode="2" # Guided
         )
 
@@ -96,6 +97,7 @@ class TestBanditPolicies(unittest.TestCase):
             project_name="Bandit Thompson Project",
             package_name=package_name,
             output_dir=output_dir,
+            task="6", # bandit task
             experience_mode="2"
         )
 
