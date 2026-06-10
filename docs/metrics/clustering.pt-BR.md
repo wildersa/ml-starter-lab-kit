@@ -1,21 +1,27 @@
-# Métricas de clusterização
+# Métricas de Agrupamento (Clustering)
 
-Use métricas de clusterização quando não existe target e o modelo cria grupos.
+No agrupamento, você não tem uma "resposta certa" (alvo) para comparar. A avaliação consiste em medir a qualidade dos grupos e sua utilidade.
 
-## Inércia
+## Inércia (Inertia)
 
-Mede o quão perto as amostras estão dos centros dos seus clusters.
+- **O que responde**: Quão compactos são meus clusters?
+- **Quando usar**: Principalmente com K-Means para encontrar o "Cotovelo" (o ponto onde adicionar mais clusters não reduz significativamente a inércia).
+- **Quando evitar**: Quando seus clusters têm formas irregulares (não esféricos).
 
-Útil para K-Means, mas não basta sozinha.
+## Coeficiente de Silhueta (Silhouette Score)
 
-## Silhouette score
+- **O que responde**: Quão bem separados estão os clusters?
+- **Quando usar**: Para verificar se uma amostra está muito mais próxima do seu próprio cluster do que de outros. Os valores variam de -1 a 1 (quanto maior, melhor).
+- **Exemplo**: Um valor próximo de 1 significa que os clusters são bem distintos; um valor próximo de 0 significa que eles se sobrepõem significativamente.
 
-Mede o quanto uma amostra é parecida com seu próprio cluster em comparação com outros clusters.
+## Interpretação Qualitativa
 
-Maior geralmente é melhor.
+- **O que responde**: Esses grupos fazem sentido para o meu negócio?
+- **Quando usar**: Sempre. Após o agrupamento, você deve descrever o "perfil" de cada grupo.
+- **Armadilha comum**: Confiar apenas em métricas matemáticas. Um agrupamento matematicamente "perfeito" que agrupa clientes de uma forma que não leva a ações diferentes é inútil.
 
-## Aviso prático
+---
 
-Uma boa métrica de clusterização não significa automaticamente que os clusters são úteis para o negócio.
+### Dica Prática
 
-Sempre interprete os clusters.
+Sempre verifique o [Checklist Antes da Avaliação](../checklists/before-evaluation.pt-BR.md) e lembre-se de que o agrupamento é frequentemente uma etapa exploratória, não uma resposta final.

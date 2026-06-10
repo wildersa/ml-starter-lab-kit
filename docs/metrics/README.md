@@ -2,18 +2,18 @@
 
 Metrics tell you if the model is useful for the problem.
 
-Do not choose a metric only because it is popular. Choose it because it matches the decision.
+Do not choose a metric only because it is popular. Choose it because it matches the **decision** you need to make and the **cost of being wrong**.
 
 ## Quick map
 
-| Problem | Start with |
+| Problem | Recommended Metrics |
 |---|---|
-| Classification | [Accuracy, F1, AUC](classification.md) |
-| Regression | [MAE, RMSE, R²](regression.md) |
-| Clustering | [Silhouette, inertia](clustering.md) |
-| Time series | [MAE, RMSE, MAPE](time-series.md) |
-| Bandits | [Reward, regret](bandits.md) |
-| Vision | [F1, mAP, IoU, Dice](vision.md) |
+| Classification | [Accuracy, Precision, Recall, F1, AUC](classification.md) |
+| Regression | [MAE, RMSE, R², MAPE](regression.md) |
+| Clustering | [Silhouette, Inertia, Interpretation](clustering.md) |
+| Time series | [MAE, RMSE, sMAPE, Backtesting](time-series.md) |
+| Bandits | [Reward, Regret, Lift, Exploration](bandits.md) |
+| Vision | [mAP, IoU, Dice, F1](vision.md) |
 
 ## Related guides
 
@@ -25,6 +25,6 @@ Do not choose a metric only because it is popular. Choose it because it matches 
 
 A good metric should answer:
 
-```text
-Did the model improve the decision I care about?
-```
+> "Did the model improve the decision I care about?"
+
+If your metric improves but your business outcome doesn't, you are measuring the wrong thing.

@@ -1,25 +1,28 @@
-# Métricas de séries temporais
+# Métricas de Séries Temporais
 
-Use estas métricas ao prever valores futuros.
+A avaliação de séries temporais exige um foco especial na ordem temporal dos dados. Você deve avaliar como o modelo se comporta em dados "futuros" em relação ao que ele viu durante o treinamento.
 
-## MAE
+## Métricas Recomendadas
 
-Erro absoluto médio.
+As séries temporais geralmente usam as mesmas métricas da regressão (MAE, RMSE, MAPE), mas com uma estratégia de avaliação diferente.
 
-Fácil de explicar.
+- **MAE**: Melhor para precisão geral nas mesmas unidades.
+- **RMSE**: Melhor quando grandes erros de previsão são catastróficos.
+- **sMAPE (MAPE Simétrico)**: Uma variação do MAPE que é mais robusta quando os valores reais são pequenos ou zero.
 
-## RMSE
+## Estratégia de Avaliação: Backtesting
 
-Penaliza erros grandes com mais força.
+- **O que responde**: Se eu tivesse usado este modelo no passado, qual teria sido o seu desempenho?
+- **Quando usar**: Sempre para séries temporais. Em vez de divisões aleatórias, use uma **Janela Deslizante (Sliding Window)** ou **Janela em Expansão (Expanding Window)**.
+- **Armadilha comum**: Avaliar em linhas aleatórias (shuffling) causa "Vazamento Temporal" (Temporal Leakage), onde o modelo vê o futuro para prever o passado, levando a um desempenho irrealista.
 
-Útil quando errar muito é especialmente ruim.
+## Horizonte de Previsão e Janela
 
-## MAPE
+- **Horizonte (Horizon)**: Quão longe no futuro você está prevendo? (ex: prever os próximos 7 dias). As métricas geralmente pioram à medida que o horizonte aumenta.
+- **Janela (Window)**: A quantidade de dados passados usados para fazer uma previsão (ex: usar os últimos 30 dias para prever o próximo dia).
 
-Erro percentual.
+---
 
-Útil para comunicação, mas perigoso quando valores reais estão perto de zero.
+### Dica Prática
 
-## Aviso prático
-
-Avalie em períodos futuros, não em linhas aleatórias.
+Sempre verifique o [Checklist Antes da Avaliação](../checklists/before-evaluation.pt-BR.md) para garantir que sua divisão temporal esteja correta e que você não esteja "vazando" informações do futuro para o passado.

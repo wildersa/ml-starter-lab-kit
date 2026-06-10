@@ -1,25 +1,28 @@
 # Time Series Metrics
 
-Use these metrics when predicting future values.
+Time series evaluation requires a special focus on the temporal order of data. You must evaluate how the model performs on "future" data relative to what it saw during training.
 
-## MAE
+## Recommended Metrics
 
-Average absolute error.
+Time series often use the same metrics as regression (MAE, RMSE, MAPE), but with a different evaluation strategy.
 
-Easy to explain.
+- **MAE**: Best for general accuracy in the same units.
+- **RMSE**: Best when large forecasting misses are catastrophic.
+- **sMAPE (Symmetric MAPE)**: A variation of MAPE that is more robust when actual values are small or zero.
 
-## RMSE
+## Evaluation Strategy: Backtesting
 
-Penalizes large errors more strongly.
+- **What it answers**: If I had used this model in the past, how would it have performed?
+- **When to use it**: Always for time series. Instead of random splits, use a **Sliding Window** or **Expanding Window** (Time Series Cross-Validation).
+- **Common trap**: Evaluating on random rows (shuffling) causes "Temporal Leakage", where the model sees the future to predict the past, leading to unrealistic performance.
 
-Useful when large misses are especially bad.
+## Forecast Horizon and Window
 
-## MAPE
+- **Horizon**: How far into the future are you predicting? (e.g., predict the next 7 days). Metrics often degrade as the horizon increases.
+- **Window**: The amount of past data used to make a prediction (e.g., use the last 30 days to predict the next 1).
 
-Percentage error.
+---
 
-Useful for communication, but risky when actual values are close to zero.
+### Practical Tip
 
-## Practical warning
-
-Evaluate on future periods, not random rows.
+Always check the [Before Evaluation Checklist](../checklists/before-evaluation.md) to ensure your temporal split is correct and you are not "leaking" future information into the past.

@@ -1,33 +1,43 @@
 # Bandit Metrics
 
-Use these metrics when a policy chooses actions and receives rewards.
+Multi-Armed Bandits (MAB) evaluate the trade-off between **Exploration** (gathering information) and **Exploitation** (using known information to maximize reward).
 
 ## Reward
 
-Immediate feedback from an action.
+- **What it answers**: What is the immediate result of an action?
+- **When to use it**: To define success (e.g., click, purchase, satisfied user).
+- **Example**: A reward of 1 for a click and 0 for no click.
 
-Example: click, conversion, revenue, score.
+## Cumulative Reward
 
-## Cumulative reward
-
-Total reward accumulated over time.
-
-Useful to compare policies.
+- **What it answers**: How much total value has the policy generated over time?
+- **When to use it**: To compare the overall performance of different strategies.
+- **Example**: Strategy A earned 1500 total clicks, while Strategy B earned 1200.
 
 ## Regret
 
-How much reward was lost compared to a better possible choice.
+- **What it answers**: How much reward did I lose by not picking the best possible arm every time?
+- **When to use it**: To understand the cost of learning. Lower regret means the policy found the best option quickly.
+- **Common trap**: Zero regret is impossible during learning, but a good policy shows a "plateauing" cumulative regret curve.
 
-Lower regret is better.
+## Lift vs. Baseline
 
-## Exploration rate
+- **What it answers**: How much better is the bandit than a random choice or a static business rule?
+- **When to use it**: To justify the use of a bandit system over a simpler approach.
+- **Example**: The Thompson Sampling policy achieved a 15% lift in conversion compared to the random baseline.
 
-How often the policy tests uncertain options.
+## Arm Distribution
 
-Too low may stop learning. Too high may waste traffic.
+- **What it answers**: Which options (arms) is the model choosing the most?
+- **When to use it**: To detect if the model is stuck on one option or if it is exploring fairly.
 
-## Exposure fairness
+## Exploration Cost and User Drift
 
-Checks if eligible segments receive reasonable exposure.
+- **Exploration Cost**: The temporary loss in reward incurred while testing uncertain options.
+- **User Behavior Drift**: Bandits are sensitive to changes in user preferences over time. If your reward rate suddenly drops, your users might have changed their behavior, requiring the model to "re-learn".
 
-Important when actions affect users differently.
+---
+
+### Practical Tip
+
+Always check the [Before Evaluation Checklist](../checklists/before-evaluation.md) and monitor the bandit's performance over time, as its environment is dynamic.

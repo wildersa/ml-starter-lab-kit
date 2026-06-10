@@ -1,34 +1,30 @@
-# Métricas de visão computacional
+# Métricas de Visão Computacional
 
-Use métricas de visão quando o modelo trabalha com imagens.
+A avaliação de Visão Computacional depende da tarefa específica: Classificação, Detecção ou Segmentação.
 
-## Classificação de imagem
+## Classificação de Imagem
 
-Métricas comuns:
+Usa as mesmas métricas da [Classificação](classification.pt-BR.md): Acurácia, Precisão, Recall e F1-Score.
 
-- accuracy;
-- precision;
-- recall;
-- F1-score;
-- matriz de confusão.
+## Detecção de Objetos
 
-## Detecção de objetos
+- **mAP (mean Average Precision)**:
+  - **O que responde**: Quão bem o modelo encontrou todos os objetos e os rotulou corretamente?
+  - **Quando usar**: Para avaliar modelos de detecção em diferentes classes.
+  - **Armadilha comum**: O mAP pode ser confuso porque depende de um threshold de IoU (veja abaixo). Um modelo pode ter mAP alto, mas ainda perder objetos pequenos.
 
-Métrica comum:
-
-- mAP: mean Average Precision.
-
-Ela avalia se as caixas detectadas e as classes estão corretas.
+- **IoU (Intersection over Union)**:
+  - **O que responde**: O quanto a caixa prevista se sobrepõe à caixa real (ground truth)?
+  - **Quando usar**: Para medir a precisão da localização. Geralmente, um IoU > 0,5 é considerado um "acerto".
 
 ## Segmentação
 
-Métricas comuns:
+- **Dice Score / F1-Score**:
+  - **O que responde**: Quão semelhante é a máscara prevista em relação à máscara real?
+  - **Quando usar**: Para avaliar a precisão ao nível do pixel. É muito comum em imagens médicas.
 
-- IoU: Intersection over Union;
-- Dice score.
+---
 
-Elas comparam máscaras previstas com máscaras esperadas.
+### Dica Prática
 
-## Aviso prático
-
-Sempre inspecione exemplos visualmente. Uma métrica pode parecer boa enquanto o modelo falha em casos de borda importantes.
+Sempre verifique o [Checklist Antes da Avaliação](../checklists/before-evaluation.pt-BR.md). Para tarefas de visão, métricas matemáticas nunca são suficientes — sempre **inspecione visualmente** uma amostra de sucessos e falhas.
