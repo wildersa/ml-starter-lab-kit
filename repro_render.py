@@ -1,9 +1,6 @@
 import re
-from pathlib import Path
 
 def render(content: str, values: dict[str, str]) -> str:
-    import re
-
     # 1. Simple placeholders: {{KEY}}
     for key, value in values.items():
         content = content.replace("{{" + key + "}}", value)
@@ -68,8 +65,29 @@ def render(content: str, values: dict[str, str]) -> str:
 
     return content
 
-template_content = Path("templates/common/bandit_lab.py.tpl").read_text()
-rendered = render(template_content, {"PACKAGE_NAME": "test_pkg"})
-print(f"Rendered length: {len(rendered)}")
-print("--- LAST 200 CHARS ---")
-print(repr(rendered[-200:]))
+template = """
+{% if LEARNING_ENABLED == "true" %}
+streamlit
+{% else %}
+{% if GENERATE_BANDIT == "true" %}
+streamlit
+{% endif %}
+{% endif %}
+"""
+
+print("Test 1: LEARNING_ENABLED=true, GENERATE_BANDIT=true")
+print(render(template, {"LEARNING_ENABLED": "true", "GENERATE_BANDIT": "true"}))
+
+print("\nTest 2: LEARNING_ENABLED=false, GENERATE_BANDIT=true")
+print(render(template, {"LEARNING_ENABLED": "false", "GENERATE_BANDIT": "true"}))
+
+print("\nTest 3: LEARNING_ENABLED=false, GENERATE_BANDIT=false")
+print(render(template, {"LEARNING_ENABLED": "false", "GENERATE_BANDIT": "false"}))
+
+print("\nTest 4: Original failing template with 'or'")
+template_fail = """
+{% if LEARNING_ENABLED == "true" or GENERATE_BANDIT == "true" %}
+streamlit
+{% endif %}
+"""
+print(render(template_fail, {"LEARNING_ENABLED": "false", "GENERATE_BANDIT": "true"}))
