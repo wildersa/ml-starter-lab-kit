@@ -18,6 +18,7 @@ import json
 import random
 import csv
 import sys
+import math
 from typing import Any, Dict, List, Tuple
 from pathlib import Path
 
@@ -87,6 +88,65 @@ class EpsilonGreedyPolicy:
         self.values[arm_index] = new_value
 
 
+class UCB1Policy:
+    """Policy that uses Upper Confidence Bound (UCB1) for exploration."""
+
+    def __init__(self, n_arms: int, seed: int = 42):
+        self.n_arms = n_arms
+        self.rng = random.Random(seed)
+        self.counts = [0] * n_arms
+        self.values = [0.0] * n_arms
+        self.t = 0
+
+    def select_arm(self) -> int:
+        self.t += 1
+        # Initial sweep: select each arm at least once
+        for i in range(self.n_arms):
+            if self.counts[i] == 0:
+                return i
+
+        # Calculate UCB score for each arm
+        ucb_values = [0.0] * self.n_arms
+        for i in range(self.n_arms):
+            bonus = math.sqrt((2 * math.log(self.t)) / self.counts[i])
+            ucb_values[i] = self.values[i] + bonus
+
+        max_ucb = max(ucb_values)
+        indices = [i for i, v in enumerate(ucb_values) if v == max_ucb]
+        return self.rng.choice(indices)
+
+    def update(self, arm_index: int, reward: int) -> None:
+        self.counts[arm_index] += 1
+        n = self.counts[arm_index]
+        value = self.values[arm_index]
+        # Incremental average update
+        new_value = ((n - 1) / n) * value + (1 / n) * reward
+        self.values[arm_index] = new_value
+
+
+class ThompsonSamplingPolicy:
+    """Policy that uses Thompson Sampling with Beta posterior for Bernoulli rewards."""
+
+    def __init__(self, n_arms: int, seed: int = 42):
+        self.n_arms = n_arms
+        self.rng = random.Random(seed)
+        # Beta(1, 1) is a uniform prior
+        self.alphas = [1.0] * n_arms
+        self.betas = [1.0] * n_arms
+
+    def select_arm(self) -> int:
+        samples = [self.rng.betavariate(self.alphas[i], self.betas[i]) for i in range(self.n_arms)]
+        max_sample = max(samples)
+        indices = [i for i, v in enumerate(samples) if v == max_sample]
+        return self.rng.choice(indices)
+
+    def update(self, arm_index: int, reward: int) -> None:
+        if reward == 1:
+            self.alphas[arm_index] += 1
+        else:
+            self.betas[arm_index] += 1
+
+
 class BanditLab:
     """Simulation runner and reporter for the Multi-Armed Bandit Lab."""
 
@@ -108,6 +168,8 @@ class BanditLab:
                 "edu_intro": "Multi-Armed Bandit (MAB) is a form of sequential decision learning. Unlike supervised learning where you have a fixed dataset and labels, MAB learns while it makes decisions through a sequence of actions.",
                 "edu_cycle": "In each round, the policy chooses one arm (action) and observes the reward only for that specific arm. This partial feedback is the core challenge of MAB: you don't know what the reward would have been if you chose a different arm.",
                 "edu_random": "The **Random Policy** serves as a baseline that does not learn from feedback. It helps to evaluate how much better adaptive policies can perform by effectively balancing exploration and exploitation.",
+                "edu_ucb1": "The **UCB1 (Upper Confidence Bound)** policy uses an 'optimism in the face of uncertainty' approach. For each arm, it calculates the average reward plus an uncertainty bonus. Arms that haven't been tried much get a higher bonus, forcing the agent to explore them before focusing on the best-performing options.",
+                "edu_thompson": "The **Thompson Sampling** policy is a Bayesian approach. It maintains a probability distribution (Beta posterior) for each arm. In each round, it samples from these distributions and chooses the arm with the highest sample. This naturally balances exploration (from the width of the distribution) and exploitation (from its center).",
                 "summary_section": "Summary",
                 "total_reward": "Total Reward",
                 "avg_reward": "Average Reward",
@@ -124,6 +186,8 @@ class BanditLab:
                 "edu_intro": "Multi-Armed Bandit (MAB) é uma forma de aprendizado por decisão sequencial. Diferente do aprendizado supervisionado onde você tem um conjunto de dados fixo e rótulos, o MAB aprende enquanto toma decisões através de uma sequência de ações.",
                 "edu_cycle": "Em cada rodada, a política escolhe um 'arm' (ação) e observa a recompensa apenas para aquele arm específico. Esse feedback parcial é o desafio central do MAB: você não sabe qual teria sido a recompensa se tivesse escolhido um arm diferente.",
                 "edu_random": "A **Política Aleatória (Random Policy)** serve como um baseline que não aprende com o feedback. Ela ajuda a avaliar o quanto melhor as políticas adaptativas podem performar ao equilibrar exploração (exploration) e explotação (exploitation).",
+                "edu_ucb1": "A política **UCB1 (Upper Confidence Bound)** utiliza uma abordagem de 'otimismo diante da incerteza'. Para cada arm, ela calcula a média de recompensa mais um bônus de incerteza. Arms pouco testados recebem um bônus maior, forçando o agente a explorá-los antes de focar nas melhores opções.",
+                "edu_thompson": "A política **Thompson Sampling** é uma abordagem Bayesiana. Ela mantém uma distribuição de probabilidade (Beta posterior) para cada arm. Em cada rodada, ela sorteia uma amostra dessas distribuições e escolhe o arm com a maior amostra. Isso equilibra naturalmente exploração (pela largura da distribuição) e explotação (pelo seu centro).",
                 "summary_section": "Resumo",
                 "total_reward": "Recompensa Total",
                 "avg_reward": "Recompensa Média",
@@ -177,7 +241,7 @@ class BanditLab:
                 sys.exit(1)
 
         # Policies validation
-        valid_policies = ["random", "epsilon_greedy"]
+        valid_policies = ["random", "epsilon_greedy", "ucb1", "thompson_sampling"]
         if not self.config["policies"]:
             print("Error: 'policies' list cannot be empty.")
             sys.exit(1)
@@ -216,6 +280,10 @@ class BanditLab:
             elif policy_name == "epsilon_greedy":
                 epsilon = self.config.get("epsilon", 0.1)
                 policy = EpsilonGreedyPolicy(self.n_arms, epsilon, self.seed)
+            elif policy_name == "ucb1":
+                policy = UCB1Policy(self.n_arms, self.seed)
+            elif policy_name == "thompson_sampling":
+                policy = ThompsonSamplingPolicy(self.n_arms, self.seed)
             else:
                 print(f"Warning: Policy '{policy_name}' is not implemented in this version. Skipping.")
                 continue
@@ -277,6 +345,10 @@ class BanditLab:
             self.t["edu_cycle"],
             "",
             self.t["edu_random"],
+            "",
+            self.t["edu_ucb1"],
+            "",
+            self.t["edu_thompson"],
             "",
             f"## {self.t['summary_section']}",
         ]

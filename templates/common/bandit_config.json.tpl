@@ -21,7 +21,9 @@
   ],
   "policies": [
     "random",
-    "epsilon_greedy"
+    "epsilon_greedy",
+    "ucb1",
+    "thompson_sampling"
   ],
   "epsilon": 0.1,
   "expected_outputs": [

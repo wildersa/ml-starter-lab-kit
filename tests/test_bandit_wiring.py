@@ -118,8 +118,8 @@ class TestBanditWiring(unittest.TestCase):
             reader = csv.DictReader(f)
             history = list(reader)
 
-        # 1000 rounds per policy (random, epsilon_greedy) = 2000 rounds
-        self.assertEqual(len(history), 2000)
+        # 1000 rounds per policy (random, epsilon_greedy, ucb1, thompson_sampling) = 4000 rounds
+        self.assertEqual(len(history), 4000)
 
         for row in history:
             # P0.2: Rewards are 0 or 1
