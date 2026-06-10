@@ -18,6 +18,6 @@ jobs:
       - name: Compile check
         run: python -m py_compile create_ml_starter.py
       - name: Install dependencies
-        run: pip install pandas numpy scikit-learn
+        run: pip install pandas numpy scikit-learn streamlit
       - name: Run tests
         run: python -m unittest discover -s tests

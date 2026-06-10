@@ -64,6 +64,11 @@ class TestBanditDashboard(unittest.TestCase):
 
     def test_bandit_dashboard_data_loading(self):
         """P0.2, P0.4: Test the data-loading function directly."""
+        # Mock streamlit to avoid requiring it for just testing the data loader
+        from unittest.mock import MagicMock
+        if 'streamlit' not in sys.modules:
+            sys.modules['streamlit'] = MagicMock()
+
         package_name = "bandit_loader"
         output_dir = self.test_dir / "bandit_loader"
 
