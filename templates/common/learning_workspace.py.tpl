@@ -19,13 +19,14 @@ try:
     config_mod = importlib.import_module(f"{module_name}.config")
     load_config = config_mod.load_config
     project_root = config_mod.project_root
+    get_mlflow_status = getattr(config_mod, "get_mlflow_status", None)
 
     readiness_mod = importlib.import_module(f"{module_name}.core.readiness")
     check_dataset_readiness = readiness_mod.check_dataset_readiness
 except ImportError:
     # Fallback to local imports if package structure is not found as expected
     try:
-        from config import load_config, project_root
+        from config import get_mlflow_status, load_config, project_root
         from core.readiness import check_dataset_readiness
     except ImportError as e:
         st.error(f"Could not import project modules: {e}")
@@ -295,8 +296,14 @@ def main():
 
     elif section == "Experiments & MLflow":
         st.header("📈 Experiments & MLflow")
-        mlflow_config = config.get("tracking", {}).get("mlflow", {})
-        mlflow_enabled = mlflow_config.get("enabled", False)
+        # MLflow status lookup - prioritize enabled_mlflow from generator, with fallback for nested structure
+        if get_mlflow_status:
+            mlflow_enabled = get_mlflow_status(config)
+        else:
+            # Inline fallback for cases where the helper is missing
+            mlflow_enabled = config.get("tracking", {}).get("enabled_mlflow")
+            if mlflow_enabled is None:
+                mlflow_enabled = config.get("tracking", {}).get("mlflow", {}).get("enabled", False)
 
         if mlflow_enabled:
             st.success("MLflow tracking is enabled for this project!")
