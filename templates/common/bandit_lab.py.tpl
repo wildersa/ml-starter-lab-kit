@@ -1,19 +1,17 @@
-"""Educational Multi-Armed Bandit Lab.
-
-This module implements a Bernoulli Multi-Armed Bandit simulation to help
-understand the exploration-exploitation trade-off and sequential decision making.
-
-Command:
-    python -m {{PACKAGE_NAME}}.lab bandit
-
-Outputs:
-    configs/bandit_results.json
-    reports/bandit-results.md
-    reports/bandit-history.csv
-"""
-
+"""Educational Multi-Armed Bandit Lab."""
 from __future__ import annotations
 
+import csv
 import json
 import random
-import
+import sys
+from pathlib import Path
+from typing import Any
+
+from .core.config import project_root
+
+
+class BernoulliEnvironment:
+    def __init__(self, arms: list[dict[str, Any]], seed: int = 42):
+        self.arms = arms
+        self.rng = random.Random
