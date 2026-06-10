@@ -154,6 +154,7 @@ def create_optional_files(
         "baseline_lab": package_path / "baseline_lab.py",
         "learning_workspace": package_path / "learning_workspace.py",
         "bandit_lab": package_path / "bandit_lab.py",
+        "bandit_dashboard": package_path / "bandit_dashboard.py",
         "bandit_config": root / "configs/bandit_config.json",
     }
 
@@ -172,6 +173,7 @@ def create_optional_files(
         "baseline_lab": "baseline_lab.py.tpl",
         "learning_workspace": "learning_workspace.py",
         "bandit_lab": "bandit_lab.py.tpl",
+        "bandit_dashboard": "bandit_dashboard.py.tpl",
         "bandit_config": "bandit_config.json.tpl",
     }
 
@@ -180,10 +182,14 @@ def create_optional_files(
             content = load_template(template_names[key], values)
             write_text(mapping[key], content, force=force)
 
-    # Special wiring for Bandit Lab which also needs a config
+    # Special wiring for Bandit Lab which also needs a config and dashboard
     if options.get("bandit_lab"):
+        # Config
         content = load_template(template_names["bandit_config"], values)
         write_text(mapping["bandit_config"], content, force=force)
+        # Dashboard
+        content = load_template(template_names["bandit_dashboard"], values)
+        write_text(mapping["bandit_dashboard"], content, force=force)
 
 
 def create_demo_data(
