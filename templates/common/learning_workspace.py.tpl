@@ -239,9 +239,30 @@ def main():
 
         bandit_results_path = project_root() / "configs/bandit_results.json"
         bandit_report_path = project_root() / "reports/bandit-results.md"
+        bandit_history_path = project_root() / "reports/bandit-history.csv"
 
         if bandit_report_path.exists():
             st.success("Bandit simulation results found.")
+
+            # Summary charts
+            if bandit_history_path.exists():
+                try:
+                    df = pd.read_csv(bandit_history_path)
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.subheader("Cumulative Reward")
+                        reward_df = df.pivot(index="round", columns="policy", values="cumulative_reward")
+                        st.line_chart(reward_df)
+                    with col2:
+                        st.subheader("Cumulative Regret")
+                        regret_df = df.pivot(index="round", columns="policy", values="cumulative_regret")
+                        st.line_chart(regret_df)
+
+                    st.info("💡 **Tip**: For more detailed analysis, use the standalone dashboard:")
+                    st.code(f"python -m {{PACKAGE_NAME}}.lab bandit-dashboard")
+                except Exception as e:
+                    st.error(f"Error loading charts: {e}")
+
             st.markdown(bandit_report_path.read_text())
 
             if bandit_results_path.exists():
