@@ -4,7 +4,7 @@ This module implements a Bernoulli Multi-Armed Bandit simulation to help
 understand the exploration-exploitation trade-off and sequential decision making.
 
 Command:
-    python -m {{PACKAGE_NAME}}.lab bandit
+    python -m test_pkg.lab bandit
 
 Outputs:
     configs/bandit_results.json
@@ -22,7 +22,6 @@ from typing import Any, Dict, List, Tuple
 from pathlib import Path
 
 from .core.config import project_root
-
 
 class BernoulliEnvironment:
     """Stochastic Bernoulli environment for Multi-Armed Bandit."""
@@ -44,7 +43,6 @@ class BernoulliEnvironment:
         """Calculates the expected regret for selecting a specific arm."""
         return self.best_prob - self.probabilities[arm_index]
 
-
 class RandomPolicy:
     """Policy that selects arms uniformly at random."""
 
@@ -58,7 +56,6 @@ class RandomPolicy:
     def update(self, arm_index: int, reward: int) -> None:
         """Random policy does not learn from rewards."""
         pass
-
 
 class EpsilonGreedyPolicy:
     """Policy that explores with probability epsilon and exploits otherwise."""
@@ -86,7 +83,6 @@ class EpsilonGreedyPolicy:
         new_value = ((n - 1) / n) * value + (1 / n) * reward
         self.values[arm_index] = new_value
 
-
 class BanditLab:
     """Simulation runner and reporter for the Multi-Armed Bandit Lab."""
 
@@ -104,10 +100,6 @@ class BanditLab:
             "en": {
                 "report_title": "Multi-Armed Bandit Lab Results",
                 "intro": "Simulation results for Bernoulli Multi-Armed Bandit environment.",
-                "edu_header": "Understanding Multi-Armed Bandits",
-                "edu_intro": "Multi-Armed Bandit (MAB) is a form of sequential decision learning. Unlike supervised learning where you have a fixed dataset and labels, MAB learns while it makes decisions through a sequence of actions.",
-                "edu_cycle": "In each round, the policy chooses one arm (action) and observes the reward only for that specific arm. This partial feedback is the core challenge of MAB: you don't know what the reward would have been if you chose a different arm.",
-                "edu_random": "The **Random Policy** serves as a baseline that does not learn from feedback. It helps to evaluate how much better adaptive policies can perform by effectively balancing exploration and exploitation.",
                 "summary_section": "Summary",
                 "total_reward": "Total Reward",
                 "avg_reward": "Average Reward",
@@ -120,10 +112,6 @@ class BanditLab:
             "pt-BR": {
                 "report_title": "Resultados do Bandit Lab",
                 "intro": "Resultados da simulação de ambiente Bernoulli Multi-Armed Bandit.",
-                "edu_header": "Entendendo Multi-Armed Bandits",
-                "edu_intro": "Multi-Armed Bandit (MAB) é uma forma de aprendizado por decisão sequencial. Diferente do aprendizado supervisionado onde você tem um conjunto de dados fixo e rótulos, o MAB aprende enquanto toma decisões através de uma sequência de ações.",
-                "edu_cycle": "Em cada rodada, a política escolhe um 'arm' (ação) e observa a recompensa apenas para aquele arm específico. Esse feedback parcial é o desafio central do MAB: você não sabe qual teria sido a recompensa se tivesse escolhido um arm diferente.",
-                "edu_random": "A **Política Aleatória (Random Policy)** serve como um baseline que não aprende com o feedback. Ela ajuda a avaliar o quanto melhor as políticas adaptativas podem performar ao equilibrar exploração (exploration) e explotação (exploitation).",
                 "summary_section": "Resumo",
                 "total_reward": "Recompensa Total",
                 "avg_reward": "Recompensa Média",
@@ -270,14 +258,6 @@ class BanditLab:
             "",
             self.t["intro"],
             "",
-            f"## {self.t['edu_header']}",
-            "",
-            self.t["edu_intro"],
-            "",
-            self.t["edu_cycle"],
-            "",
-            self.t["edu_random"],
-            "",
             f"## {self.t['summary_section']}",
         ]
 
@@ -296,7 +276,6 @@ class BanditLab:
                 md.append(f"- {arm}: {count}")
 
         return "\n".join(md)
-
 
 def main() -> None:
     """Entry point for the Bandit Lab."""
@@ -351,7 +330,6 @@ def main() -> None:
     except Exception as e:
         print(f"Error in Bandit Lab: {e}")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

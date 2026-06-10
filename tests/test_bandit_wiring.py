@@ -92,6 +92,13 @@ class TestBanditWiring(unittest.TestCase):
         self.assertTrue(results_md_path.exists())
         self.assertTrue(history_csv_path.exists())
 
+        # Educational content check in Markdown
+        md_content = results_md_path.read_text()
+        self.assertIn("Understanding Multi-Armed Bandits", md_content)
+        self.assertIn("sequential decision learning", md_content)
+        self.assertIn("partial feedback", md_content)
+        self.assertIn("Random Policy", md_content)
+
         # P0.4: Check JSON metrics
         with open(results_json_path, "r") as f:
             results = json.load(f)
