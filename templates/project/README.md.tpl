@@ -117,6 +117,15 @@ python -m {{PACKAGE_NAME}}.lab workspace
 1. **Check**: Validate data readiness.
 2. **Explore (EDA)**: Generate the dataset summary.
 3. **Workspace**: Open the Streamlit app for interactive insights.
+
+{% if GENERATE_BANDIT == "true" %}
+### Educational Labs
+This project includes the **Multi-Armed Bandit Lab** as an advanced learning exercise. Unlike supervised learning, it focuses on sequential decision-making. You can explore it via the Workspace or the CLI:
+
+```bash
+python -m {{PACKAGE_NAME}}.lab bandit
+```
+{% endif %}
 {% else %}
 {% if GENERATE_ADVISOR == "true" %}
 ### 4. Run the Dataset Advisor

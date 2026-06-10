@@ -57,6 +57,9 @@ def main():
             "Feature Explorer",
             "Model Suggestions",
             "Baseline Lab",
+            {% if GENERATE_BANDIT == "true" %}
+            "Bandit Lab",
+            {% endif %}
             "Train & Evaluate",
             "Experiments & MLflow"
         ]
@@ -221,6 +224,41 @@ def main():
             You should always know how a simple model (like a Mean/Mode predictor or a Linear Regression)
             performs before trying complex algorithms. Any real model must significantly outperform this baseline.
             """)
+
+    {% if GENERATE_BANDIT == "true" %}
+    elif section == "Bandit Lab":
+        st.header("🎰 Multi-Armed Bandit Lab")
+        st.markdown("""
+        **Multi-Armed Bandits (MAB)** are a different paradigm from supervised learning.
+        While supervised learning focuses on predicting a target from features, MAB focuses on
+        **sequential decision learning** under uncertainty.
+
+        In this lab, you simulate a scenario where you must choose between multiple 'arms' (actions)
+        to maximize a reward. It is a core concept in Reinforcement Learning and A/B Testing.
+        """)
+
+        bandit_results_path = project_root() / "configs/bandit_results.json"
+        bandit_report_path = project_root() / "reports/bandit-results.md"
+
+        if bandit_report_path.exists():
+            st.success("Bandit simulation results found.")
+            st.markdown(bandit_report_path.read_text())
+
+            if bandit_results_path.exists():
+                with open(bandit_results_path, "r") as f:
+                    bandit_results = json.load(f)
+                st.subheader("Raw Metrics")
+                st.json(bandit_results)
+        else:
+            st.info("Run the Bandit Lab simulation to see results:")
+            st.code(f"python -m {{PACKAGE_NAME}}.lab bandit")
+
+            st.markdown("""
+            **What is the goal?**
+            You want to find the best-performing action (arm) while minimizing the cost of
+            exploring sub-optimal ones. This is known as the **Exploration-Exploitation trade-off**.
+            """)
+    {% endif %}
 
     elif section == "Train & Evaluate":
         st.header("🚀 Train & Evaluate")
