@@ -35,7 +35,7 @@ class TestTemplates(unittest.TestCase):
         self.assertIn("Experiments & MLflow", content)
 
         # Check core delegation
-        self.assertIn("from config import load_config, project_root", content)
+        self.assertIn("from config import get_mlflow_status, load_config, project_root", content)
         self.assertIn("from core.readiness import check_dataset_readiness", content)
         # It also has absolute import logic
         self.assertIn("importlib.import_module(f\"{module_name}.config\")", content)
