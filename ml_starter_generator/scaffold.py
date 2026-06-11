@@ -77,8 +77,13 @@ def create_notebook_placeholder(root: Path, values: dict[str, str], *, force: bo
 
 def create_docs(root: Path, values: dict[str, str], *, force: bool) -> None:
     lang = values.get("LANGUAGE", "en")
+    eval_template = "evaluation.md"
+    if lang == "pt-BR":
+        eval_template = "evaluation.pt-BR.md"
+
     docs = {
         "docs/data-dictionary.md": load_template("data-dictionary.md", values, folder="project/docs"),
+        "docs/evaluation.md": load_template(eval_template, values, folder="project/docs"),
         "reports/modeling-notes.md": load_template("modeling-notes.md", values, folder="project/reports"),
         ".gitignore": load_template("gitignore", values, folder="project"),
         ".env.example": load_template("env.example", values, folder="project"),
