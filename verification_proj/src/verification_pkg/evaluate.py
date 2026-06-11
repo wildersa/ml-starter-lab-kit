@@ -6,7 +6,6 @@ from collections import Counter
 from .core.config import load_config, project_root
 from .core.data import load_csv
 
-
 def load_model(path: str = "models/model.json") -> dict[str, object]:
     model_path = project_root() / path
 
@@ -14,7 +13,6 @@ def load_model(path: str = "models/model.json") -> dict[str, object]:
         raise FileNotFoundError("Model not found. Run train.py first.")
 
     return json.loads(model_path.read_text(encoding="utf-8"))
-
 
 def evaluate_majority_baseline(rows: list[dict[str, str]], model: dict[str, object]) -> dict[str, object]:
     target = model["target_column"]
@@ -30,7 +28,6 @@ def evaluate_majority_baseline(rows: list[dict[str, str]], model: dict[str, obje
         "prediction": prediction,
         "target_distribution": dict(Counter(y_true)),
     }
-
 
 def main() -> None:
     config = load_config()
@@ -112,7 +109,6 @@ def main() -> None:
             print("="*50 + "\n")
         except Exception as e:
             print(f"MLflow tracking failed: {e}")
-
 
 if __name__ == "__main__":
     main()

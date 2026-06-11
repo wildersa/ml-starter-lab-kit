@@ -69,7 +69,7 @@ class TestTemplates(unittest.TestCase):
         self.assertIn("elif section == \"Learning Notes\":", content)
         self.assertIn("st.header(\"📚 Learning Notes\")", content)
         self.assertIn("if not eda_summary_path.exists():", content)
-        self.assertIn("elif learning_report.exists():", content)
+        self.assertIn("render_project_doc(\"reports/learning-notes.md\")", content)
         self.assertIn("python -m test_pkg.lab learn", content)
 
 if __name__ == "__main__":

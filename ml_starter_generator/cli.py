@@ -35,6 +35,7 @@ TRANSLATIONS = {
         "task_unsupervised": "PCA/K-Means/clustering",
         "task_timeseries": "time series/LSTM",
         "task_vision": "image classification/detection",
+        "task_bandit": "Multi-Armed Bandit (MAB)",
         "choose_option": "Choose an option",
         "invalid_option": "Invalid option.",
         "dataset_target": "Dataset and target",
@@ -157,6 +158,7 @@ TRANSLATIONS = {
         "next_step_eda_first": "IMPORTANT: Run EDA before Advisor, Baseline, or Learning Notes",
         "next_step_advisor": "Dataset Advice (modeling suggestions)",
         "next_step_bandit": "Bandit Lab (adaptive decisions)",
+        "include_bandit_lab": "Multi-Armed Bandit Lab",
         "next_step_demo": "Check the demo scenario and data dictionary in docs/demo-scenario.md",
         "summary_mlflow": "MLflow Tracking",
         "yes": "yes",
@@ -177,6 +179,7 @@ TRANSLATIONS = {
         "task_unsupervised": "PCA/K-Means/agrupamento",
         "task_timeseries": "séries temporais/LSTM",
         "task_vision": "classificação de imagem/detecção",
+        "task_bandit": "Multi-Armed Bandit (MAB)",
         "choose_option": "Escolha uma opção",
         "invalid_option": "Opção inválida.",
         "dataset_target": "Dataset e alvo (target)",
@@ -299,6 +302,7 @@ TRANSLATIONS = {
         "next_step_eda_first": "IMPORTANTE: Execute a EDA antes do Advisor, Baseline ou Notas de Aprendizado",
         "next_step_advisor": "Conselhos sobre o Dataset (sugestões de modelagem)",
         "next_step_bandit": "Bandit Lab (decisões adaptativas)",
+        "include_bandit_lab": "Bandit Lab (MAB)",
         "next_step_demo": "Consulte o cenário de demo e o dicionário de dados em docs/demo-scenario.md",
         "summary_mlflow": "Rastreamento MLflow",
         "yes": "sim",
@@ -408,6 +412,7 @@ def choose_task(t: dict[str, str]) -> str:
     print(f"3. unsupervised  - {t['task_unsupervised']}")
     print(f"4. timeseries    - {t['task_timeseries']}")
     print(f"5. vision        - {t['task_vision']}")
+    print(f"6. bandit        - {t.get('task_bandit', 'Multi-Armed Bandit')}")
 
     while True:
         choice = ask(t['choose_option'], "2")

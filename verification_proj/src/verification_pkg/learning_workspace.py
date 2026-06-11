@@ -6,7 +6,7 @@ import importlib
 import sys
 
 # Setup path for local imports
-# We expect to be in src/{{PACKAGE_NAME}}/learning_workspace.py
+# We expect to be in src/verification_pkg/learning_workspace.py
 pkg_dir = Path(__file__).resolve().parent
 src_dir = pkg_dir.parent
 
@@ -15,7 +15,7 @@ if str(src_dir) not in sys.path:
 
 try:
     # Try absolute import via package name
-    module_name = "{{PACKAGE_NAME}}"
+    module_name = "verification_pkg"
     config_mod = importlib.import_module(f"{module_name}.config")
     load_config = config_mod.load_config
     project_root = config_mod.project_root
@@ -34,7 +34,7 @@ except ImportError:
 
 # Page config
 st.set_page_config(
-    page_title="{{PROJECT_NAME}} - Learning Workspace",
+    page_title="verification_proj - Learning Workspace",
     page_icon="🎓",
     layout="wide"
 )
@@ -84,7 +84,7 @@ def render_project_doc(relative_path: str):
             st.write("This report is generated after you run the corresponding pipeline step.")
 
 def main():
-    st.title("🎓 {{PROJECT_NAME}} Learning Workspace")
+    st.title("🎓 verification_proj Learning Workspace")
     st.markdown("""
     Welcome to your **Guided Learning Workspace**! This tool helps you navigate the ML pipeline
     visually and understand each step of the process.
@@ -102,9 +102,7 @@ def main():
             "Feature Explorer",
             "Model Suggestions",
             "Baseline Lab",
-            {% if GENERATE_BANDIT == "true" %}
-            "Bandit Lab",
-            {% endif %}
+
             "Train & Evaluate",
             "Production & Monitoring",
             "Experiments & MLflow"
@@ -161,7 +159,7 @@ def main():
             st.markdown(f"""
             To generate a visual summary, run:
             ```bash
-            python -m {{PACKAGE_NAME}}.lab eda
+            python -m verification_pkg.lab eda
             ```
             Then refresh this page to see the results.
             """)
@@ -177,7 +175,7 @@ def main():
             st.markdown(f"""
             Please run the EDA step first:
             ```bash
-            python -m {{PACKAGE_NAME}}.lab eda
+            python -m verification_pkg.lab eda
             ```
             """)
         else:
@@ -186,7 +184,7 @@ def main():
             st.divider()
             st.subheader("How to refresh")
             st.info("If you updated your data or features, regenerate your contextual learning notes:")
-            st.code(f"python -m {{PACKAGE_NAME}}.lab learn")
+            st.code(f"python -m verification_pkg.lab learn")
 
     elif section == "Target Analysis":
         st.header("🎯 Target Analysis")
@@ -220,7 +218,7 @@ def main():
             st.markdown(f"""
             Suggestions must be data-driven. Please run the EDA step first to understand your dataset characteristics:
             ```bash
-            python -m {{PACKAGE_NAME}}.lab eda
+            python -m verification_pkg.lab eda
             ```
             Then refresh this page to continue.
             """)
@@ -229,7 +227,7 @@ def main():
 
             st.divider()
             st.info("Run the Dataset Advisor to regenerate suggestions:")
-            st.code(f"python -m {{PACKAGE_NAME}}.lab advisor")
+            st.code(f"python -m verification_pkg.lab advisor")
 
     elif section == "Baseline Lab":
         st.header("🔬 Baseline Lab")
@@ -242,7 +240,7 @@ def main():
             st.markdown(f"""
             Understanding your data distribution and missing values is crucial for setting up a proper baseline.
             ```bash
-            python -m {{PACKAGE_NAME}}.lab eda
+            python -m verification_pkg.lab eda
             ```
             """)
         else:
@@ -256,51 +254,7 @@ def main():
 
             st.divider()
             st.info("Run the Baseline Lab to establish or update your performance benchmark:")
-            st.code(f"python -m {{PACKAGE_NAME}}.lab baseline")
-
-    {% if GENERATE_BANDIT == "true" %}
-    elif section == "Bandit Lab":
-        st.header("🎰 Multi-Armed Bandit Lab")
-
-        lang_suffix = ".pt-BR" if "{{LANGUAGE}}" == "pt-BR" else ""
-        render_project_doc(f"docs/mab-lab{lang_suffix}.md")
-
-        st.divider()
-        st.subheader("Simulation Results")
-
-        bandit_results_path = project_root() / "configs/bandit_results.json"
-        bandit_history_path = project_root() / "reports/bandit-history.csv"
-
-        if bandit_history_path.exists():
-            # Summary charts
-            try:
-                df = pd.read_csv(bandit_history_path)
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.subheader("Cumulative Reward")
-                    reward_df = df.pivot(index="round", columns="policy", values="cumulative_reward")
-                    st.line_chart(reward_df)
-                with col2:
-                    st.subheader("Cumulative Regret")
-                    regret_df = df.pivot(index="round", columns="policy", values="cumulative_regret")
-                    st.line_chart(regret_df)
-
-                st.info("💡 **Tip**: For more detailed analysis, use the standalone dashboard:")
-                st.code(f"python -m {{PACKAGE_NAME}}.lab bandit-dashboard")
-            except Exception as e:
-                st.error(f"Error loading charts: {e}")
-
-            render_project_doc("reports/bandit-results.md")
-
-            if bandit_results_path.exists():
-                with open(bandit_results_path, "r") as f:
-                    bandit_results = json.load(f)
-                with st.expander("Raw Metrics (JSON)"):
-                    st.json(bandit_results)
-        else:
-            st.info("Run the Bandit Lab simulation to see results:")
-            st.code(f"python -m {{PACKAGE_NAME}}.lab bandit")
-    {% endif %}
+            st.code(f"python -m verification_pkg.lab baseline")
 
     elif section == "Train & Evaluate":
         st.header("🚀 Train & Evaluate")
@@ -311,25 +265,25 @@ def main():
         with tabs[0]:
             st.subheader("Training")
             st.write("Training uses historical data to teach the model patterns.")
-            st.code(f"python -m {{PACKAGE_NAME}}.lab train")
+            st.code(f"python -m verification_pkg.lab train")
 
             st.subheader("Evaluation")
             st.write("Evaluation tests how well the model generalizes to new, unseen data.")
-            st.code(f"python -m {{PACKAGE_NAME}}.lab evaluate")
+            st.code(f"python -m verification_pkg.lab evaluate")
 
             st.divider()
             st.subheader("Latest Results")
             render_project_doc("reports/evaluation-report.md")
 
         with tabs[1]:
-            lang_suffix = ".pt-BR" if "{{LANGUAGE}}" == "pt-BR" else ""
+            lang_suffix = ".pt-BR" if "en" == "pt-BR" else ""
             render_project_doc(f"docs/evaluation{lang_suffix}.md")
 
     elif section == "Production & Monitoring":
         st.header("📡 Production & Monitoring")
         st.write("What happens after the model is ready?")
 
-        lang_suffix = ".pt-BR" if "{{LANGUAGE}}" == "pt-BR" else ""
+        lang_suffix = ".pt-BR" if "en" == "pt-BR" else ""
         render_project_doc(f"docs/monitoring{lang_suffix}.md")
 
     elif section == "Experiments & MLflow":
