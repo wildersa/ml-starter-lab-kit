@@ -86,8 +86,8 @@ class TestBanditGating(unittest.TestCase):
         self.assertNotIn("lab bandit", output)
         self.assertNotIn("Bandit Lab", output)
 
-    def test_guided_learning_priority_includes_bandit(self):
-        """Guided projects with 'learning' priority include Bandit Lab (P1-D logic)."""
+    def test_guided_learning_priority_excludes_bandit(self):
+        """P0.1: Guided projects with 'learning' priority STILL exclude Bandit Lab (strict gating)."""
         package_name = "guided_learning_pkg"
         output_dir = self.test_dir / "guided_learning"
 
@@ -101,11 +101,10 @@ class TestBanditGating(unittest.TestCase):
         )
 
         bandit_lab_path = output_dir / f"src/{package_name}/bandit_lab.py"
-        self.assertTrue(bandit_lab_path.exists(), "Bandit Lab should be generated for 'learning' priority in Guided mode.")
+        self.assertFalse(bandit_lab_path.exists(), "Bandit Lab should NOT be generated for 'learning' priority in Guided mode (strict gating).")
 
         readme_content = (output_dir / "README.md").read_text()
-        self.assertIn("lab bandit", readme_content)
-        self.assertIn("Multi-Armed Bandit Lab", readme_content)
+        self.assertNotIn("lab bandit", readme_content)
 
     def test_minimal_supervised_full_profile_includes_bandit(self):
         """P0.2: Explicit Bandit Lab selection (via full profile) still sets/generates the feature."""

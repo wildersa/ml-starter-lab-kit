@@ -12,13 +12,13 @@ class TestBanditWorkspace(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.test_dir)
 
-    def test_guided_bandit_enabled(self):
-        """P0.1, P0.2, P0.3, P0.4: Guided project with Bandit enabled."""
-        project_name = "guided_bandit"
-        package_name = "guided_bandit"
+    def test_bandit_enabled_via_full_profile(self):
+        """P0.2: Bandit enabled via full profile in Minimal mode."""
+        project_name = "full_bandit"
+        package_name = "full_bandit"
         run_generator(
             project_name=project_name,
-            experience_mode="2", # guided
+            experience_mode="1", # minimal
             output_dir=self.test_dir,
             include_docs="y",
             include_ml_basics="y",
@@ -34,20 +34,18 @@ class TestBanditWorkspace(unittest.TestCase):
         workspace_content = workspace_path.read_text()
         readme_content = readme_path.read_text()
 
-        # P0.1 & P0.3: Workspace includes Bandit Lab section and command
+        # Workspace includes Bandit Lab section and command
         self.assertIn('"Bandit Lab"', workspace_content)
         self.assertIn('elif section == "Bandit Lab":', workspace_content)
-        self.assertIn('python -m guided_bandit.lab bandit', workspace_content)
+        self.assertIn('python -m full_bandit.lab bandit', workspace_content)
         self.assertIn('reports/bandit-results.md', workspace_content)
 
-        # P0.2: Workspace explains MAB is sequential decision learning
+        # Workspace explains MAB is sequential decision learning
         self.assertIn('sequential decision learning', workspace_content)
         self.assertIn('different paradigm from supervised learning', workspace_content)
 
-        # P0.4: Guided README mentions Bandit Lab
-        self.assertIn('Multi-Armed Bandit Lab', readme_content)
-        self.assertIn('advanced learning exercise', readme_content)
-        self.assertIn('python -m guided_bandit.lab bandit', readme_content)
+        # README mentions Bandit Lab in suggested commands
+        self.assertIn('python -m full_bandit.lab bandit', readme_content)
 
     def test_minimal_bandit_disabled(self):
         """P0.5: Minimal Starter does not mention Bandit Lab."""

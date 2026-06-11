@@ -794,11 +794,15 @@ def main() -> None:
         optional_options["baseline_lab"] = True
         optional_options["learning_workspace"] = True
 
-        # P1-D: Gate Bandit Lab in Guided mode.
-        # Included only when explicitly selected (priority_learning) or for bandit tasks.
-        is_bandit_task = (task == "bandit" or task == "adaptive")
-        if problem_profile.get("priority") == t["priority_learning"] or is_bandit_task:
-             optional_options["bandit_lab"] = True
+    # P1-D: Gate Bandit Lab.
+    # Included only for specific bandit tasks or if explicitly selected in profile.
+    is_bandit_task = (task == "bandit" or task == "adaptive")
+    if is_bandit_task:
+         optional_options["bandit_lab"] = True
+
+    # If bandit lab is enabled, we also need the workspace to view it.
+    if optional_options.get("bandit_lab"):
+        optional_options["learning_workspace"] = True
 
     needs_ml_basics = (optional_options.get("advisor") or optional_options.get("baseline_lab"))
     if needs_ml_basics and not include_ml_basics:
