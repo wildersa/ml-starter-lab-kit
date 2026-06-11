@@ -153,7 +153,7 @@ O arquivo `src/{{PACKAGE_NAME}}/train.py` gerado é um **baseline simples**, nã
 4. Realize a EDA no notebook{% if GENERATE_EDA == "true" %} (ou execute `python -m {{PACKAGE_NAME}}.lab eda`{% if LEARNING_ENABLED == "true" %} ou use o workspace{% endif %}){% endif %}
 5. Edite `src/{{PACKAGE_NAME}}/features.py`
 6. Treine o modelo (baseline)
-7. Avalie os resultados (veja `docs/evaluation.md`)
+7. Avalie os resultados
 8. Documente limitações e próximos passos
 
 ## Comandos sugeridos
