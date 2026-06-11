@@ -4,16 +4,28 @@ Use this page as the main map for the learning notes.
 
 The documentation is intentionally short. It should help you start a project, not replace full books or framework docs.
 
-## Recommended path
+## Beginner Learning Journey
 
-1. [Learning paths](learning-paths.md)
-2. [ML architectures](architectures/README.md)
-3. [Workflows](workflows/README.md)
-4. [Model families](models/README.md)
-5. [Metrics](metrics/README.md)
-6. [Checklists](checklists/README.md)
-7. [Common mistakes](common-mistakes/README.md)
-8. [Glossary](glossary/README.md)
+Follow this path to understand how to go from a raw dataset to a monitored model.
+
+1.  **Project Setup**: [Starter and generated project layout](usage/project-layout.md)
+2.  **Dataset Understanding**: [Exploratory Data Analysis (EDA)](workflows/eda.md)
+3.  **Establish a Baseline**: [Baselines and Evaluation](concepts/evaluation-and-monitoring.md#2-the-baseline-your-performance-floor)
+4.  **Choose Your Metrics**: [Metrics Overview](metrics/README.md)
+5.  **Training & Evaluation**: [Evaluation vs Monitoring](concepts/evaluation-and-monitoring.md#1-evaluation-vs-monitoring)
+6.  **Experiment Tracking**: [Experiment Visualization](experiment-visualization.md)
+7.  **Production & Monitoring**: [Drift and Retraining](concepts/evaluation-and-monitoring.md#6-drift-and-retraining)
+8.  **Avoid Pitfalls**: [Common Mistakes](common-mistakes/README.md)
+
+## Navigation by Topic
+
+- [Learning paths](learning-paths.md): Specific paths for tabular, vision, and time-series.
+- [ML architectures](architectures/README.md): How the pieces fit together.
+- [Workflows](workflows/README.md): Step-by-step guides for training and fine-tuning.
+- [Model families](models/README.md): Which model to pick for your task.
+- [Metrics reference](metrics/README.md): Detailed metric definitions.
+- [Checklists](checklists/README.md): What to verify before moving to the next step.
+- [Glossary](glossary/README.md): ML terminology for beginners.
 
 ## By question
 

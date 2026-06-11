@@ -10,7 +10,8 @@ Choose a path based on what you are trying to do.
 4. [Preprocessing](workflows/preprocessing.md)
 5. [Feature engineering](models/feature-engineering.md)
 6. [Metrics overview](metrics/README.md)
-7. [Before evaluation checklist](checklists/before-evaluation.md)
+7. [Evaluation and monitoring basics](concepts/evaluation-and-monitoring.md)
+8. [Before evaluation checklist](checklists/before-evaluation.md)
 
 ## Path 2 — Supervised tabular model
 
@@ -19,7 +20,8 @@ Choose a path based on what you are trying to do.
 3. [Preprocessing](workflows/preprocessing.md)
 4. [Feature measurement](workflows/feature-measurement.md)
 5. [Classification metrics](metrics/classification.md) or [Regression metrics](metrics/regression.md)
-6. [Overfitting](common-mistakes/overfitting.md)
+6. [Evaluation and monitoring basics](concepts/evaluation-and-monitoring.md)
+7. [Overfitting](common-mistakes/overfitting.md)
 
 ## Path 3 — Unsupervised model
 
