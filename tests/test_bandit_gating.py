@@ -33,6 +33,59 @@ class TestBanditGating(unittest.TestCase):
         self.assertNotIn("lab bandit", readme_content)
         self.assertNotIn("Multi-Armed Bandit Lab", readme_content)
 
+    def test_guided_regression_no_bandit(self):
+        """P0.1: Guided regression projects do NOT include Bandit Lab by default."""
+        package_name = "guided_reg_pkg"
+        output_dir = self.test_dir / "guided_reg"
+
+        run_generator(
+            project_name="Guided Regression",
+            package_name=package_name,
+            output_dir=output_dir,
+            task="2", # supervised
+            experience_mode="2", # guided
+            problem_goal="2", # predict a number (regression)
+            problem_priority="2" # performance
+        )
+
+        bandit_lab_path = output_dir / f"src/{package_name}/bandit_lab.py"
+        self.assertFalse(bandit_lab_path.exists())
+
+    def test_guided_timeseries_no_bandit(self):
+        """P0.1: Guided time-series projects do NOT include Bandit Lab by default."""
+        package_name = "guided_ts_pkg"
+        output_dir = self.test_dir / "guided_ts"
+
+        run_generator(
+            project_name="Guided Time Series",
+            package_name=package_name,
+            output_dir=output_dir,
+            task="4", # timeseries
+            experience_mode="2", # guided
+            problem_priority="2" # performance
+        )
+
+        bandit_lab_path = output_dir / f"src/{package_name}/bandit_lab.py"
+        self.assertFalse(bandit_lab_path.exists())
+
+    def test_cli_summary_hides_bandit_when_absent(self):
+        """P0.4: CLI summary (terminal output) does not mention bandit if not generated."""
+        package_name = "no_bandit_summary_pkg"
+        output_dir = self.test_dir / "no_bandit_summary"
+
+        output = run_generator(
+            project_name="No Bandit Summary",
+            package_name=package_name,
+            output_dir=output_dir,
+            task="2",
+            experience_mode="2",
+            problem_priority="1"
+        )
+
+        # The output of run_generator is the captured stdout
+        self.assertNotIn("lab bandit", output)
+        self.assertNotIn("Bandit Lab", output)
+
     def test_guided_learning_priority_includes_bandit(self):
         """Guided projects with 'learning' priority include Bandit Lab (P1-D logic)."""
         package_name = "guided_learning_pkg"
