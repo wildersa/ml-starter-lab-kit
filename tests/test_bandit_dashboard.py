@@ -16,8 +16,8 @@ class TestBanditDashboard(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.test_dir)
 
-    def test_bandit_dashboard_generated_in_guided_mode(self):
-        """P0.1: Guided project contains bandit_dashboard.py."""
+    def test_bandit_dashboard_generated_with_full_profile(self):
+        """P0.2: Project contains bandit_dashboard.py when full profile is selected."""
         package_name = "bandit_dashboard_pkg"
         output_dir = self.test_dir / "bandit_dashboard_project"
 
@@ -25,8 +25,9 @@ class TestBanditDashboard(unittest.TestCase):
             project_name="Bandit Dashboard Project",
             package_name=package_name,
             output_dir=output_dir,
-            task="6", # bandit task
-            experience_mode="2" # Guided
+            task="2",
+            experience_mode="1",
+            optional_profile="3" # Full
         )
 
         dashboard_path = output_dir / f"src/{package_name}/bandit_dashboard.py"
@@ -77,8 +78,9 @@ class TestBanditDashboard(unittest.TestCase):
             project_name="Bandit Loader",
             package_name=package_name,
             output_dir=output_dir,
-            task="6", # bandit task
-            experience_mode="2"
+            task="2",
+            experience_mode="1",
+            optional_profile="3" # Full
         )
 
         # We need to import the function from the generated file
@@ -142,8 +144,9 @@ class TestBanditDashboard(unittest.TestCase):
             project_name="Bandit Syntax",
             package_name=package_name,
             output_dir=output_dir,
-            task="6", # bandit task
-            experience_mode="2"
+            task="2",
+            experience_mode="1",
+            optional_profile="3" # Full
         )
 
         dashboard_path = output_dir / f"src/{package_name}/bandit_dashboard.py"

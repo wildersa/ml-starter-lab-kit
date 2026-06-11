@@ -25,8 +25,9 @@ class TestBanditPolicies(unittest.TestCase):
             project_name="Bandit Policies Project",
             package_name=package_name,
             output_dir=output_dir,
-            task="6", # bandit task
-            experience_mode="2" # Guided
+            task="2",
+            experience_mode="1",
+            optional_profile="3" # Full
         )
 
         # Run the bandit lab
@@ -97,8 +98,9 @@ class TestBanditPolicies(unittest.TestCase):
             project_name="Bandit Thompson Project",
             package_name=package_name,
             output_dir=output_dir,
-            task="6", # bandit task
-            experience_mode="2"
+            task="2",
+            experience_mode="1",
+            optional_profile="3" # Full
         )
 
         # We will run a small script inside the generated project's environment

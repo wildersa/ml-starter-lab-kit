@@ -10,5 +10,4 @@ TASKS = {
     "3": "unsupervised",
     "4": "timeseries",
     "5": "vision",
-    "6": "bandit",
 }

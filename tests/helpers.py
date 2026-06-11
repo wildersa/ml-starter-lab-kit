@@ -75,12 +75,11 @@ def run_generator(
     is_guided = (experience_mode == "2" or experience_mode == "guided")
     if not is_guided:
         inputs.append(include_docs)
-
-    inputs.append(optional_profile)
-    if optional_profile == "4" or optional_profile == "custom":
-        # The number of custom options might change.
-        # We take what was provided.
-        inputs.extend(optionals)
+        inputs.append(optional_profile)
+        if optional_profile == "4" or optional_profile == "custom":
+            # The number of custom options might change.
+            # We take what was provided.
+            inputs.extend(optionals)
 
     # Dependency check for advisor/baseline_lab happens AFTER section 5 selection
     if not is_guided:

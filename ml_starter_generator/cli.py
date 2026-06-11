@@ -35,7 +35,6 @@ TRANSLATIONS = {
         "task_unsupervised": "PCA/K-Means/clustering",
         "task_timeseries": "time series/LSTM",
         "task_vision": "image classification/detection",
-        "task_bandit": "Multi-Armed Bandit / adaptive decisions",
         "choose_option": "Choose an option",
         "invalid_option": "Invalid option.",
         "dataset_target": "Dataset and target",
@@ -178,7 +177,6 @@ TRANSLATIONS = {
         "task_unsupervised": "PCA/K-Means/agrupamento",
         "task_timeseries": "séries temporais/LSTM",
         "task_vision": "classificação de imagem/detecção",
-        "task_bandit": "Multi-Armed Bandit / decisões adaptativas",
         "choose_option": "Escolha uma opção",
         "invalid_option": "Opção inválida.",
         "dataset_target": "Dataset e alvo (target)",
@@ -410,7 +408,6 @@ def choose_task(t: dict[str, str]) -> str:
     print(f"3. unsupervised  - {t['task_unsupervised']}")
     print(f"4. timeseries    - {t['task_timeseries']}")
     print(f"5. vision        - {t['task_vision']}")
-    print(f"6. bandit        - {t['task_bandit']}")
 
     while True:
         choice = ask(t['choose_option'], "2")
@@ -556,12 +553,31 @@ def run_problem_framing_wizard(task: str, t: dict[str, str], lang: str) -> dict[
 
     # 2. What matters most?
     print(f"\n{t['priority_question']}")
-    print(f"   - {t['priority_interpretability']}")
-    print(f"   - {t['priority_performance']}")
-    print(f"   - {t['priority_speed']}")
-    print(f"   - {t['priority_imbalanced']}")
-    print(f"   - {t['priority_learning']}")
-    priority = ask(t["priority_label"], t["priority_learning"])
+    print(f"   1. {t['priority_interpretability']}")
+    print(f"   2. {t['priority_performance']}")
+    print(f"   3. {t['priority_speed']}")
+    print(f"   4. {t['priority_imbalanced']}")
+    print(f"   5. {t['priority_learning']}")
+
+    while True:
+        choice = ask(t["priority_label"], "5")
+        choice_lower = choice.lower()
+        if not choice or choice == "5" or "learn" in choice_lower or "aprendizado" in choice_lower:
+            priority = t["priority_learning"]
+            break
+        if choice == "1" or "interpret" in choice_lower:
+            priority = t["priority_interpretability"]
+            break
+        if choice == "2" or "perform" in choice_lower or "desempenho" in choice_lower:
+            priority = t["priority_performance"]
+            break
+        if choice == "3" or "speed" in choice_lower or "veloci" in choice_lower or "simpl" in choice_lower:
+            priority = t["priority_speed"]
+            break
+        if choice == "4" or "imbalance" in choice_lower or "desbalance" in choice_lower:
+            priority = t["priority_imbalanced"]
+            break
+        print(t["invalid_option"])
 
     # 3. Which error is more costly?
     print(f"\n{t['error_cost_question']}")
@@ -680,6 +696,8 @@ def print_summary(root: Path, values: dict[str, str], t: dict[str, str], include
 
         if values.get("GENERATE_ADVISOR") == "true":
             steps.append(f"   - {t['next_step_advisor']}:   python -m {pkg}.lab advisor")
+        if values.get("GENERATE_BANDIT") == "true":
+            steps.append(f"   - {t['next_step_bandit']}:   python -m {pkg}.lab bandit")
 
     UI.panel(t["next_steps"], "\n".join(steps))
 
@@ -745,7 +763,10 @@ def main() -> None:
 
     print(f"\n{t['optional_files_templates']}")
 
-    profile = choose_optional_profile(t, experience_mode=experience_mode)
+    if experience_mode == "guided":
+        profile = "recommended"
+    else:
+        profile = choose_optional_profile(t, experience_mode=experience_mode)
 
     if profile == "custom":
         optional_options = {
@@ -773,8 +794,11 @@ def main() -> None:
         optional_options["baseline_lab"] = True
         optional_options["learning_workspace"] = True
 
-    if task == "bandit":
-        optional_options["bandit_lab"] = True
+        # P1-D: Gate Bandit Lab in Guided mode.
+        # Included only when explicitly selected (priority_learning) or for bandit tasks.
+        is_bandit_task = (task == "bandit" or task == "adaptive")
+        if problem_profile.get("priority") == t["priority_learning"] or is_bandit_task:
+             optional_options["bandit_lab"] = True
 
     needs_ml_basics = (optional_options.get("advisor") or optional_options.get("baseline_lab"))
     if needs_ml_basics and not include_ml_basics:
