@@ -2,7 +2,7 @@
 
 As tarefas de visão (Classificação, Detecção, Segmentação) requerem métricas que levem em conta tanto o "quê" quanto o "onde" em uma imagem.
 
-Para um mergulho profundo em como medir o desempenho do modelo e como isso se relaciona com o valor de negócio, consulte o guia de [Avaliação e Monitoramento](../concepts/evaluation-and-monitoring.md).
+Para um mergulho profundo em como medir o desempenho do modelo e como isso se relaciona com o valor de negócio, consulte o guia de [Avaliação e Monitoramento](../concepts/evaluation-and-monitoring.pt-BR.md).
 
 ## Classificação de Imagem (Acurácia, F1, etc.)
 

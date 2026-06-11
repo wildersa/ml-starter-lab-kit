@@ -16,10 +16,15 @@ class TestMetricsDocs(unittest.TestCase):
 
     def test_shared_concept_link(self):
         """P0.6: Each page references the shared evaluation/monitoring concept page."""
-        for filename in self.files + self.pt_files:
+        for filename in self.files:
             filepath = self.docs_dir / filename
             content = filepath.read_text(encoding="utf-8")
             self.assertIn("evaluation-and-monitoring.md", content, f"{filename} missing link to evaluation concept")
+
+        for filename in self.pt_files:
+            filepath = self.docs_dir / filename
+            content = filepath.read_text(encoding="utf-8")
+            self.assertIn("evaluation-and-monitoring.pt-BR.md", content, f"{filename} missing link to evaluation concept")
 
     def test_classification_terms(self):
         """P0.1: Classification page contains required metric/error-cost terms."""

@@ -2,7 +2,7 @@
 
 O agrupamento é não supervisionado, o que significa que não há uma "resposta certa" para comparar. A avaliação consiste em encontrar padrões que façam sentido para o negócio.
 
-Para um mergulho profundo em como medir o desempenho do modelo e como isso se relaciona com o valor de negócio, consulte o guia de [Avaliação e Monitoramento](../concepts/evaluation-and-monitoring.md).
+Para um mergulho profundo em como medir o desempenho do modelo e como isso se relaciona com o valor de negócio, consulte o guia de [Avaliação e Monitoramento](../concepts/evaluation-and-monitoring.pt-BR.md).
 
 ## Inércia (Soma dos Quadrados Dentro do Cluster)
 

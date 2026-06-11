@@ -2,7 +2,7 @@
 
 Os Multi-Armed Bandits (MAB) focam no equilíbrio entre **Exploração** (tentar coisas novas) e **Explotação** (usar o que você já sabe que funciona).
 
-Para um mergulho profundo em como medir o desempenho do modelo e como isso se relaciona com o valor de negócio, consulte o guia de [Avaliação e Monitoramento](../concepts/evaluation-and-monitoring.md).
+Para um mergulho profundo em como medir o desempenho do modelo e como isso se relaciona com o valor de negócio, consulte o guia de [Avaliação e Monitoramento](../concepts/evaluation-and-monitoring.pt-BR.md).
 
 ## Recompensa (Reward)
 

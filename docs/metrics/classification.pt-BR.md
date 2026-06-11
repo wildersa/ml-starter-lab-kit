@@ -2,7 +2,7 @@
 
 Use métricas de classificação quando o modelo prevê uma categoria (classe).
 
-Para um mergulho profundo em como medir o desempenho do modelo e como isso se relaciona com o valor de negócio, consulte o guia de [Avaliação e Monitoramento](../concepts/evaluation-and-monitoring.md).
+Para um mergulho profundo em como medir o desempenho do modelo e como isso se relaciona com o valor de negócio, consulte o guia de [Avaliação e Monitoramento](../concepts/evaluation-and-monitoring.pt-BR.md).
 
 ## Matriz de Confusão (Confusion Matrix)
 

@@ -17,13 +17,13 @@ Não escolha uma métrica apenas porque ela é popular. Escolha-a porque ela cor
 
 ## Princípios Fundamentais
 
-Para um mergulho profundo nos conceitos fundamentais de como medir o sucesso de ML, consulte o guia de **[Avaliação e Monitoramento](../concepts/evaluation-and-monitoring.md)**.
+Para um mergulho profundo nos conceitos fundamentais de como medir o sucesso de ML, consulte o guia de **[Avaliação e Monitoramento](../concepts/evaluation-and-monitoring.pt-BR.md)**.
 
 ### Guias relacionados
 
-- [Erro de métrica (Metric mismatch)](../common-mistakes/metric-mismatch.md)
-- [Medição de features](../workflows/feature-measurement.md)
-- [Checklist antes da avaliação](../checklists/before-evaluation.md)
+- [Erro de métrica (Metric mismatch)](../common-mistakes/metric-mismatch.pt-BR.md)
+- [Medição de features](../workflows/feature-measurement.pt-BR.md)
+- [Checklist antes da avaliação](../checklists/before-evaluation.pt-BR.md)
 
 ### Regra prática
 

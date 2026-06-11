@@ -2,7 +2,7 @@
 
 A previsão de séries temporais requer métricas especiais porque os dados têm uma ordem temporal. Você não pode simplesmente embaralhar suas linhas.
 
-Para um mergulho profundo em como medir o desempenho do modelo e como isso se relaciona com o valor de negócio, consulte o guia de [Avaliação e Monitoramento](../concepts/evaluation-and-monitoring.md).
+Para um mergulho profundo em como medir o desempenho do modelo e como isso se relaciona com o valor de negócio, consulte o guia de [Avaliação e Monitoramento](../concepts/evaluation-and-monitoring.pt-BR.md).
 
 ## Backtesting (Avaliação Walk-forward)
 

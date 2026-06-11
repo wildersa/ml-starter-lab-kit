@@ -2,7 +2,7 @@
 
 Use métricas de regressão quando o modelo prevê um número contínuo (ex: preço, temperatura ou distância).
 
-Para um mergulho profundo em como medir o desempenho do modelo e como isso se relaciona com o valor de negócio, consulte o guia de [Avaliação e Monitoramento](../concepts/evaluation-and-monitoring.md).
+Para um mergulho profundo em como medir o desempenho do modelo e como isso se relaciona com o valor de negócio, consulte o guia de [Avaliação e Monitoramento](../concepts/evaluation-and-monitoring.pt-BR.md).
 
 ## MAE (Erro Médio Absoluto)
 
