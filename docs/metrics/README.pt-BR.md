@@ -1,30 +1,31 @@
-# Visão geral de métricas
+# Visão Geral de Métricas
 
-Métricas mostram se o modelo é útil para o problema.
+As métricas dizem se o modelo é útil para o problema.
 
-Não escolha uma métrica só porque ela é popular. Escolha porque ela combina com a decisão.
+Não escolha uma métrica apenas porque ela é popular. Escolha-a porque ela corresponde à decisão que você precisa tomar.
 
 ## Mapa rápido
 
-| Problema | Comece com |
+| Problema | Métricas Principais |
 |---|---|
-| Classificação | [Accuracy, F1, AUC](classification.pt-BR.md) |
-| Regressão | [MAE, RMSE, R²](regression.pt-BR.md) |
-| Clusterização | [Silhouette, inércia](clustering.pt-BR.md) |
-| Série temporal | [MAE, RMSE, MAPE](time-series.pt-BR.md) |
-| Bandits | [Reward, regret](bandits.pt-BR.md) |
-| Visão | [F1, mAP, IoU, Dice](vision.pt-BR.md) |
+| **[Classificação](classification.pt-BR.md)** | Matriz de Confusão, Acurácia, Precisão, Recall, F1, AUC, Thresholds |
+| **[Regressão](regression.pt-BR.md)** | MAE, RMSE, MAPE, R² |
+| **[Séries Temporais](time-series.pt-BR.md)** | MAE, RMSE, MAPE, Backtesting, Avaliação por Horizonte |
+| **[Agrupamento (Clustering)](clustering.pt-BR.md)** | Inércia, Silhouette Score, Interpretação Qualitativa |
+| **[Visão Computacional](vision.pt-BR.md)** | mAP, IoU, Dice Score, Métricas de Classificação de Imagem |
+| **[Bandits](bandits.pt-BR.md)** | Recompensa, Recompensa Acumulada, Regret, Lift, Drift de Usuário |
 
-## Guias relacionados
+## Princípios Fundamentais
 
-- [Métrica incompatível](../common-mistakes/metric-mismatch.pt-BR.md)
+Para um mergulho profundo nos conceitos fundamentais de como medir o sucesso de ML, consulte o guia de **[Avaliação e Monitoramento](../concepts/evaluation-and-monitoring.pt-BR.md)**.
+
+### Guias relacionados
+
+- [Erro de métrica (Metric mismatch)](../common-mistakes/metric-mismatch.pt-BR.md)
 - [Medição de features](../workflows/feature-measurement.pt-BR.md)
 - [Checklist antes da avaliação](../checklists/before-evaluation.pt-BR.md)
 
-## Regra prática
+### Regra prática
 
 Uma boa métrica deve responder:
-
-```text
-O modelo melhorou a decisão que importa?
-```
+> **"O modelo melhorou a decisão com a qual eu me importo?"**
