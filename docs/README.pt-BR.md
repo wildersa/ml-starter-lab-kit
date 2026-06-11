@@ -9,7 +9,7 @@ A documentação é intencionalmente curta. Ela deve ajudar a começar um projet
 Siga este caminho para entender como ir de um conjunto de dados bruto a um modelo monitorado.
 
 1.  **Configuração do Projeto**: [Layout do starter e do projeto gerado](usage/project-layout.pt-BR.md)
-2.  **Entendendo os Dados**: [Análise Exploratória de Dados (EDA)](workflows/eda.md)
+2.  **Entendendo os Dados**: [Análise Exploratória de Dados (EDA)](workflows/eda.pt-BR.md)
 3.  **Estabeleça um Baseline**: [Baselines e Avaliação](concepts/evaluation-and-monitoring.pt-BR.md#2-o-baseline-seu-piso-de-desempenho)
 4.  **Escolha suas Métricas**: [Visão Geral de Métricas](metrics/README.pt-BR.md)
 5.  **Treino e Avaliação**: [Avaliação vs Monitoramento](concepts/evaluation-and-monitoring.pt-BR.md#1-avaliacao-vs-monitoramento)

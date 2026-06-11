@@ -21,7 +21,7 @@ Escolha uma trilha com base no que você quer fazer.
 4. [Medição de features](workflows/feature-measurement.pt-BR.md)
 5. [Métricas de classificação](metrics/classification.pt-BR.md) ou [métricas de regressão](metrics/regression.pt-BR.md)
 6. [Básico de avaliação e monitoramento](concepts/evaluation-and-monitoring.pt-BR.md)
-7. [Overfitting](common-mistakes/overfitting.md)
+7. [Overfitting](common-mistakes/overfitting.pt-BR.md)
 
 ## Trilha 3 — Modelo não supervisionado
 
