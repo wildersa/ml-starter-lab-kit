@@ -28,3 +28,4 @@ A good metric should answer:
 > "Did the model improve the decision I care about?"
 
 If your metric improves but your business outcome doesn't, you are measuring the wrong thing.
+- Review the [Evaluation and Monitoring](../concepts/evaluation-and-monitoring.md) concept for the full lifecycle.

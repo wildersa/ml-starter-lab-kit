@@ -33,6 +33,7 @@ Use regression metrics when your model predicts a continuous number (e.g., house
 
 ---
 
-### Practical Tip
+### Next Steps
 
 Always check the [Before Evaluation Checklist](../checklists/before-evaluation.md) to ensure your metrics are reliable and match your business goals.
+- Review the [Evaluation and Monitoring](../concepts/evaluation-and-monitoring.md) concept for the full lifecycle.

@@ -57,6 +57,7 @@ Modelos de classificação geralmente retornam uma probabilidade (0.0 a 1.0). O 
 
 ---
 
-### Dica Prática
+### Próximos Passos
 
 Sempre verifique o [Checklist Antes da Avaliação](../checklists/before-evaluation.pt-BR.md) para garantir que suas métricas sejam confiáveis e correspondam aos seus objetivos de negócio.
+- Veja o conceito de [Avaliação e Monitoramento](../concepts/evaluation-and-monitoring.pt-BR.md) para o ciclo completo.

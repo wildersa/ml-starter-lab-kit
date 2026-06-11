@@ -23,6 +23,7 @@ Time series often use the same metrics as regression (MAE, RMSE, MAPE), but with
 
 ---
 
-### Practical Tip
+### Next Steps
 
 Always check the [Before Evaluation Checklist](../checklists/before-evaluation.md) to ensure your temporal split is correct and you are not "leaking" future information into the past.
+- Review the [Evaluation and Monitoring](../concepts/evaluation-and-monitoring.md) concept for the full lifecycle.

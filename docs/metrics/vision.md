@@ -25,6 +25,7 @@ Uses the same metrics as [Classification](classification.md): Accuracy, Precisio
 
 ---
 
-### Practical Tip
+### Next Steps
 
 Always check the [Before Evaluation Checklist](../checklists/before-evaluation.md). For vision tasks, mathematical metrics are never enough—always **visually inspect** a sample of successes and failures.
+- Review the [Evaluation and Monitoring](../concepts/evaluation-and-monitoring.md) concept for the full lifecycle.

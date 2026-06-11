@@ -33,6 +33,7 @@ Use métricas de regressão quando seu modelo prevê um número contínuo (ex: p
 
 ---
 
-### Dica Prática
+### Próximos Passos
 
 Sempre verifique o [Checklist Antes da Avaliação](../checklists/before-evaluation.pt-BR.md) para garantir que suas métricas sejam confiáveis e correspondam aos seus objetivos de negócio.
+- Veja o conceito de [Avaliação e Monitoramento](../concepts/evaluation-and-monitoring.pt-BR.md) para o ciclo completo.

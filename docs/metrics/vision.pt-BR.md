@@ -25,6 +25,7 @@ Usa as mesmas métricas da [Classificação](classification.pt-BR.md): Acurácia
 
 ---
 
-### Dica Prática
+### Próximos Passos
 
 Sempre verifique o [Checklist Antes da Avaliação](../checklists/before-evaluation.pt-BR.md). Para tarefas de visão, métricas matemáticas nunca são suficientes — sempre **inspecione visualmente** uma amostra de sucessos e falhas.
+- Veja o conceito de [Avaliação e Monitoramento](../concepts/evaluation-and-monitoring.pt-BR.md) para o ciclo completo.

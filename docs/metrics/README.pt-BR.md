@@ -28,3 +28,4 @@ Uma boa métrica deve responder:
 > "O modelo melhorou a decisão com a qual eu me preocupo?"
 
 Se sua métrica melhora, mas o resultado do seu negócio não, você está medindo a coisa errada.
+- Veja o conceito de [Avaliação e Monitoramento](../concepts/evaluation-and-monitoring.pt-BR.md) para o ciclo completo.

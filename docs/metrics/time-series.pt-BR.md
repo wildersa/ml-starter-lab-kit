@@ -23,6 +23,7 @@ As séries temporais geralmente usam as mesmas métricas da regressão (MAE, RMS
 
 ---
 
-### Dica Prática
+### Próximos Passos
 
 Sempre verifique o [Checklist Antes da Avaliação](../checklists/before-evaluation.pt-BR.md) para garantir que sua divisão temporal esteja correta e que você não esteja "vazando" informações do futuro para o passado.
+- Veja o conceito de [Avaliação e Monitoramento](../concepts/evaluation-and-monitoring.pt-BR.md) para o ciclo completo.

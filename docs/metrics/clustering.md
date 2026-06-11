@@ -22,6 +22,7 @@ In clustering, you don't have a "right answer" (target) to compare against. Eval
 
 ---
 
-### Practical Tip
+### Next Steps
 
 Always check the [Before Evaluation Checklist](../checklists/before-evaluation.md) and remember that clustering is often an exploratory step, not a final answer.
+- Review the [Evaluation and Monitoring](../concepts/evaluation-and-monitoring.md) concept for the full lifecycle.

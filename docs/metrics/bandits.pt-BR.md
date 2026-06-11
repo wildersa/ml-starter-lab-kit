@@ -1,6 +1,6 @@
 # Métricas de Bandit
 
-Os Multi-Armed Bandits (MAB) avaliam o equilíbrio entre **Exploração** (coletar informações) e **Exploração** (usar informações conhecidas para maximizar a recompensa).
+Os Multi-Armed Bandits (MAB) avaliam o equilíbrio entre **Exploração** (testar opções para aprender) e **Explotação/Aproveitamento** (usar a melhor opção conhecida para maximizar recompensa).
 
 ## Recompensa (Reward)
 
@@ -38,6 +38,7 @@ Os Multi-Armed Bandits (MAB) avaliam o equilíbrio entre **Exploração** (colet
 
 ---
 
-### Dica Prática
+### Próximos Passos
 
 Sempre verifique o [Checklist Antes da Avaliação](../checklists/before-evaluation.pt-BR.md) e monitore o desempenho do bandit ao longo do tempo, pois seu ambiente é dinâmico.
+- Veja o conceito de [Avaliação e Monitoramento](../concepts/evaluation-and-monitoring.pt-BR.md) para o ciclo completo.

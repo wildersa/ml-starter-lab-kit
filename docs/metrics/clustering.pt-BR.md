@@ -22,6 +22,7 @@ No agrupamento, você não tem uma "resposta certa" (alvo) para comparar. A aval
 
 ---
 
-### Dica Prática
+### Próximos Passos
 
 Sempre verifique o [Checklist Antes da Avaliação](../checklists/before-evaluation.pt-BR.md) e lembre-se de que o agrupamento é frequentemente uma etapa exploratória, não uma resposta final.
+- Veja o conceito de [Avaliação e Monitoramento](../concepts/evaluation-and-monitoring.pt-BR.md) para o ciclo completo.

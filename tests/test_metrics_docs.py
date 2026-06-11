@@ -38,8 +38,8 @@ class TestMetricsDocs(unittest.TestCase):
         self.assertIn("Common trap", content)
         self.assertIn("Example", content)
 
-        # P0.6: Reference to evaluation concept
-        self.assertIn("../checklists/before-evaluation.md", content)
+        # P0.6: Reference to evaluation and monitoring concept
+        self.assertIn("../concepts/evaluation-and-monitoring.md", content)
 
     def test_regression_time_series_content(self):
         # P0.2 coverage
@@ -54,11 +54,11 @@ class TestMetricsDocs(unittest.TestCase):
         self.assertIn("Horizon", ts_content)
         self.assertIn("Window", ts_content)
 
-        self.assertIn("Practical Tip", reg_content)
-        self.assertIn("Practical Tip", ts_content)
+        self.assertIn("Next Steps", reg_content)
+        self.assertIn("Next Steps", ts_content)
 
-        self.assertIn("../checklists/before-evaluation.md", reg_content)
-        self.assertIn("../checklists/before-evaluation.md", ts_content)
+        self.assertIn("../concepts/evaluation-and-monitoring.md", reg_content)
+        self.assertIn("../concepts/evaluation-and-monitoring.md", ts_content)
 
     def test_clustering_vision_content(self):
         # P0.3 coverage
@@ -73,8 +73,8 @@ class TestMetricsDocs(unittest.TestCase):
         self.assertIn("IoU", vis_content)
         self.assertIn("Dice", vis_content)
 
-        self.assertIn("../checklists/before-evaluation.md", clu_content)
-        self.assertIn("../checklists/before-evaluation.md", vis_content)
+        self.assertIn("../concepts/evaluation-and-monitoring.md", clu_content)
+        self.assertIn("../concepts/evaluation-and-monitoring.md", vis_content)
 
     def test_bandits_content(self):
         # P0.4 coverage
@@ -86,7 +86,7 @@ class TestMetricsDocs(unittest.TestCase):
         for term in required_terms:
             self.assertIn(term, content)
 
-        self.assertIn("../checklists/before-evaluation.md", content)
+        self.assertIn("../concepts/evaluation-and-monitoring.md", content)
 
 if __name__ == "__main__":
     unittest.main()

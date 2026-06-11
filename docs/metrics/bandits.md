@@ -38,6 +38,7 @@ Multi-Armed Bandits (MAB) evaluate the trade-off between **Exploration** (gather
 
 ---
 
-### Practical Tip
+### Next Steps
 
 Always check the [Before Evaluation Checklist](../checklists/before-evaluation.md) and monitor the bandit's performance over time, as its environment is dynamic.
+- Review the [Evaluation and Monitoring](../concepts/evaluation-and-monitoring.md) concept for the full lifecycle.
