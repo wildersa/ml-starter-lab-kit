@@ -156,6 +156,7 @@ TRANSLATIONS = {
         "next_step_workspace": "Interactive Learning Workspace (Visual-first)",
         "next_step_eda_first": "IMPORTANT: Run EDA before Advisor, Baseline, or Learning Notes",
         "next_step_advisor": "Dataset Advice (modeling suggestions)",
+        "next_step_bandit": "Bandit Lab (adaptive decisions)",
         "next_step_demo": "Check the demo scenario and data dictionary in docs/demo-scenario.md",
         "summary_mlflow": "MLflow Tracking",
         "yes": "yes",
@@ -297,6 +298,7 @@ TRANSLATIONS = {
         "next_step_workspace": "Workspace de Aprendizado Interativo (Visual-first)",
         "next_step_eda_first": "IMPORTANTE: Execute a EDA antes do Advisor, Baseline ou Notas de Aprendizado",
         "next_step_advisor": "Conselhos sobre o Dataset (sugestões de modelagem)",
+        "next_step_bandit": "Bandit Lab (decisões adaptativas)",
         "next_step_demo": "Consulte o cenário de demo e o dicionário de dados em docs/demo-scenario.md",
         "summary_mlflow": "Rastreamento MLflow",
         "yes": "sim",
@@ -551,12 +553,31 @@ def run_problem_framing_wizard(task: str, t: dict[str, str], lang: str) -> dict[
 
     # 2. What matters most?
     print(f"\n{t['priority_question']}")
-    print(f"   - {t['priority_interpretability']}")
-    print(f"   - {t['priority_performance']}")
-    print(f"   - {t['priority_speed']}")
-    print(f"   - {t['priority_imbalanced']}")
-    print(f"   - {t['priority_learning']}")
-    priority = ask(t["priority_label"], t["priority_learning"])
+    print(f"   1. {t['priority_interpretability']}")
+    print(f"   2. {t['priority_performance']}")
+    print(f"   3. {t['priority_speed']}")
+    print(f"   4. {t['priority_imbalanced']}")
+    print(f"   5. {t['priority_learning']}")
+
+    while True:
+        choice = ask(t["priority_label"], "5")
+        choice_lower = choice.lower()
+        if not choice or choice == "5" or "learn" in choice_lower or "aprendizado" in choice_lower:
+            priority = t["priority_learning"]
+            break
+        if choice == "1" or "interpret" in choice_lower:
+            priority = t["priority_interpretability"]
+            break
+        if choice == "2" or "perform" in choice_lower or "desempenho" in choice_lower:
+            priority = t["priority_performance"]
+            break
+        if choice == "3" or "speed" in choice_lower or "veloci" in choice_lower or "simpl" in choice_lower:
+            priority = t["priority_speed"]
+            break
+        if choice == "4" or "imbalance" in choice_lower or "desbalance" in choice_lower:
+            priority = t["priority_imbalanced"]
+            break
+        print(t["invalid_option"])
 
     # 3. Which error is more costly?
     print(f"\n{t['error_cost_question']}")
@@ -662,6 +683,8 @@ def print_summary(root: Path, values: dict[str, str], t: dict[str, str], include
             steps.append(f"   - {t['next_step_4_data']}:     python -m {pkg}.lab eda")
         if values.get("GENERATE_ADVISOR") == "true":
             steps.append(f"   - {t['next_step_advisor']}:   python -m {pkg}.lab advisor")
+        if values.get("GENERATE_BANDIT") == "true":
+            steps.append(f"   - {t['next_step_bandit']}:   python -m {pkg}.lab bandit")
         steps.append(f"   - {t['next_step_4_train']}:    python -m {pkg}.lab train")
         steps.append(f"   - {t['next_step_4_eval']}: python -m {pkg}.lab evaluate")
     else:
@@ -673,6 +696,8 @@ def print_summary(root: Path, values: dict[str, str], t: dict[str, str], include
 
         if values.get("GENERATE_ADVISOR") == "true":
             steps.append(f"   - {t['next_step_advisor']}:   python -m {pkg}.lab advisor")
+        if values.get("GENERATE_BANDIT") == "true":
+            steps.append(f"   - {t['next_step_bandit']}:   python -m {pkg}.lab bandit")
 
     UI.panel(t["next_steps"], "\n".join(steps))
 
@@ -767,7 +792,16 @@ def main() -> None:
         optional_options["advisor"] = True
         optional_options["learning"] = True
         optional_options["baseline_lab"] = True
-        optional_options["bandit_lab"] = True
+        optional_options["learning_workspace"] = True
+
+    # P1-D: Gate Bandit Lab.
+    # Included only for specific bandit tasks or if explicitly selected in profile.
+    is_bandit_task = (task == "bandit" or task == "adaptive")
+    if is_bandit_task:
+         optional_options["bandit_lab"] = True
+
+    # If bandit lab is enabled, we also need the workspace to view it.
+    if optional_options.get("bandit_lab"):
         optional_options["learning_workspace"] = True
 
     needs_ml_basics = (optional_options.get("advisor") or optional_options.get("baseline_lab"))

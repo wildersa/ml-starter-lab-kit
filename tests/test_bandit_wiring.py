@@ -18,16 +18,18 @@ class TestBanditWiring(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.test_dir)
 
-    def test_bandit_lab_generated_in_guided_mode(self):
-        """P0.1: Guided project contains bandit_lab.py and configs/bandit_config.json."""
-        package_name = "bandit_guided_pkg"
-        output_dir = self.test_dir / "bandit_guided_project"
+    def test_bandit_lab_generated_with_full_profile(self):
+        """P0.2: Project contains bandit_lab.py and configs/bandit_config.json when full profile is selected."""
+        package_name = "bandit_full_pkg"
+        output_dir = self.test_dir / "bandit_full_project"
 
         run_generator(
-            project_name="Bandit Guided Project",
+            project_name="Bandit Full Project",
             package_name=package_name,
             output_dir=output_dir,
-            experience_mode="2" # Guided Learning Mode
+            task="2", # Supervised
+            experience_mode="1", # Minimal
+            optional_profile="3" # Full profile
         )
 
         self.assertTrue((output_dir / f"src/{package_name}/bandit_lab.py").exists())
@@ -66,7 +68,9 @@ class TestBanditWiring(unittest.TestCase):
             project_name="Bandit Run Project",
             package_name=package_name,
             output_dir=output_dir,
-            experience_mode="2"
+            task="2",
+            experience_mode="1",
+            optional_profile="3" # Full
         )
 
         # Run the bandit lab
@@ -140,7 +144,9 @@ class TestBanditWiring(unittest.TestCase):
             project_name="Bandit Fail Project",
             package_name=package_name,
             output_dir=output_dir,
-            experience_mode="2"
+            task="2",
+            experience_mode="1",
+            optional_profile="3" # Full
         )
 
         # Corrupt the config: remove 'n_rounds'
@@ -173,7 +179,9 @@ class TestBanditWiring(unittest.TestCase):
             project_name="Bandit Policy Fail Project",
             package_name=package_name,
             output_dir=output_dir,
-            experience_mode="2"
+            task="2",
+            experience_mode="1",
+            optional_profile="3" # Full
         )
 
         config_path = output_dir / "configs/bandit_config.json"
@@ -205,7 +213,9 @@ class TestBanditWiring(unittest.TestCase):
             project_name="Bandit Prob Fail Project",
             package_name=package_name,
             output_dir=output_dir,
-            experience_mode="2"
+            task="2",
+            experience_mode="1",
+            optional_profile="3" # Full
         )
 
         config_path = output_dir / "configs/bandit_config.json"
