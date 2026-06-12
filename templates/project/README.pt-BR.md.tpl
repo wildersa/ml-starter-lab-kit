@@ -78,9 +78,15 @@ Coloque seu dataset em `data/raw/dataset.csv` (ou no caminho que você configuro
 Consulte `docs/demo-scenario.md` para ver o cenário e o dicionário de dados.
 {% endif %}
 
+{% if TASK != "bandit" %}
 **Conceitos de Aprendizado Supervisionado:**
 - **Alvo (Target)**: A coluna que você deseja prever. A maioria dos projetos tem **um** alvo principal.
 - **Features**: As colunas usadas para fazer a previsão. Você pode ter **muitas** colunas de features. As colunas existentes no CSV já são candidatas a features.
+{% else %}
+**Conceitos de Bandit Learning:**
+- **Recompensa (Reward)**: A métrica que você deseja maximizar (ex: clique, conversão, sucesso).
+- **Arms (Ações)**: As escolhas ou ações disponíveis que o agente pode tomar.
+{% endif %}
 
 Exemplo de `dataset.csv`:
 ```csv

@@ -88,6 +88,22 @@ def get_demo_data(task: str, goal: str = "") -> str:
             "data/raw/images/img10.jpg,dog,640,480\n"
         )
 
+    if task == "bandit":
+        # Multi-Armed Bandit demo: arm name and reward
+        return (
+            "arm_name,reward\n"
+            "arm_a,1\n"
+            "arm_b,0\n"
+            "arm_a,0\n"
+            "arm_c,1\n"
+            "arm_b,1\n"
+            "arm_a,1\n"
+            "arm_c,0\n"
+            "arm_b,0\n"
+            "arm_a,1\n"
+            "arm_c,1\n"
+        )
+
     # Default/Generic: minimal placeholder
     return (
         "feature1,feature2,target\n"
