@@ -154,7 +154,8 @@ The generated `src/{{PACKAGE_NAME}}/train.py` is a **simple baseline**, not a fi
 5. Edit `src/{{PACKAGE_NAME}}/features.py`
 6. Train the model (baseline)
 7. Evaluate results
-8. Document limitations and next steps
+8. Run monitoring/drift check
+9. Document limitations and next steps
 
 ## Suggested commands
 
@@ -200,6 +201,11 @@ python -m {{PACKAGE_NAME}}.lab train
 
 # Evaluate
 python -m {{PACKAGE_NAME}}.lab evaluate
+
+{% if GENERATE_MONITOR == "true" %}
+# (Optional) Run educational monitoring/drift stub
+python -m {{PACKAGE_NAME}}.lab monitor
+{% endif %}
 
 # Run all steps
 python -m {{PACKAGE_NAME}}.lab all

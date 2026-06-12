@@ -48,6 +48,14 @@ def run_bandit():
         print("\n[INFO] Multi-Armed Bandit Lab is not enabled in this project.")
         print("To enable it, generate a project with the 'guided' mode or 'full' profile.")
 
+def run_monitor():
+    try:
+        monitor = importlib.import_module(".monitor", package=__package__)
+        monitor.main()
+    except ImportError:
+        print("\n[INFO] Monitoring stub is not enabled in this project.")
+        print("To enable it, generate a project with the 'guided' mode or 'recommended' profile.")
+
 {% if GENERATE_BANDIT == "true" %}
 def run_bandit_dashboard():
     # Bandit Dashboard is a Streamlit app named bandit_dashboard.py inside the package
@@ -115,6 +123,7 @@ def main():
     subparsers.add_parser("learn", help="Generate dataset-contextual learning notes")
     subparsers.add_parser("baseline", help="Run Baseline Lab for simple model benchmarking")
     subparsers.add_parser("bandit", help="Run educational Multi-Armed Bandit Lab")
+    subparsers.add_parser("monitor", help="Run educational monitoring/drift stub")
     {% if GENERATE_BANDIT == "true" %}
     subparsers.add_parser("bandit-dashboard", help="Visual explorer for Bandit Lab results")
     {% endif %}
@@ -137,6 +146,8 @@ def main():
         run_baseline()
     elif args.command == "bandit":
         run_bandit()
+    elif args.command == "monitor":
+        run_monitor()
     {% if GENERATE_BANDIT == "true" %}
     elif args.command == "bandit-dashboard":
         run_bandit_dashboard()
