@@ -36,7 +36,8 @@ def create_config(
         "project": {
             "name": values["PROJECT_NAME"],
             "package": values["PACKAGE_NAME"],
-            "task": task
+            "task": task,
+            "language": values.get("LANGUAGE", "en")
         },
         "data": {
             "raw_path": raw_path,

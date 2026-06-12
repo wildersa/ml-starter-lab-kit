@@ -27,32 +27,6 @@ def train_baseline_classifier(rows: list[dict[str, object]], target_column: str)
     }
 
 
-def train_baseline_regressor(rows: list[dict[str, object]], target_column: str) -> dict[str, object]:
-    if not target_column:
-        raise ValueError("target_column not configured.")
-
-    values = []
-    for row in rows:
-        val = row.get(target_column)
-        if val not in (None, ""):
-            try:
-                values.append(float(val))
-            except (ValueError, TypeError):
-                continue
-
-    if not values:
-        raise ValueError(f"No numeric values found for target: {target_column}")
-
-    mean_value = sum(values) / len(values)
-
-    return {
-        "model_type": "mean_value_baseline",
-        "target_column": target_column,
-        "prediction": mean_value,
-        "count": len(values),
-    }
-
-
 def save_model(model: dict[str, object], path: str | Path = "models/model.json") -> None:
     model_path = project_root() / path
     model_path.parent.mkdir(parents=True, exist_ok=True)
@@ -68,12 +42,7 @@ def main() -> None:
     target_column = config["target"]["column"]
 
     if task in {"generic", "supervised", "vision"}:
-        # Attempt to detect if it's regression based on goal if available,
-        # but for baseline we'll try numeric first then fallback to classifier.
-        try:
-            model = train_baseline_regressor(rows, target_column)
-        except ValueError:
-            model = train_baseline_classifier(rows, target_column)
+        model = train_baseline_classifier(rows, target_column)
     elif task == "unsupervised":
         model = {
             "model_type": "unsupervised_placeholder",
