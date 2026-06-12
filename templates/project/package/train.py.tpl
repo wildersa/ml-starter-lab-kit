@@ -91,6 +91,13 @@ def main() -> None:
                 "model_type": "timeseries_placeholder",
                 "note": "Add LSTM/Keras or another temporal model here."
             }
+    {% if TASK == "bandit" %}
+    elif task == "bandit":
+        model = {
+            "model_type": "bandit_placeholder",
+            "note": "Bandit projects typically use simulation or off-policy logs. Use 'lab bandit' to run the Lab."
+        }
+    {% endif %}
     else:
         raise ValueError(f"Task not supported: {task}")
 

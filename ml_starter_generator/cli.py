@@ -35,7 +35,7 @@ TRANSLATIONS = {
         "task_unsupervised": "PCA/K-Means/clustering",
         "task_timeseries": "time series/LSTM",
         "task_vision": "image classification/detection",
-        "task_bandit": "Multi-Armed Bandit (MAB)",
+        "task_bandit": "Multi-Armed Bandit / adaptive decisions",
         "choose_option": "Choose an option",
         "invalid_option": "Invalid option.",
         "dataset_target": "Dataset and target",
@@ -180,7 +180,7 @@ TRANSLATIONS = {
         "task_unsupervised": "PCA/K-Means/agrupamento",
         "task_timeseries": "séries temporais/LSTM",
         "task_vision": "classificação de imagem/detecção",
-        "task_bandit": "Multi-Armed Bandit (MAB)",
+        "task_bandit": "Multi-Armed Bandit / decisões adaptativas",
         "choose_option": "Escolha uma opção",
         "invalid_option": "Opção inválida.",
         "dataset_target": "Dataset e alvo (target)",
@@ -414,6 +414,7 @@ def choose_task(t: dict[str, str]) -> str:
     print(f"3. unsupervised  - {t['task_unsupervised']}")
     print(f"4. timeseries    - {t['task_timeseries']}")
     print(f"5. vision        - {t['task_vision']}")
+    print(f"6. bandit        - {t['task_bandit']}")
 
     while True:
         choice = ask(t['choose_option'], "2")
@@ -549,6 +550,7 @@ def run_problem_framing_wizard(task: str, t: dict[str, str], lang: str) -> dict[
         "unsupervised": t["goal_group_records"],
         "timeseries": t["goal_forecast_values"],
         "vision": t["goal_work_images_text"],
+        "bandit": t["task_bandit"],
         "generic": t["goal_predict_category"]
     }
     default_goal = goals.get(task, t["goal_predict_category"])
@@ -813,6 +815,8 @@ def main() -> None:
     is_bandit_task = (task == "bandit" or task == "adaptive")
     if is_bandit_task:
          optional_options["bandit_lab"] = True
+         # When task is bandit, we also want the docs and related assets enabled
+         # by forcing the GENERATE_BANDIT flag in values later.
 
     # If bandit lab is enabled, we also need the workspace to view it.
     if optional_options.get("bandit_lab"):

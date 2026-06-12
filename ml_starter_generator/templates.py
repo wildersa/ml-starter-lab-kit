@@ -1,33 +1,32 @@
 from __future__ import annotations
 
+import re
 from pathlib import Path
+from typing import Any
 from .constants import STARTER_ROOT
 
-def render(content: str, values: dict[str, str]) -> str:
-    import re
+def render(content: str, values: dict[str, Any]) -> str:
+    safe_values = {k: str(v) for k, v in values.items()}
 
-    # 1. Simple placeholders: {{KEY}}
-    for key, value in values.items():
-        content = content.replace("{{" + key + "}}", value)
-
-    # 2. Recursive conditional blocks: {% if KEY == "value" %}...{% else %}...{% endif %}
     def process(text):
-        # Find the first {% if ... %}
-        match = re.search(r'{%\s*if\s+(\w+)\s*==\s*"([^"]+)"\s*%}', text)
+        # Support == and != with optional spaces and optional quotes
+        # Quotes are technically required by our current templates, but let's be flexible.
+        match = re.search(r'{%\s*if\s+(\w+)\s*(!=|==)\s*"([^"]*)"\s*%}', text)
         if not match:
             return text
 
         if_start = match.start()
-        if_tag_len = len(match.group(0))
+        if_tag_full = match.group(0)
         key = match.group(1)
-        val = match.group(2)
+        op = match.group(2)
+        val = match.group(3)
 
-        # Find matching endif, and optional else at the same level
         depth = 0
         endif_pos = -1
         endif_tag_len = 0
         else_pos = -1
         else_tag_len = 0
+
         for m in re.finditer(r'{%\s*(if|else|endif).*?%}', text[if_start:]):
             tag = m.group(1)
             if tag == 'if':
@@ -43,29 +42,43 @@ def render(content: str, values: dict[str, str]) -> str:
                 else_tag_len = len(m.group(0))
 
         if endif_pos == -1:
-            # Unbalanced tags: ignore this if and continue
-            return text[:if_start] + text[if_start + if_tag_len:]
+            # Malformed template: remove the tag to avoid infinite loop
+            return text[:if_start] + text[if_start + len(if_tag_full):]
+
+        actual_val = safe_values.get(key, "")
+        if op == "==":
+            condition_met = (actual_val == val)
+        else: # !=
+            condition_met = (actual_val != val)
 
         if else_pos != -1:
-            if_content = text[if_start + if_tag_len : else_pos]
+            if_content = text[if_start + len(if_tag_full) : else_pos]
             else_content = text[else_pos + else_tag_len : endif_pos]
-            if values.get(key) == val:
-                selected = if_content
-            else:
-                selected = else_content
+            selected = if_content if condition_met else else_content
         else:
-            if_content = text[if_start + if_tag_len : endif_pos]
-            if values.get(key) == val:
-                selected = if_content
-            else:
-                selected = ""
+            if_content = text[if_start + len(if_tag_full) : endif_pos]
+            selected = if_content if condition_met else ""
 
-        # Recurse on the resulting text to handle other tags at the same level or nested ones
-        return process(text[:if_start] + selected + text[endif_pos + endif_tag_len:])
+        return text[:if_start] + selected + text[endif_pos + endif_tag_len:]
 
-    content = process(content)
+    # Run IF/ELSE processing until convergence
+    while True:
+        new_content = process(content)
+        if new_content == content:
+            break
+        content = new_content
 
-    # 3. Handle leftover empty lines from conditional blocks
+    # 2. Simple placeholders: {{KEY}}
+    for key, value in safe_values.items():
+        content = content.replace("{{" + key + "}}", value)
+
+    # 3. Clean up empty lines that were left by tag lines
+    # This matches lines containing ONLY a tag (and whitespace), and removes the whole line including the newline
+    content = re.sub(r'^[ \t]*{%\s*(if|else|endif).*?%}[ \t]*\n', '', content, flags=re.MULTILINE)
+    # Also clean up trailing tags that might not have a newline after them
+    content = re.sub(r'[ \t]*{%\s*(if|else|endif).*?%}[ \t]*', '', content)
+
+    # 4. Final normalization of empty lines
     content = re.sub(r'\n\s*\n\s*\n', '\n\n', content)
 
     return content

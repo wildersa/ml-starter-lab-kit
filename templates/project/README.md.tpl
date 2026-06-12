@@ -78,9 +78,15 @@ Place your dataset at `data/raw/dataset.csv` (or the path you configured).
 Check `docs/demo-scenario.md` for the scenario and data dictionary.
 {% endif %}
 
+{% if TASK != "bandit" %}
 **Supervised Learning concepts:**
 - **Target**: The column you want to predict. Most projects have **one** main target.
 - **Features**: The columns used to make the prediction. You can have **many** feature columns. Existing CSV columns are already candidate features.
+{% else %}
+**Bandit Learning concepts:**
+- **Reward**: The metric you want to maximize (e.g. click, conversion, success).
+- **Arms**: The available choices or actions the agent can take.
+{% endif %}
 
 Example `dataset.csv`:
 ```csv
@@ -120,7 +126,7 @@ python -m {{PACKAGE_NAME}}.lab workspace
 
 {% if GENERATE_BANDIT == "true" %}
 ### Educational Labs
-This project includes the **Multi-Armed Bandit Lab** as an advanced learning exercise. Unlike supervised learning, it focuses on sequential decision-making. You can explore it via the Workspace or the CLI:
+This project includes the **Multi-Armed Bandit Lab (adaptive decisions)** as an advanced learning exercise. Unlike supervised learning, it focuses on sequential decision-making. You can explore it via the Workspace or the CLI:
 
 ```bash
 python -m {{PACKAGE_NAME}}.lab bandit
@@ -192,7 +198,7 @@ python -m {{PACKAGE_NAME}}.lab baseline
 {% endif %}
 
 {% if GENERATE_BANDIT == "true" %}
-# (Optional) Run educational Multi-Armed Bandit Lab
+# (Optional) Run educational Multi-Armed Bandit Lab (adaptive decisions)
 python -m {{PACKAGE_NAME}}.lab bandit
 {% endif %}
 

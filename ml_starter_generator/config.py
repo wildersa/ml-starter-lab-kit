@@ -29,6 +29,8 @@ def create_config(
             target_column = "sales"
         elif task == "vision":
             target_column = "label"
+        elif task == "bandit":
+            target_column = "reward"
         elif task == "generic":
             target_column = "target"
 
