@@ -107,3 +107,24 @@ def f1_score(y_true: list[Any], y_pred: list[Any], *, positive_label: Any) -> fl
     r = recall(y_true, y_pred, positive_label=positive_label)
     denominator = p + r
     return 2 * (p * r) / denominator if denominator > 0 else 0.0
+
+
+# --- Multi-Armed Bandit Metrics ---
+
+def bandit_total_reward(rewards: list[int | float]) -> float:
+    """Total reward obtained in a bandit simulation."""
+    return float(sum(rewards))
+
+
+def bandit_average_reward(rewards: list[int | float]) -> float:
+    """Average reward per round in a bandit simulation."""
+    if not rewards:
+        return 0.0
+    return sum(rewards) / len(rewards)
+
+
+def bandit_lift(avg_reward: float, baseline_reward: float) -> float:
+    """Relative improvement over a baseline reward."""
+    if baseline_reward == 0:
+        return 0.0
+    return (avg_reward - baseline_reward) / baseline_reward

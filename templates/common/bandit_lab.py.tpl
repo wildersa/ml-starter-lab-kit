@@ -19,10 +19,12 @@ import random
 import csv
 import sys
 import math
+import argparse
 from typing import Any, Dict, List, Tuple
 from pathlib import Path
 
 from .core.config import project_root
+from .metrics import bandit_total_reward, bandit_average_reward, bandit_lift
 
 
 class BernoulliEnvironment:
@@ -168,14 +170,18 @@ class BanditLab:
                 "edu_intro": "Multi-Armed Bandit (MAB) is a form of sequential decision learning. Unlike supervised learning where you have a fixed dataset and labels, MAB learns while it makes decisions through a sequence of actions.",
                 "edu_cycle": "In each round, the policy chooses one arm (action) and observes the reward only for that specific arm. This partial feedback is the core challenge of MAB: you don't know what the reward would have been if you chose a different arm.",
                 "edu_random": "The **Random Policy** serves as a baseline that does not learn from feedback. It helps to evaluate how much better adaptive policies can perform by effectively balancing exploration and exploitation.",
+                "edu_epsilon_greedy": "The **Epsilon-Greedy** policy is a simple yet effective strategy. It explores the environment by choosing a random arm with probability `epsilon`, and exploits its current knowledge by choosing the best-performing arm otherwise.",
                 "edu_ucb1": "The **UCB1 (Upper Confidence Bound)** policy uses an 'optimism in the face of uncertainty' approach. For each arm, it calculates the average reward plus an uncertainty bonus. Arms that haven't been tried much get a higher bonus, forcing the agent to explore them before focusing on the best-performing options.",
                 "edu_thompson": "The **Thompson Sampling** policy is a Bayesian approach. It maintains a probability distribution (Beta posterior) for each arm. In each round, it samples from these distributions and chooses the arm with the highest sample. This naturally balances exploration (from the width of the distribution) and exploitation (from its center).",
                 "summary_section": "Summary",
+                "comparison_table": "Policy Comparison",
                 "total_reward": "Total Reward",
                 "avg_reward": "Average Reward",
                 "cumulative_regret": "Cumulative Regret",
                 "best_arm_rate": "Best Arm Selection Rate",
                 "arm_counts": "Arm Selection Counts",
+                "policy": "Policy",
+                "lift_vs_random": "Lift vs. Random",
                 "status_running": "Running {policy} policy simulation...",
                 "status_complete": "Bandit Lab simulation complete.",
             },
@@ -186,14 +192,18 @@ class BanditLab:
                 "edu_intro": "Multi-Armed Bandit (MAB) é uma forma de aprendizado por decisão sequencial. Diferente do aprendizado supervisionado onde você tem um conjunto de dados fixo e rótulos, o MAB aprende enquanto toma decisões através de uma sequência de ações.",
                 "edu_cycle": "Em cada rodada, a política escolhe um 'arm' (ação) e observa a recompensa apenas para aquele arm específico. Esse feedback parcial é o desafio central do MAB: você não sabe qual teria sido a recompensa se tivesse escolhido um arm diferente.",
                 "edu_random": "A **Política Aleatória (Random Policy)** serve como um baseline que não aprende com o feedback. Ela ajuda a avaliar o quanto melhor as políticas adaptativas podem performar ao equilibrar exploração (exploration) e explotação (exploitation).",
+                "edu_epsilon_greedy": "A política **Epsilon-Greedy** é uma estratégia simples e eficaz. Ela explora o ambiente escolhendo um arm aleatório com probabilidade `epsilon` e explota seu conhecimento atual escolhendo o melhor arm nas outras vezes.",
                 "edu_ucb1": "A política **UCB1 (Upper Confidence Bound)** utiliza uma abordagem de 'otimismo diante da incerteza'. Para cada arm, ela calcula a média de recompensa mais um bônus de incerteza. Arms pouco testados recebem um bônus maior, forçando o agente a explorá-los antes de focar nas melhores opções.",
                 "edu_thompson": "A política **Thompson Sampling** é uma abordagem Bayesiana. Ela mantém uma distribuição de probabilidade (Beta posterior) para cada arm. Em cada rodada, ela sorteia uma amostra dessas distribuições e escolhe o arm com a maior amostra. Isso equilibra naturalmente exploração (pela largura da distribuição) e explotação (pelo seu centro).",
                 "summary_section": "Resumo",
+                "comparison_table": "Comparação de Políticas",
                 "total_reward": "Recompensa Total",
                 "avg_reward": "Recompensa Média",
                 "cumulative_regret": "Regret Acumulado",
                 "best_arm_rate": "Taxa de Escolha do Melhor Arm",
                 "arm_counts": "Contagem de Escolha dos Arms",
+                "policy": "Política",
+                "lift_vs_random": "Melhoria vs. Aleatório",
                 "status_running": "Executando simulação da política {policy}...",
                 "status_complete": "Simulação do Bandit Lab concluída.",
             }
@@ -323,9 +333,13 @@ class BanditLab:
                 "cumulative_regret": round(cumulative_regret, 4)
             })
 
+        # Gather all rewards for centralized metric calculation
+        rewards = [h["reward"] for h in history]
+
         metrics = {
-            "total_reward": total_reward,
-            "average_reward": round(total_reward / self.n_rounds, 4),
+            "total_reward": bandit_total_reward(rewards),
+            "cumulative_reward": bandit_total_reward(rewards),
+            "average_reward": round(bandit_average_reward(rewards), 4),
             "cumulative_regret": round(cumulative_regret, 4),
             "best_arm_selection_rate": round(best_arm_count / self.n_rounds, 4),
             "arm_counts": {self.arms[i]["name"]: arm_counts[i] for i in range(self.n_arms)}
@@ -346,12 +360,34 @@ class BanditLab:
             "",
             self.t["edu_random"],
             "",
+            self.t["edu_epsilon_greedy"],
+            "",
             self.t["edu_ucb1"],
             "",
             self.t["edu_thompson"],
             "",
             f"## {self.t['summary_section']}",
+            "",
+            f"### {self.t['comparison_table']}",
+            "",
         ]
+
+        # Table header
+        header = f"| {self.t['policy']} | {self.t['total_reward']} | {self.t['avg_reward']} | {self.t['cumulative_regret']} | {self.t['best_arm_rate']} | {self.t['lift_vs_random']} |"
+        separator = "| :--- | :---: | :---: | :---: | :---: | :---: |"
+        md.append(header)
+        md.append(separator)
+
+        random_avg = results.get("random", {}).get("average_reward", 0.0)
+
+        for policy, metrics in results.items():
+            lift_str = "N/A"
+            if policy != "random" and random_avg > 0:
+                lift = bandit_lift(metrics["average_reward"], random_avg)
+                lift_str = f"{lift:+.2%}"
+
+            row = f"| {policy} | {metrics['total_reward']} | {metrics['average_reward']:.4f} | {metrics['cumulative_regret']:.2f} | {metrics['best_arm_selection_rate']:.2%} | {lift_str} |"
+            md.append(row)
 
         for policy, metrics in results.items():
             md.extend([
@@ -372,8 +408,26 @@ class BanditLab:
 
 def main() -> None:
     """Entry point for the Bandit Lab."""
+    # If called via the unified CLI (lab.py), the 'bandit' command might still be in sys.argv
+    argv = sys.argv[1:]
+    if argv and argv[0] == "bandit":
+        argv = argv[1:]
+
+    parser = argparse.ArgumentParser(description="Educational Multi-Armed Bandit Lab.")
+    parser.add_argument("--config", type=str, default="configs/bandit_config.json", help="Path to bandit configuration file.")
+    parser.add_argument("--list-policies", action="store_true", help="List available bandit policies.")
+    args = parser.parse_args(argv)
+
+    if args.list_policies:
+        print("Available policies:")
+        print("- random: Selects arms uniformly at random.")
+        print("- epsilon_greedy: Explores with probability epsilon, exploits otherwise.")
+        print("- ucb1: Upper Confidence Bound (optimism in the face of uncertainty).")
+        print("- thompson_sampling: Bayesian approach using Beta distributions.")
+        return
+
     root = project_root()
-    config_path = root / "configs/bandit_config.json"
+    config_path = root / args.config
 
     # Language detection fallback
     lang = "en"

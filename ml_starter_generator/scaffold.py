@@ -184,12 +184,16 @@ def create_optional_files(
         "bandit_config": "bandit_config.json.tpl",
     }
 
+    # Special wiring for Bandit Lab: it REQUIRES metrics.py
+    if options.get("bandit_lab"):
+        options["metrics"] = True
+
     for key, enabled in options.items():
         if enabled and key in mapping:
             content = load_template(template_names[key], values)
             write_text(mapping[key], content, force=force)
 
-    # Special wiring for Bandit Lab which also needs a config and dashboard
+    # Config and Dashboard are specific to Bandit Lab and not in the main loop above
     if options.get("bandit_lab"):
         # Config
         content = load_template(template_names["bandit_config"], values)
