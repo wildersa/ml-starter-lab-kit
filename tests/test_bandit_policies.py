@@ -41,7 +41,7 @@ class TestBanditPolicies(unittest.TestCase):
             text=True
         )
 
-        self.assertEqual(result.returncode, 0, f"Bandit Lab failed: {result.stderr}")
+        self.assertEqual(result.returncode, 0, f"Bandit Lab failed:\nSTDOUT: {result.stdout}\nSTDERR: {result.stderr}")
 
         # Check artifacts
         results_json_path = output_dir / "configs/bandit_results.json"
@@ -60,8 +60,11 @@ class TestBanditPolicies(unittest.TestCase):
             self.assertIn(policy, results)
             metrics = results[policy]
             self.assertIn("total_reward", metrics)
+            self.assertIn("cumulative_reward", metrics)
             self.assertIn("average_reward", metrics)
             self.assertIn("cumulative_regret", metrics)
+            self.assertIn("best_arm_selection_rate", metrics)
+            self.assertIn("arm_counts", metrics)
 
         # P0.4: Verify history CSV
         with open(history_csv_path, "r") as f:
@@ -84,10 +87,48 @@ class TestBanditPolicies(unittest.TestCase):
         md_content = results_md_path.read_text()
         self.assertIn("UCB1 (Upper Confidence Bound)", md_content)
         self.assertIn("Thompson Sampling", md_content)
+        self.assertIn("Epsilon-Greedy", md_content)
         self.assertIn("uncertainty bonus", md_content)
         self.assertIn("Beta posterior", md_content)
         self.assertIn("exploration", md_content)
         self.assertIn("exploitation", md_content)
+
+        # P0.4: Verify comparison table and lift
+        self.assertIn("| random |", md_content)
+        self.assertIn("| ucb1 |", md_content)
+        self.assertIn("Lift vs. Random", md_content)
+
+    def test_bandit_cli_list_policies(self):
+        """P0.4: Verify that the Bandit Lab CLI can list policies."""
+        package_name = "bandit_cli_pkg"
+        output_dir = self.test_dir / "bandit_cli_project"
+
+        run_generator(
+            project_name="Bandit CLI Project",
+            package_name=package_name,
+            output_dir=output_dir,
+            task="2",
+            experience_mode="1",
+            optional_profile="3" # Full
+        )
+
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(output_dir / "src")
+
+        # We need to run the bandit_lab.py directly to test its own argparse
+        result = subprocess.run(
+            [sys.executable, "-m", f"{package_name}.bandit_lab", "--list-policies"],
+            cwd=output_dir,
+            env=env,
+            capture_output=True,
+            text=True
+        )
+
+        self.assertEqual(result.returncode, 0)
+        self.assertIn("Available policies:", result.stdout)
+        self.assertIn("- random", result.stdout)
+        self.assertIn("- ucb1", result.stdout)
+        self.assertIn("- thompson_sampling", result.stdout)
 
     def test_thompson_posterior_updates(self):
         """P0.2: Verify Thompson Sampling updates alpha/beta correctly in the generated module."""

@@ -191,6 +191,8 @@ def create_optional_files(
 
     # Special wiring for Bandit Lab which also needs a config and dashboard
     if options.get("bandit_lab"):
+        # Ensure metrics is also generated for bandit_lab
+        options["metrics"] = True
         # Config
         content = load_template(template_names["bandit_config"], values)
         write_text(mapping["bandit_config"], content, force=force)
