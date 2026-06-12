@@ -133,6 +133,14 @@ def bandit_summary(rewards: list[float]) -> dict[str, float]:
     }
 
 
+def arm_counts(selected_arms: list[Any]) -> dict[Any, int]:
+    """Return the number of times each arm was selected."""
+    counts: dict[Any, int] = {}
+    for arm in selected_arms:
+        counts[arm] = counts.get(arm, 0) + 1
+    return counts
+
+
 def calculate_lift(current: float, baseline: float) -> float:
     """Calculate relative lift: (current - baseline) / baseline.
     Returns 0.0 if baseline is 0.

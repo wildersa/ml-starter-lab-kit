@@ -58,6 +58,11 @@ class TestMetricsTemplate(unittest.TestCase):
         self.assertEqual(summary['average_reward'], 2/3)
         self.assertEqual(summary['count'], 3)
 
+    def test_arm_counts(self):
+        arms = ["A", "B", "A"]
+        counts = self.module.arm_counts(arms)
+        self.assertEqual(counts, {"A": 2, "B": 1})
+
     def test_calculate_lift(self):
         self.assertEqual(self.module.calculate_lift(120, 100), 0.2)
         self.assertEqual(self.module.calculate_lift(100, 0), 0.0)
