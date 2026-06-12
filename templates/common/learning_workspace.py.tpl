@@ -39,6 +39,50 @@ st.set_page_config(
     layout="wide"
 )
 
+def render_project_doc(relative_path: str):
+    """
+    Safely reads and renders a project-local Markdown file.
+    Only allows paths from a predefined allowlist of docs and reports.
+    """
+    # Define safe allowed paths
+    allowed_paths = {
+        # Docs
+        "docs/evaluation.md",
+        "docs/evaluation.pt-BR.md",
+        "docs/monitoring.md",
+        "docs/monitoring.pt-BR.md",
+        "docs/mab-lab.md",
+        "docs/mab-lab.pt-BR.md",
+        "docs/data-dictionary.md",
+        "docs/demo-scenario.md",
+        "docs/demo-scenario.pt-BR.md",
+        # Reports
+        "reports/learning-notes.md",
+        "reports/dataset-advice.md",
+        "reports/baseline-results.md",
+        "reports/bandit-results.md",
+        "reports/evaluation-report.md",
+        "reports/model-report.md",
+        "reports/modeling-notes.md",
+    }
+
+    if relative_path not in allowed_paths:
+        st.error(f"Access denied: {relative_path} is not in the allowlist.")
+        return
+
+    full_path = project_root() / relative_path
+
+    if full_path.exists():
+        try:
+            content = full_path.read_text(encoding="utf-8")
+            st.markdown(content)
+        except Exception as e:
+            st.warning(f"Could not read {relative_path}: {e}")
+    else:
+        st.info(f"💡 **Documentation not found**: `{relative_path}` does not exist yet.")
+        if "reports/" in relative_path:
+            st.write("This report is generated after you run the corresponding pipeline step.")
+
 def main():
     st.title("🎓 {{PROJECT_NAME}} Learning Workspace")
     st.markdown("""
@@ -62,6 +106,7 @@ def main():
             "Bandit Lab",
             {% endif %}
             "Train & Evaluate",
+            "Production & Monitoring",
             "Experiments & MLflow"
         ]
     )
@@ -126,7 +171,6 @@ def main():
         st.write("Understand ML concepts through the lens of your own data.")
 
         eda_summary_path = project_root() / "configs/eda_summary.json"
-        learning_report = project_root() / "reports/learning-notes.md"
 
         if not eda_summary_path.exists():
             st.warning("📊 **EDA Required**: Learning notes require data analysis first.")
@@ -136,13 +180,13 @@ def main():
             python -m {{PACKAGE_NAME}}.lab eda
             ```
             """)
-        elif learning_report.exists():
-            st.success("Contextual learning notes found.")
-            st.markdown(learning_report.read_text())
         else:
-            st.info("Generate your contextual learning notes:")
+            render_project_doc("reports/learning-notes.md")
+
+            st.divider()
+            st.subheader("How to refresh")
+            st.info("If you updated your data or features, regenerate your contextual learning notes:")
             st.code(f"python -m {{PACKAGE_NAME}}.lab learn")
-            st.write("Then refresh this page to see the notes.")
 
     elif section == "Target Analysis":
         st.header("🎯 Target Analysis")
@@ -170,7 +214,6 @@ def main():
         st.write("Recommendations based on your problem framing and data profile.")
 
         eda_summary_path = project_root() / "configs/eda_summary.json"
-        advisor_report = project_root() / "reports/dataset-advice.md"
 
         if not eda_summary_path.exists():
             st.warning("📊 **EDA Required**: Exploratory Data Analysis (EDA) is required before generating suggestions.")
@@ -181,23 +224,18 @@ def main():
             ```
             Then refresh this page to continue.
             """)
-        elif advisor_report.exists():
-            try:
-                st.success("Dataset Advisor report found.")
-                st.markdown(advisor_report.read_text())
-            except Exception:
-                st.warning("Could not read the Advisor suggestions report.")
         else:
-            st.info("Run the Dataset Advisor to get modeling suggestions based on your data:")
+            render_project_doc("reports/dataset-advice.md")
+
+            st.divider()
+            st.info("Run the Dataset Advisor to regenerate suggestions:")
             st.code(f"python -m {{PACKAGE_NAME}}.lab advisor")
 
     elif section == "Baseline Lab":
         st.header("🔬 Baseline Lab")
-        st.write("Start with simple models to establish a 'floor' for performance.")
 
         eda_summary_path = project_root() / "configs/eda_summary.json"
         baseline_results_path = project_root() / "configs/baseline_results.json"
-        baseline_report_path = project_root() / "reports/baseline-results.md"
 
         if not eda_summary_path.exists():
             st.warning("📊 **EDA Required**: We recommend running EDA before starting your baseline experiments.")
@@ -207,92 +245,92 @@ def main():
             python -m {{PACKAGE_NAME}}.lab eda
             ```
             """)
-        elif baseline_report_path.exists():
-            st.success("Baseline results found.")
-            st.markdown(baseline_report_path.read_text())
+        else:
+            render_project_doc("reports/baseline-results.md")
 
             if baseline_results_path.exists():
                 with open(baseline_results_path, "r") as f:
                     baseline_results = json.load(f)
-                st.subheader("Raw Metrics")
-                st.json(baseline_results)
-        else:
-            st.info("Run the Baseline Lab to establish a performance benchmark:")
-            st.code(f"python -m {{PACKAGE_NAME}}.lab baseline")
+                with st.expander("Raw Metrics (JSON)"):
+                    st.json(baseline_results)
 
-            st.markdown("""
-            **Why a baseline?**
-            You should always know how a simple model (like a Mean/Mode predictor or a Linear Regression)
-            performs before trying complex algorithms. Any real model must significantly outperform this baseline.
-            """)
+            st.divider()
+            st.info("Run the Baseline Lab to establish or update your performance benchmark:")
+            st.code(f"python -m {{PACKAGE_NAME}}.lab baseline")
 
     {% if GENERATE_BANDIT == "true" %}
     elif section == "Bandit Lab":
         st.header("🎰 Multi-Armed Bandit Lab")
-        st.markdown("""
-        **Multi-Armed Bandits (MAB)** are a different paradigm from supervised learning.
-        While supervised learning focuses on predicting a target from features, MAB focuses on
-        **sequential decision learning** under uncertainty.
 
-        In this lab, you simulate a scenario where you must choose between multiple 'arms' (actions)
-        to maximize a reward. It is a core concept in Reinforcement Learning and A/B Testing.
-        """)
+        lang_suffix = ".pt-BR" if "{{LANGUAGE}}" == "pt-BR" else ""
+        render_project_doc(f"docs/mab-lab{lang_suffix}.md")
+
+        st.divider()
+        st.subheader("Simulation Results")
 
         bandit_results_path = project_root() / "configs/bandit_results.json"
-        bandit_report_path = project_root() / "reports/bandit-results.md"
         bandit_history_path = project_root() / "reports/bandit-history.csv"
 
-        if bandit_report_path.exists():
-            st.success("Bandit simulation results found.")
-
+        if bandit_history_path.exists():
             # Summary charts
-            if bandit_history_path.exists():
-                try:
-                    df = pd.read_csv(bandit_history_path)
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        st.subheader("Cumulative Reward")
-                        reward_df = df.pivot(index="round", columns="policy", values="cumulative_reward")
-                        st.line_chart(reward_df)
-                    with col2:
-                        st.subheader("Cumulative Regret")
-                        regret_df = df.pivot(index="round", columns="policy", values="cumulative_regret")
-                        st.line_chart(regret_df)
+            try:
+                df = pd.read_csv(bandit_history_path)
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.subheader("Cumulative Reward")
+                    reward_df = df.pivot(index="round", columns="policy", values="cumulative_reward")
+                    st.line_chart(reward_df)
+                with col2:
+                    st.subheader("Cumulative Regret")
+                    regret_df = df.pivot(index="round", columns="policy", values="cumulative_regret")
+                    st.line_chart(regret_df)
 
-                    st.info("💡 **Tip**: For more detailed analysis, use the standalone dashboard:")
-                    st.code(f"python -m {{PACKAGE_NAME}}.lab bandit-dashboard")
-                except Exception as e:
-                    st.error(f"Error loading charts: {e}")
+                st.info("💡 **Tip**: For more detailed analysis, use the standalone dashboard:")
+                st.code(f"python -m {{PACKAGE_NAME}}.lab bandit-dashboard")
+            except Exception as e:
+                st.error(f"Error loading charts: {e}")
 
-            st.markdown(bandit_report_path.read_text())
+            render_project_doc("reports/bandit-results.md")
 
             if bandit_results_path.exists():
                 with open(bandit_results_path, "r") as f:
                     bandit_results = json.load(f)
-                st.subheader("Raw Metrics")
-                st.json(bandit_results)
+                with st.expander("Raw Metrics (JSON)"):
+                    st.json(bandit_results)
         else:
             st.info("Run the Bandit Lab simulation to see results:")
             st.code(f"python -m {{PACKAGE_NAME}}.lab bandit")
-
-            st.markdown("""
-            **What is the goal?**
-            You want to find the best-performing action (arm) while minimizing the cost of
-            exploring sub-optimal ones. This is known as the **Exploration-Exploitation trade-off**.
-            """)
     {% endif %}
 
     elif section == "Train & Evaluate":
         st.header("🚀 Train & Evaluate")
         st.write("The core cycle of Machine Learning.")
 
-        st.subheader("Training")
-        st.write("Training uses historical data to teach the model patterns.")
-        st.code(f"python -m {{PACKAGE_NAME}}.lab train")
+        tabs = st.tabs(["Execution", "Concepts"])
 
-        st.subheader("Evaluation")
-        st.write("Evaluation tests how well the model generalizes to new, unseen data.")
-        st.code(f"python -m {{PACKAGE_NAME}}.lab evaluate")
+        with tabs[0]:
+            st.subheader("Training")
+            st.write("Training uses historical data to teach the model patterns.")
+            st.code(f"python -m {{PACKAGE_NAME}}.lab train")
+
+            st.subheader("Evaluation")
+            st.write("Evaluation tests how well the model generalizes to new, unseen data.")
+            st.code(f"python -m {{PACKAGE_NAME}}.lab evaluate")
+
+            st.divider()
+            st.subheader("Latest Results")
+            render_project_doc("reports/evaluation-report.md")
+
+        with tabs[1]:
+            lang_suffix = ".pt-BR" if "{{LANGUAGE}}" == "pt-BR" else ""
+            render_project_doc(f"docs/evaluation{lang_suffix}.md")
+
+    elif section == "Production & Monitoring":
+        st.header("📡 Production & Monitoring")
+        st.write("What happens after the model is ready?")
+
+        lang_suffix = ".pt-BR" if "{{LANGUAGE}}" == "pt-BR" else ""
+        render_project_doc(f"docs/monitoring{lang_suffix}.md")
 
     elif section == "Experiments & MLflow":
         st.header("📈 Experiments & MLflow")

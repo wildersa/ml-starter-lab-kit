@@ -77,12 +77,19 @@ def create_notebook_placeholder(root: Path, values: dict[str, str], *, force: bo
 
 def create_docs(root: Path, values: dict[str, str], *, force: bool) -> None:
     lang = values.get("LANGUAGE", "en")
+    suffix = ".pt-BR" if lang == "pt-BR" else ""
+
     docs = {
         "docs/data-dictionary.md": load_template("data-dictionary.md", values, folder="project/docs"),
+        f"docs/evaluation{suffix}.md": load_template(f"evaluation{suffix}.md", values, folder="project/docs"),
+        f"docs/monitoring{suffix}.md": load_template(f"monitoring{suffix}.md", values, folder="project/docs"),
         "reports/modeling-notes.md": load_template("modeling-notes.md", values, folder="project/reports"),
         ".gitignore": load_template("gitignore", values, folder="project"),
         ".env.example": load_template("env.example", values, folder="project"),
     }
+
+    if values.get("GENERATE_BANDIT") == "true":
+        docs[f"docs/mab-lab{suffix}.md"] = load_template(f"mab-lab{suffix}.md", values, folder="project/docs")
 
     if values.get("INCLUDE_DEMO") == "true":
         template_name = "demo-scenario.md"

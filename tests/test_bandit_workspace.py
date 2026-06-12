@@ -40,9 +40,8 @@ class TestBanditWorkspace(unittest.TestCase):
         self.assertIn('python -m full_bandit.lab bandit', workspace_content)
         self.assertIn('reports/bandit-results.md', workspace_content)
 
-        # Workspace explains MAB is sequential decision learning
-        self.assertIn('sequential decision learning', workspace_content)
-        self.assertIn('different paradigm from supervised learning', workspace_content)
+        # Workspace delegates to doc
+        self.assertIn('render_project_doc(f"docs/mab-lab', workspace_content)
 
         # README mentions Bandit Lab in suggested commands
         self.assertIn('python -m full_bandit.lab bandit', readme_content)
