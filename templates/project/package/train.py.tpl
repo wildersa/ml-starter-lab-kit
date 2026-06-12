@@ -27,6 +27,32 @@ def train_baseline_classifier(rows: list[dict[str, object]], target_column: str)
     }
 
 
+def train_mean_baseline(rows: list[dict[str, object]], target_column: str) -> dict[str, object]:
+    if not target_column:
+        raise ValueError("target_column not configured.")
+
+    values = []
+    for row in rows:
+        val = row.get(target_column)
+        if val not in (None, ""):
+            try:
+                values.append(float(val))
+            except (ValueError, TypeError):
+                continue
+
+    if not values:
+        raise ValueError(f"No numeric values found for target: {target_column}")
+
+    mean_value = sum(values) / len(values)
+
+    return {
+        "model_type": "mean_value_baseline",
+        "target_column": target_column,
+        "prediction": mean_value,
+        "samples": len(values),
+    }
+
+
 def save_model(model: dict[str, object], path: str | Path = "models/model.json") -> None:
     model_path = project_root() / path
     model_path.parent.mkdir(parents=True, exist_ok=True)
@@ -41,7 +67,15 @@ def main() -> None:
     task = config["project"]["task"]
     target_column = config["target"]["column"]
 
-    if task in {"generic", "supervised", "vision"}:
+    # In generated project, we use the demo subtype to decide the baseline
+    demo_subtype = "{{DEMO_SUBTYPE}}"
+
+    if task == "supervised":
+        if demo_subtype == "regression":
+            model = train_mean_baseline(rows, target_column)
+        else:
+            model = train_baseline_classifier(rows, target_column)
+    elif task in {"generic", "vision"}:
         model = train_baseline_classifier(rows, target_column)
     elif task == "unsupervised":
         model = {
@@ -49,10 +83,14 @@ def main() -> None:
             "note": "Add PCA/K-Means with scikit-learn here, if the project uses scikit-learn."
         }
     elif task == "timeseries":
-        model = {
-            "model_type": "timeseries_placeholder",
-            "note": "Add LSTM/Keras or another temporal model here, if the project uses deep learning."
-        }
+        # Timeseries defaults to regression-style baseline (mean value)
+        try:
+            model = train_mean_baseline(rows, target_column)
+        except Exception:
+            model = {
+                "model_type": "timeseries_placeholder",
+                "note": "Add LSTM/Keras or another temporal model here."
+            }
     else:
         raise ValueError(f"Task not supported: {task}")
 

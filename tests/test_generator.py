@@ -464,7 +464,7 @@ class TestGenerator(unittest.TestCase):
         self.assertNotIn("class BaselineLab", train_content)
 
         evaluate_content = (pkg_path / "evaluate.py").read_text()
-        self.assertIn("def evaluate_majority_baseline", evaluate_content)
+        self.assertIn("def evaluate_classification", evaluate_content)
 
 if __name__ == "__main__":
     unittest.main()
