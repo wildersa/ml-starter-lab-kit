@@ -123,7 +123,12 @@ def main():
     subparsers.add_parser("learn", help="Generate dataset-contextual learning notes")
     subparsers.add_parser("baseline", help="Run Baseline Lab for simple model benchmarking")
     subparsers.add_parser("bandit", help="Run educational Multi-Armed Bandit Lab")
-    subparsers.add_parser("monitor", help="Run educational monitoring/drift stub")
+
+    monitor_parser = subparsers.add_parser("monitor", help="Run educational monitoring/drift stub")
+    monitor_parser.add_argument("--reference", help="Path to reference (training) data")
+    monitor_parser.add_argument("--current", help="Path to current (new) data")
+    monitor_parser.add_argument("--output", help="Path to save report")
+
     {% if GENERATE_BANDIT == "true" %}
     subparsers.add_parser("bandit-dashboard", help="Visual explorer for Bandit Lab results")
     {% endif %}
