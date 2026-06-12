@@ -1,9 +1,0 @@
-{
-  "goal": "1",
-  "priority": "learning/experimentation",
-  "error_cost": "not sure",
-  "dataset_size": "not sure",
-  "prefer_baseline": "yes",
-  "domain_note": "",
-  "language": "en"
-}

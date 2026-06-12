@@ -1,1 +1,0 @@
-Mock learning notes

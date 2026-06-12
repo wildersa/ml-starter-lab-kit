@@ -56,9 +56,10 @@ class TestWorkspaceRendering(unittest.TestCase):
         # 1. Enabled
         run_generator(
             project_name="with_bandit",
-            experience_mode="guided",
+            experience_mode="minimal",
             output_dir=self.test_dir / "with_bandit",
-            task="6" # bandit
+            task="2",
+            optional_profile="3" # full includes bandit
         )
         self.assertTrue((self.test_dir / "with_bandit/docs/mab-lab.md").exists())
 

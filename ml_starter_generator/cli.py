@@ -412,7 +412,6 @@ def choose_task(t: dict[str, str]) -> str:
     print(f"3. unsupervised  - {t['task_unsupervised']}")
     print(f"4. timeseries    - {t['task_timeseries']}")
     print(f"5. vision        - {t['task_vision']}")
-    print(f"6. bandit        - {t.get('task_bandit', 'Multi-Armed Bandit')}")
 
     while True:
         choice = ask(t['choose_option'], "2")
