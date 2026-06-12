@@ -171,5 +171,49 @@ class TestEvaluationReport(unittest.TestCase):
         self.assertTrue(reports_dir.exists())
         self.assertTrue((reports_dir / "evaluation-report.md").exists())
 
+    def test_evaluation_report_generation_regression(self):
+        # 1. Generate project (Supervised, but we'll use numeric data to trigger regression)
+        run_generator(
+            project_name=self.project_name,
+            package_name=self.package_name,
+            task="2", # supervised
+            dataset_path="data/raw/train.csv",
+            target_column="target",
+            output_dir=self.test_dir,
+            include_ml_basics="n"
+        )
+
+        # 2. Create dummy numeric data
+        data_dir = self.test_dir / "data/processed"
+        data_dir.mkdir(parents=True, exist_ok=True)
+        train_csv = data_dir / "modeling_table.csv"
+        with open(train_csv, "w") as f:
+            f.write("feature1,target\n1,10\n2,20\n3,30\n")
+
+        # 3. Run train.py to get mean_value_baseline
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(self.test_dir / "src")
+        subprocess.check_call([sys.executable, "-m", f"{self.package_name}.train"], cwd=self.test_dir, env=env)
+
+        # Verify it's a mean_value_baseline
+        with open(self.test_dir / "models/model.json") as f:
+            model = json.load(f)
+            self.assertEqual(model["model_type"], "mean_value_baseline")
+            self.assertEqual(model["prediction"], 20.0)
+
+        # 4. Run evaluate.py
+        subprocess.check_call([sys.executable, "-m", f"{self.package_name}.evaluate"], cwd=self.test_dir, env=env)
+
+        # 5. Assertions
+        report_path = self.test_dir / "reports/evaluation-report.md"
+        self.assertTrue(report_path.exists())
+
+        report_content = report_path.read_text(encoding="utf-8")
+        self.assertIn("# Evaluation Report", report_content)
+        self.assertIn("RMSE:", report_content)
+        self.assertIn("mean_value_baseline", report_content)
+        self.assertIn("average magnitude of error", report_content) # from interpretation_regression
+        self.assertIn("non-linear relationships", report_content) # from next_steps_regression
+
 if __name__ == "__main__":
     unittest.main()

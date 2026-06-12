@@ -20,10 +20,12 @@ TRANSLATIONS = {
         "model_type": "**Model type:** {model_type}",
         "samples": "**Samples evaluated:** {count}",
         "accuracy_desc": "Accuracy represents the proportion of correct predictions out of the total number of samples.",
-        "baseline_note": "This evaluation used a {baseline_type} baseline.",
+        "baseline_note": "This evaluation used a **{baseline_type}** baseline as a performance floor.",
         "interpretation_supervised": "An accuracy of {value:.2%} means the model correctly predicted the class for {value:.2%} of the test cases.",
+        "interpretation_regression": "An RMSE of {value:.4f} represents the average magnitude of error in your predictions, in the same units as your target.",
         "next_steps_supervised": "1. Try adding more features in `features.py`.\n2. Experiment with different model types in `train.py`.\n3. Check for data leakage if accuracy is suspiciously high.",
-        "how_to_read_text": "This report summarizes the performance of your model. Higher values are generally better for metrics like accuracy, while lower values are better for error metrics like RMSE.",
+        "next_steps_regression": "1. Look for non-linear relationships in your features.\n2. Try normalizing or scaling numeric features.\n3. Identify and handle outliers that might be inflating the error.",
+        "how_to_read_text": "This report summarizes the performance of your model compared to a simple baseline. Different tasks use different metrics: accuracy for classification and RMSE for regression.",
         "no_metrics": "No metrics available to report."
     },
     "pt-BR": {
@@ -38,10 +40,12 @@ TRANSLATIONS = {
         "model_type": "**Tipo de modelo:** {model_type}",
         "samples": "**Amostras avaliadas:** {count}",
         "accuracy_desc": "A acurácia representa a proporção de previsões corretas em relação ao número total de amostras.",
-        "baseline_note": "Esta avaliação utilizou um baseline do tipo {baseline_type}.",
+        "baseline_note": "Esta avaliação utilizou um baseline do tipo **{baseline_type}** como um patamar mínimo de desempenho.",
         "interpretation_supervised": "Uma acurácia de {value:.2%} significa que o modelo previu corretamente a classe para {value:.2%} dos casos de teste.",
+        "interpretation_regression": "Um RMSE de {value:.4f} representa a magnitude média do erro em suas previsões, nas mesmas unidades do seu alvo.",
         "next_steps_supervised": "1. Tente adicionar mais features em `features.py`.\n2. Experimente diferentes tipos de modelos em `train.py`.\n3. Verifique se há vazamento de dados (leakage) se a acurácia for suspeitosamente alta.",
-        "how_to_read_text": "Este relatório resume o desempenho do seu modelo. Valores mais altos são geralmente melhores para métricas como acurácia, enquanto valores menores são melhores para métricas de erro como RMSE.",
+        "next_steps_regression": "1. Procure por relações não lineares em suas features.\n2. Tente normalizar ou escalar features numéricas.\n3. Identifique e trate outliers que possam estar inflando o erro.",
+        "how_to_read_text": "Este relatório resume o desempenho do seu modelo em comparação a um baseline simples. Diferentes tarefas usam métricas diferentes: acurácia para classificação e RMSE para regressão.",
         "no_metrics": "Nenhuma métrica disponível para relatar."
     }
 }
@@ -63,6 +67,7 @@ def generate_report(metrics: dict[str, Any], config: dict[str, Any], problem_pro
         t["task_type"].format(task=task),
         t["model_type"].format(model_type=model_type),
         t["samples"].format(count=metrics.get("samples", 0)),
+        t["baseline_note"].format(baseline_type=model_type),
         ""
     ]
 
@@ -72,17 +77,24 @@ def generate_report(metrics: dict[str, Any], config: dict[str, Any], problem_pro
         md.append("")
         md.append(t["interpretation_h"])
         md.append(t["interpretation_supervised"].format(value=metrics["accuracy"]))
+        md.append("")
+        md.append(t["next_experiment_h"])
+        md.append(t["next_steps_supervised"])
+    elif "rmse" in metrics:
+        md.append(f"- **RMSE:** {metrics['rmse']:.4f}")
+        md.append("")
+        md.append(t["interpretation_h"])
+        md.append(t["interpretation_regression"].format(value=metrics["rmse"]))
+        md.append("")
+        md.append(t["next_experiment_h"])
+        md.append(t["next_steps_regression"])
     else:
         md.append(f"- {t['no_metrics']}")
         md.append("")
         md.append(t["interpretation_h"])
         md.append(str(metrics.get("note", "No specific interpretation available.")))
-
-    md.append("")
-    md.append(t["next_experiment_h"])
-    if task == "supervised":
-        md.append(t["next_steps_supervised"])
-    else:
+        md.append("")
+        md.append(t["next_experiment_h"])
         md.append("1. Review your data features.\n2. Try different algorithm parameters.")
 
     md.append("")
@@ -101,7 +113,7 @@ def load_model(path: str = "models/model.json") -> dict[str, object]:
     return json.loads(model_path.read_text(encoding="utf-8"))
 
 
-def evaluate_majority_baseline(rows: list[dict[str, str]], model: dict[str, object]) -> dict[str, Any]:
+def evaluate_majority_baseline(rows: list[dict[str, Any]], model: dict[str, Any]) -> dict[str, Any]:
     target = model["target_column"]
     prediction = model["prediction"]
 
@@ -114,6 +126,33 @@ def evaluate_majority_baseline(rows: list[dict[str, str]], model: dict[str, obje
         "samples": len(y_true),
         "prediction": prediction,
         "target_distribution": dict(Counter(y_true)),
+    }
+
+
+def evaluate_mean_baseline(rows: list[dict[str, Any]], model: dict[str, Any]) -> dict[str, Any]:
+    target = model["target_column"]
+    prediction = float(model["prediction"])
+
+    y_true = []
+    for row in rows:
+        val = row.get(target)
+        if val not in (None, ""):
+            try:
+                y_true.append(float(val))
+            except (ValueError, TypeError):
+                continue
+
+    if not y_true:
+        return {"metric": "rmse", "rmse": 0, "samples": 0}
+
+    mse = sum((y - prediction) ** 2 for y in y_true) / len(y_true)
+    rmse = mse ** 0.5
+
+    return {
+        "metric": "rmse",
+        "rmse": rmse,
+        "samples": len(y_true),
+        "prediction": prediction,
     }
 
 
@@ -131,6 +170,9 @@ def main() -> None:
     if model.get("model_type") == "majority_class_baseline":
         metrics = evaluate_majority_baseline(rows, model)
         metrics["model_type"] = "majority_class_baseline"
+    elif model.get("model_type") == "mean_value_baseline":
+        metrics = evaluate_mean_baseline(rows, model)
+        metrics["model_type"] = "mean_value_baseline"
     else:
         metrics = {
             "note": "Evaluation not yet implemented for this model type.",
@@ -160,6 +202,8 @@ def main() -> None:
                 # Log metrics
                 if "accuracy" in metrics:
                     mlflow.log_metric("accuracy", metrics["accuracy"])
+                if "rmse" in metrics:
+                    mlflow.log_metric("rmse", metrics["rmse"])
 
                 mlflow.log_metric("samples", metrics.get("samples", 0))
 
