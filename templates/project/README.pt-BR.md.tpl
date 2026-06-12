@@ -154,7 +154,8 @@ O arquivo `src/{{PACKAGE_NAME}}/train.py` gerado é um **baseline simples**, nã
 5. Edite `src/{{PACKAGE_NAME}}/features.py`
 6. Treine o modelo (baseline)
 7. Avalie os resultados
-8. Documente limitações e próximos passos
+8. Execute a verificação de monitoramento/drift
+9. Documente limitações e próximos passos
 
 ## Comandos sugeridos
 
@@ -200,6 +201,11 @@ python -m {{PACKAGE_NAME}}.lab train
 
 # Avaliar
 python -m {{PACKAGE_NAME}}.lab evaluate
+
+{% if GENERATE_MONITOR == "true" %}
+# (Opcional) Executar stub educacional de monitoramento/drift
+python -m {{PACKAGE_NAME}}.lab monitor
+{% endif %}
 
 # Executar todos os passos
 python -m {{PACKAGE_NAME}}.lab all

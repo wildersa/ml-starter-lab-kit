@@ -111,6 +111,7 @@ TRANSLATIONS = {
         "include_learning": "Include dataset-contextual learning notes?",
         "include_baseline_lab": "Include educational Baseline Lab?",
         "include_bandit_lab": "Include educational Multi-Armed Bandit Lab?",
+        "include_monitoring": "Include lightweight monitoring/drift stub?",
         "dependency_note_title": "Dependency Note",
         "dependency_note_text": "Dataset Advisor and Baseline Lab require basic ML dependencies (pandas, scikit-learn).",
         "enable_ml_basics": "Enable basic ML dependencies now?",
@@ -158,7 +159,7 @@ TRANSLATIONS = {
         "next_step_eda_first": "IMPORTANT: Run EDA before Advisor, Baseline, or Learning Notes",
         "next_step_advisor": "Dataset Advice (modeling suggestions)",
         "next_step_bandit": "Bandit Lab (adaptive decisions)",
-        "include_bandit_lab": "Multi-Armed Bandit Lab",
+        "next_step_monitor": "Monitoring/Drift (educational stub)",
         "next_step_demo": "Check the demo scenario and data dictionary in docs/demo-scenario.md",
         "summary_mlflow": "MLflow Tracking",
         "yes": "yes",
@@ -255,6 +256,7 @@ TRANSLATIONS = {
         "include_learning": "Incluir notas de aprendizado contextuais ao dataset?",
         "include_baseline_lab": "Incluir Baseline Lab educacional?",
         "include_bandit_lab": "Incluir Bandit Lab educacional (Multi-Armed Bandit)?",
+        "include_monitoring": "Incluir stub de monitoramento/drift leve?",
         "dependency_note_title": "Nota de Dependência",
         "dependency_note_text": "O Dataset Advisor e o Baseline Lab requerem dependências básicas de ML (pandas, scikit-learn).",
         "enable_ml_basics": "Ativar dependências básicas de ML agora?",
@@ -302,7 +304,7 @@ TRANSLATIONS = {
         "next_step_eda_first": "IMPORTANTE: Execute a EDA antes do Advisor, Baseline ou Notas de Aprendizado",
         "next_step_advisor": "Conselhos sobre o Dataset (sugestões de modelagem)",
         "next_step_bandit": "Bandit Lab (decisões adaptativas)",
-        "include_bandit_lab": "Bandit Lab (MAB)",
+        "next_step_monitor": "Monitoramento/Drift (stub educacional)",
         "next_step_demo": "Consulte o cenário de demo e o dicionário de dados em docs/demo-scenario.md",
         "summary_mlflow": "Rastreamento MLflow",
         "yes": "sim",
@@ -511,6 +513,7 @@ def get_options_by_profile(profile: str) -> dict[str, bool]:
         "learning": False,
         "baseline_lab": False,
         "bandit_lab": False,
+        "monitoring": False,
     }
 
     if profile == "minimal":
@@ -524,6 +527,7 @@ def get_options_by_profile(profile: str) -> dict[str, bool]:
         options["advisor"] = True
         options["learning"] = True
         options["baseline_lab"] = True
+        options["monitoring"] = True
         return options
 
     if profile == "full":
@@ -691,6 +695,8 @@ def print_summary(root: Path, values: dict[str, str], t: dict[str, str], include
             steps.append(f"   - {t['next_step_bandit']}:   python -m {pkg}.lab bandit")
         steps.append(f"   - {t['next_step_4_train']}:    python -m {pkg}.lab train")
         steps.append(f"   - {t['next_step_4_eval']}: python -m {pkg}.lab evaluate")
+        if values.get("GENERATE_MONITOR") == "true":
+            steps.append(f"   - {t['next_step_monitor']}: python -m {pkg}.lab monitor")
     else:
         steps.append(f"{run_idx}. {t['next_step_4']}:")
         if values.get("GENERATE_EDA") == "true":
@@ -702,6 +708,8 @@ def print_summary(root: Path, values: dict[str, str], t: dict[str, str], include
             steps.append(f"   - {t['next_step_advisor']}:   python -m {pkg}.lab advisor")
         if values.get("GENERATE_BANDIT") == "true":
             steps.append(f"   - {t['next_step_bandit']}:   python -m {pkg}.lab bandit")
+        if values.get("GENERATE_MONITOR") == "true":
+            steps.append(f"   - {t['next_step_monitor']}: python -m {pkg}.lab monitor")
 
     UI.panel(t["next_steps"], "\n".join(steps))
 
@@ -787,6 +795,7 @@ def main() -> None:
             "learning": ask_yes_no(t["include_learning"], False, lang=lang),
             "baseline_lab": ask_yes_no(t["include_baseline_lab"], False, lang=lang),
             "bandit_lab": ask_yes_no(t["include_bandit_lab"], False, lang=lang),
+            "monitoring": ask_yes_no(t["include_monitoring"], False, lang=lang),
         }
     else:
         optional_options = get_options_by_profile(profile)
@@ -796,6 +805,7 @@ def main() -> None:
         optional_options["advisor"] = True
         optional_options["learning"] = True
         optional_options["baseline_lab"] = True
+        optional_options["monitoring"] = True
         optional_options["learning_workspace"] = True
 
     # P1-D: Gate Bandit Lab.
@@ -895,6 +905,7 @@ def main() -> None:
         "GENERATE_LEARNING": "true" if optional_options.get("learning") else "false",
         "GENERATE_BASELINE": "true" if optional_options.get("baseline_lab") else "false",
         "GENERATE_BANDIT": "true" if optional_options.get("bandit_lab") else "false",
+        "GENERATE_MONITOR": "true" if optional_options.get("monitoring") else "false",
     }
 
     UI.section(t["final_summary"], 7)
