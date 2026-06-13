@@ -24,14 +24,20 @@ tests/               testes mínimos
 Este projeto usa arquivos de requisitos para gerenciar o ambiente local.
 
 ```bash
-# Criar ambiente virtual
-python -m venv .venv
+# Criar ambiente virtual (POSIX)
+python{{PYTHON_VERSION}} -m venv .venv
+
+# Criar ambiente virtual (Windows)
+py -{{PYTHON_VERSION}} -m venv .venv
 
 # Ativar ambiente (Linux/macOS)
 source .venv/bin/activate
 
 # Ativar ambiente (Windows)
 .venv\\Scripts\\activate
+
+# Verificar versão do Python
+python --version
 
 # Instalar dependências básicas e o próprio pacote em modo editável
 pip install -r requirements.txt

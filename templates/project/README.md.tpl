@@ -24,14 +24,20 @@ tests/               minimum tests
 This project uses requirements files to manage the local environment.
 
 ```bash
-# Create virtual environment
-python -m venv .venv
+# Create virtual environment (POSIX)
+python{{PYTHON_VERSION}} -m venv .venv
+
+# Create virtual environment (Windows)
+py -{{PYTHON_VERSION}} -m venv .venv
 
 # Activate environment (Linux/macOS)
 source .venv/bin/activate
 
 # Activate environment (Windows)
 .venv\\Scripts\\activate
+
+# Verify Python version
+python --version
 
 # Install basic dependencies and the package itself in editable mode
 pip install -r requirements.txt

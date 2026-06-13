@@ -657,12 +657,15 @@ def print_summary(root: Path, values: dict[str, str], t: dict[str, str], include
 
     # 2. Environment/Package Setup
     if include_pyproject:
+        python_version = values.get("PYTHON_VERSION", "3.12")
         steps.append(f"2. {t['next_step_setup']}:")
-        steps.append("   python -m venv .venv")
         if sys.platform == "win32":
+            steps.append(f"   py -{python_version} -m venv .venv")
             steps.append("   .venv\\Scripts\\activate")
         else:
+            steps.append(f"   python{python_version} -m venv .venv")
             steps.append("   source .venv/bin/activate")
+        steps.append("   python --version")
         steps.append("   pip install -r requirements.txt")
         steps.append(f"3. {t['next_step_install']}:")
         steps.append("   pip install -e .")
@@ -899,6 +902,7 @@ def main() -> None:
         "TARGET_COLUMN": target_column,
         "INCLUDE_DEMO": "true" if include_demo else "false",
         "PYTHON_REQUIRES": python_requires,
+        "PYTHON_VERSION": python_version,
         "ADVISOR_COMMAND": advisor_cmd,
         "LANGUAGE": lang,
         "ENABLE_MLFLOW": "true" if include_mlflow else "false",
