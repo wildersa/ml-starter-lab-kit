@@ -90,6 +90,7 @@ def create_docs(root: Path, values: dict[str, str], *, force: bool) -> None:
 
     if values.get("GENERATE_BANDIT") == "true":
         docs[f"docs/mab-lab{suffix}.md"] = load_template(f"mab-lab{suffix}.md", values, folder="project/docs")
+        docs[f"docs/bandit-walkthrough{suffix}.md"] = load_template(f"bandit-walkthrough{suffix}.md", values, folder="project/docs")
 
     if values.get("INCLUDE_DEMO") == "true":
         template_name = "demo-scenario.md"

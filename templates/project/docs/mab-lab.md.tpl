@@ -51,3 +51,7 @@ Chooses arms optimistically by adding an uncertainty bonus to the observed mean.
 
 ### Thompson Sampling
 A Bayesian approach that maintains a probability distribution for each arm and samples from it to make decisions. It handles exploration naturally through uncertainty.
+
+## 4. Next Steps
+
+If you are coming from a supervised learning background, we recommend reading the **[Bandit Walkthrough](bandit-walkthrough.md)** to understand how to map your dataset to these concepts.

@@ -132,7 +132,11 @@ python -m {{PACKAGE_NAME}}.lab workspace
 
 {% if GENERATE_BANDIT == "true" %}
 ### Labs Educacionais
-Este projeto inclui o **Bandit Lab (Multi-Armed Bandit)** como um exercício avançado de aprendizado. Diferente do aprendizado supervisionado, ele foca em tomada de decisão sequencial. Você pode explorá-lo via Workspace ou CLI:
+Este projeto inclui o **Bandit Lab (Multi-Armed Bandit)** como um exercício avançado de aprendizado. Diferente do aprendizado supervisionado, ele foca em tomada de decisão sequencial.
+
+Confira o **[Passo a Passo do Bandit](docs/bandit-walkthrough.pt-BR.md)** para aprender como mapear conjuntos de dados supervisionados para laboratórios de decisão adaptativa.
+
+Você pode explorá-lo via Workspace ou CLI:
 
 ```bash
 python -m {{PACKAGE_NAME}}.lab bandit
