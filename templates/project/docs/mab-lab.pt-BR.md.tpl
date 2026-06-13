@@ -51,3 +51,7 @@ Escolhe arms de forma otimista, adicionando um bônus de incerteza à média obs
 
 ### Thompson Sampling
 Uma abordagem Bayesiana que mantém uma distribuição de probabilidade para cada arm e extrai amostras dela para tomar decisões. Ele lida com a exploração naturalmente através da incerteza.
+
+## 4. Próximos Passos
+
+Se você vem de um histórico de aprendizado supervisionado, recomendamos a leitura do **[Passo a Passo do Bandit](bandit-walkthrough.pt-BR.md)** para entender como mapear seu conjunto de dados para esses conceitos.

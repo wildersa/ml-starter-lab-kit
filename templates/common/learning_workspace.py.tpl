@@ -53,6 +53,8 @@ def render_project_doc(relative_path: str):
         "docs/monitoring.pt-BR.md",
         "docs/mab-lab.md",
         "docs/mab-lab.pt-BR.md",
+        "docs/bandit-walkthrough.md",
+        "docs/bandit-walkthrough.pt-BR.md",
         "docs/data-dictionary.md",
         "docs/demo-scenario.md",
         "docs/demo-scenario.pt-BR.md",
@@ -263,7 +265,17 @@ def main():
         st.header("🎰 Multi-Armed Bandit Lab")
 
         lang_suffix = ".pt-BR" if "{{LANGUAGE}}" == "pt-BR" else ""
-        render_project_doc(f"docs/mab-lab{lang_suffix}.md")
+
+        bandit_tabs = st.tabs([
+            "📖 " + ("Guia de Início" if "{{LANGUAGE}}" == "pt-BR" else "Walkthrough"),
+            "🔬 " + ("Referência" if "{{LANGUAGE}}" == "pt-BR" else "Reference")
+        ])
+
+        with bandit_tabs[0]:
+            render_project_doc(f"docs/bandit-walkthrough{lang_suffix}.md")
+
+        with bandit_tabs[1]:
+            render_project_doc(f"docs/mab-lab{lang_suffix}.md")
 
         st.divider()
         st.subheader("Simulation Results")
