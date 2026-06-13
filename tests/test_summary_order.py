@@ -28,18 +28,18 @@ class TestCLISummaryOrder(unittest.TestCase):
         self.assertIn("cd ", output)
 
         # Verify setup steps
-        setup_steps = ["python -m venv .venv", "pip install -r requirements.txt", "pip install -e ."]
-        module_commands = [f"python -m {self.package_name}.lab eda", f"python -m {self.package_name}.lab train"]
-
-        for step in setup_steps:
-            self.assertIn(step, output)
+        # Changed to flexible check because of versioned venv command
+        self.assertIn("-m venv .venv", output)
+        self.assertIn("pip install -r requirements.txt", output)
+        self.assertIn("pip install -e .", output)
+        self.assertIn("python --version", output)
 
         # Verify order: navigation -> setup -> data/config -> run
         # We need to find the occurrence within [Next steps] panel
         next_steps_output = output.split("[Next steps]")[1]
 
         nav_idx = next_steps_output.find("cd ")
-        setup_idx = next_steps_output.find("python -m venv .venv")
+        setup_idx = next_steps_output.find("-m venv .venv")
         install_idx = next_steps_output.find("pip install -e .")
         # Find the line with the dataset path
         dataset_line_idx = next_steps_output.find(self.test_dir.name + "/data/raw/dataset.csv")
@@ -64,7 +64,7 @@ class TestCLISummaryOrder(unittest.TestCase):
 
         # Should NOT promise editable install
         self.assertNotIn("pip install -e .", output)
-        self.assertNotIn("python -m venv .venv", output)
+        self.assertNotIn("-m venv .venv", output)
 
         # P0.5: It must either show the correct PYTHONPATH=src style alternative or explicitly state that package setup is required
         self.assertIn("PYTHONPATH=src", output)
