@@ -59,3 +59,45 @@ Just like in supervised learning, the environment changes. A "Best Arm" today mi
 ## 4. How to use this in the Bandit Lab
 
 When you run `python -m {{PACKAGE_NAME}}.lab bandit`, the simulator uses your configuration to test different policies against each other. It calculates the **Cumulative Reward** and **Regret** over time, helping you see which policy learns the fastest.
+
+## 5. Worked Example — Marketing dataset to Bandit Lab
+
+Let's say you have a **Banking Marketing Dataset** used for Supervised Learning.
+
+**Original Supervised Columns:**
+* `age`, `job`, `balance`, `housing`, `loan`, `campaign` (Features)
+* `y` (Target: subscribed? yes/no)
+
+To turn this into a **Bandit Lab**, you need to bridge the gap:
+
+### Step 1: Define the Context
+All the features from the original dataset become your **Context**.
+* `age`, `job`, `balance` etc.
+
+### Step 2: Define the Arms / Actions
+You need to decide what you are testing.
+* **Arm A**: Send a generic SMS.
+* **Arm B**: Call the client with a personalized offer.
+* **Arm C**: Send an email with a discount coupon.
+
+### Step 3: Define the Reward
+This is where the "Supervised Target" trap lives. The original `y` (subscribed) is the result of a *previous* marketing action. In a Bandit Lab, we want to know if the user subscribed **because** of the Arm we chose (A, B, or C).
+
+* **Immediate Reward**: Did the user click the link in the SMS? (Binary: 1/0)
+* **Delayed Reward**: Did the user sign the contract within 7 days?
+
+### Step 4: Compare with Baseline
+How do you know if your policy is good?
+* **Random Baseline**: Randomly chooses A, B, or C for every client.
+* **Fixed Baseline**: Always sends SMS (Arm A) to everyone.
+
+### Step 5: The Simulation Table
+During the simulation, the Bandit Lab generates a history that looks like this:
+
+| impression_id | context_age | context_balance | arm_chosen | reward | reward_delay_days |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 101 | 35 | 2000 | Arm B | 1 | 2 |
+| 102 | 42 | 500 | Arm A | 0 | - |
+| 103 | 28 | 1200 | Arm C | 1 | 0 |
+
+**Conclusion**: In the Bandit Lab, the **target original** (`y`) is not enough. You must model the interaction (Action -> Reward) to truly optimize your business decisions.

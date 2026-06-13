@@ -59,3 +59,45 @@ Assim como no aprendizado supervisionado, o ambiente muda. O "Melhor Braço" hoj
 ## 4. Como usar isso no Bandit Lab
 
 Quando você executa `python -m {{PACKAGE_NAME}}.lab bandit`, o simulador usa sua configuração para testar diferentes políticas entre si. Ele calcula a **Recompensa Acumulada** e o **Regret** ao longo do tempo, ajudando você a ver qual política aprende mais rápido.
+
+## 5. Exemplo guiado — Dataset de marketing para Bandit Lab
+
+Imagine que você tem um **Dataset de Marketing Bancário** usado para Aprendizado Supervisionado.
+
+**Colunas Originais Supervisionadas:**
+* `age` (idade), `job` (profissão), `balance` (saldo), `housing` (moradia), `loan` (empréstimo), `campaign` (Features)
+* `y` (Alvo: assinou o produto? sim/não)
+
+Para transformar isso em um **Bandit Lab**, você precisa fazer a ponte:
+
+### Passo 1: Defina o Contexto
+Todas as features do dataset original tornam-se o seu **Contexto**.
+* `age`, `job`, `balance`, etc.
+
+### Passo 2: Defina os Braços / Ações
+Você precisa decidir o que está testando.
+* **Braço A**: Enviar um SMS genérico.
+* **Braço B**: Ligar para o cliente com uma oferta personalizada.
+* **Braço C**: Enviar um e-mail com um cupom de desconto.
+
+### Passo 3: Defina a Recompensa (Reward)
+Aqui é onde mora a armadilha do "Target Supervisionado". O `y` original (assinou) é o resultado de uma ação de marketing *anterior*. Em um Bandit Lab, queremos saber se o usuário assinou **por causa** do Braço que escolhemos (A, B ou C).
+
+* **Recompensa Imediata**: O usuário clicou no link do SMS? (Binário: 1/0)
+* **Recompensa Atrasada**: O usuário assinou o contrato dentro de 7 dias?
+
+### Passo 4: Compare com o Baseline
+Como saber se sua política é boa?
+* **Baseline Aleatório**: Escolhe aleatoriamente A, B ou C para cada cliente.
+* **Baseline Fixo**: Sempre envia SMS (Braço A) para todos.
+
+### Passo 5: A Tabela de Simulação
+Durante a simulação, o Bandit Lab gera um histórico parecido com este:
+
+| impression_id | context_age | context_balance | arm_chosen | reward | reward_delay_days |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 101 | 35 | 2000 | Braço B | 1 | 2 |
+| 102 | 42 | 500 | Braço A | 0 | - |
+| 103 | 28 | 1200 | Braço C | 1 | 0 |
+
+**Conclusão**: No Bandit Lab, o **target original** (`y`) não é suficiente. Você deve modelar a interação (Ação -> Recompensa) para realmente otimizar suas decisões de negócio.

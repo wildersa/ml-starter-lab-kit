@@ -46,6 +46,13 @@ class TestBanditWalkthrough(unittest.TestCase):
         self.assertIn("Actions", content)
         self.assertIn("Rewards", content)
 
+        # Practical Example Terms (P0.2/P0.3 enhancement)
+        self.assertIn("Worked Example", content)
+        self.assertIn("Marketing", content)
+        self.assertIn("impression_id", content)
+        self.assertIn("reward_delay_days", content)
+        self.assertIn("target original", content)
+
         # P0.5: Workspace navigation exposes the walkthrough
         workspace_path = self.test_dir / f"src/{package_name}/learning_workspace.py"
         workspace_content = workspace_path.read_text()
@@ -81,6 +88,11 @@ class TestBanditWalkthrough(unittest.TestCase):
         content = walkthrough_path.read_text()
         self.assertIn("AVISO CRÍTICO", content)
         self.assertIn("Braço", content)
+        self.assertIn("Exemplo guiado", content)
+        self.assertIn("Marketing", content)
+        self.assertIn("impression_id", content)
+        self.assertIn("reward_delay_days", content)
+        self.assertIn("target original", content)
 
         workspace_path = self.test_dir / f"src/{package_name}/learning_workspace.py"
         workspace_content = workspace_path.read_text()
