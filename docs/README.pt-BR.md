@@ -40,9 +40,11 @@ Siga este caminho para entender como ir de um conjunto de dados bruto a um model
 | O que pode dar errado? | [Erros comuns](common-mistakes/README.pt-BR.md) |
 | O que esse termo significa? | [Glossário](glossary/README.pt-BR.md) |
 | Como Multi-Armed Bandit difere de treino supervisionado? | [Referência do Multi-Armed Bandit Lab](mab-lab.md) |
+| Como uso o Synthetic Data Lab? | [Fluxo de Dados Sintéticos](workflows/synthetic-data.pt-BR.md) |
 
 ## Uso do projeto
 
 - [Layout do starter e do projeto gerado](usage/project-layout.pt-BR.md)
+- [Fluxo de Dados Sintéticos](workflows/synthetic-data.pt-BR.md)
 - [Estratégia de visualização de experimentos](experiment-visualization.md)
 - [Referência do Multi-Armed Bandit Lab](mab-lab.md)

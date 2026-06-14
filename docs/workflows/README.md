@@ -8,6 +8,7 @@ Use it as a quick reference, not as a deep theory guide.
 
 | Guide | Use for |
 |---|---|
+| [Synthetic Data](synthetic-data.md) | generating data for testing and study |
 | [EDA](eda.md) | first look at the dataset |
 | [Preprocessing](preprocessing.md) | missing values, encoding, scaling, type conversion |
 | [Feature engineering](../models/feature-engineering.md) | creating useful input columns |
