@@ -36,6 +36,11 @@ class SyntheticDataLab:
                 "scenario_details": "## Scenario Details",
                 "table_header": "| Attribute | Value |",
                 "table_sep": "| :--- | :--- |",
+                "activation_success": "Project configuration updated! Raw data now points to: {path}",
+                "next_steps_title": "\nNext Steps:",
+                "next_step_data": "1. Run data preparation: python -m {pkg}.lab data",
+                "next_step_train": "2. Run training:         python -m {pkg}.lab train",
+                "next_step_manual": "Manual: Update 'configs/config.json' to use '{path}' as 'raw_path'.",
             },
             "pt-BR": {
                 "generating": "Gerando dados sintéticos para o cenário: {scenario}...",
@@ -48,6 +53,11 @@ class SyntheticDataLab:
                 "scenario_details": "## Detalhes do Cenário",
                 "table_header": "| Atributo | Valor |",
                 "table_sep": "| :--- | :--- |",
+                "activation_success": "Configuração do projeto atualizada! Os dados brutos agora apontam para: {path}",
+                "next_steps_title": "\nPróximos Passos:",
+                "next_step_data": "1. Preparar os dados: python -m {pkg}.lab data",
+                "next_step_train": "2. Treinar o modelo:  python -m {pkg}.lab train",
+                "next_step_manual": "Manual: Atualize 'configs/config.json' para usar '{path}' como 'raw_path'.",
             }
         }
         self.t = self.translations.get(lang, self.translations["en"])
@@ -200,6 +210,35 @@ class SyntheticDataLab:
 
         return df
 
+    def activate_dataset(self, scenario: str, csv_path: Path):
+        config_path = project_root() / "configs/config.json"
+        if not config_path.exists():
+            return
+
+        try:
+            with open(config_path, "r", encoding="utf-8") as f:
+                project_config = json.load(f)
+
+            # Update data path
+            # Use relative path from project root for portability
+            rel_csv_path = csv_path.relative_to(project_root())
+            project_config["data"]["raw_path"] = str(rel_csv_path)
+
+            # Update target column based on scenario
+            if scenario in ["classification", "regression"]:
+                project_config["target"]["column"] = "target"
+            elif scenario == "timeseries":
+                project_config["target"]["column"] = "value"
+            elif scenario.startswith("bandit"):
+                project_config["target"]["column"] = "reward"
+
+            with open(config_path, "w", encoding="utf-8") as f:
+                json.dump(project_config, f, indent=2, ensure_ascii=False)
+
+            print(self.t["activation_success"].format(path=rel_csv_path))
+        except Exception as e:
+            print(f"Warning: Could not auto-activate dataset: {e}")
+
     def run(self):
         self._ensure_output_dir()
         scenario = self.config.get("scenario", "classification")
@@ -245,7 +284,29 @@ class SyntheticDataLab:
 
         print(self.t["success"].format(path=self.output_dir))
 
+        if self.config.get("activate_as_project_dataset"):
+            self.activate_dataset(scenario, csv_path)
+
         self.update_report(scenario, meta, df)
+
+        # Print Next Steps
+        pkg = "your_package"
+        try:
+            config_path = project_root() / "configs/config.json"
+            if config_path.exists():
+                with open(config_path, "r", encoding="utf-8") as f:
+                    project_config = json.load(f)
+                    pkg = project_config.get("project", {}).get("package", pkg)
+        except:
+            pass
+
+        print(self.t["next_steps_title"])
+        if self.config.get("activate_as_project_dataset"):
+            print(self.t["next_step_data"].format(pkg=pkg))
+            print(self.t["next_step_train"].format(pkg=pkg))
+        else:
+            rel_csv_path = csv_path.relative_to(project_root())
+            print(self.t["next_step_manual"].format(path=rel_csv_path))
 
     def update_report(self, scenario: str, meta: dict[str, Any], df: pd.DataFrame):
         md = [

@@ -7,6 +7,12 @@ def run_check():
     from . import guide
     guide.main()
 
+
+def run_data():
+    from . import data
+    data.main()
+
+
 def run_eda():
     try:
         eda = importlib.import_module(".eda", package=__package__)
@@ -88,8 +94,11 @@ def run_evaluate():
     evaluate.main()
 
 def run_all():
-    print("\n>>> Running Full Pipeline: check -> eda -> train -> evaluate")
+    print("\n>>> Running Full Pipeline: check -> data -> eda -> train -> evaluate")
     run_check()
+
+    print("\n>>> Step: Data Preparation")
+    run_data()
 
     # Optional EDA
     try:
@@ -126,6 +135,7 @@ def main():
     subparsers = parser.add_subparsers(dest="command", help="Available subcommands")
 
     subparsers.add_parser("check", help="Run dataset and configuration readiness check")
+    subparsers.add_parser("data", help="Run data preparation and processing")
     subparsers.add_parser("eda", help="Run exploratory data analysis")
     subparsers.add_parser("advisor", help="Run Dataset Advisor for modeling suggestions")
     subparsers.add_parser("learn", help="Generate dataset-contextual learning notes")
@@ -152,6 +162,8 @@ def main():
 
     if args.command == "check":
         run_check()
+    elif args.command == "data":
+        run_data()
     elif args.command == "eda":
         run_eda()
     elif args.command == "advisor":
