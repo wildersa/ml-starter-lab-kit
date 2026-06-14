@@ -40,7 +40,10 @@ class SyntheticDataLab:
                 "next_steps_title": "\nNext Steps:",
                 "next_step_data": "1. Run data preparation: python -m {pkg}.lab data",
                 "next_step_train": "2. Run training:         python -m {pkg}.lab train",
-                "next_step_manual": "Manual: Update 'configs/config.json' to use '{path}' as 'raw_path'.",
+                "next_step_eval": "3. Run evaluation:       python -m {pkg}.lab evaluate",
+                "next_step_manual_title": "Manual configuration required:",
+                "next_step_manual_raw": "- Set 'data.raw_path' to '{path}'",
+                "next_step_manual_target": "- Set 'target.column' to '{target}'",
             },
             "pt-BR": {
                 "generating": "Gerando dados sintéticos para o cenário: {scenario}...",
@@ -57,7 +60,10 @@ class SyntheticDataLab:
                 "next_steps_title": "\nPróximos Passos:",
                 "next_step_data": "1. Preparar os dados: python -m {pkg}.lab data",
                 "next_step_train": "2. Treinar o modelo:  python -m {pkg}.lab train",
-                "next_step_manual": "Manual: Atualize 'configs/config.json' para usar '{path}' como 'raw_path'.",
+                "next_step_eval": "3. Avaliar o modelo:   python -m {pkg}.lab evaluate",
+                "next_step_manual_title": "Configuração manual necessária:",
+                "next_step_manual_raw": "- Defina 'data.raw_path' como '{path}'",
+                "next_step_manual_target": "- Defina 'target.column' como '{target}'",
             }
         }
         self.t = self.translations.get(lang, self.translations["en"])
@@ -304,9 +310,21 @@ class SyntheticDataLab:
         if self.config.get("activate_as_project_dataset"):
             print(self.t["next_step_data"].format(pkg=pkg))
             print(self.t["next_step_train"].format(pkg=pkg))
+            print(self.t["next_step_eval"].format(pkg=pkg))
         else:
             rel_csv_path = csv_path.relative_to(project_root())
-            print(self.t["next_step_manual"].format(path=rel_csv_path))
+            target = "target"
+            if scenario == "timeseries":
+                target = "value"
+            elif scenario.startswith("bandit"):
+                target = "reward"
+
+            print(self.t["next_step_manual_title"])
+            print(self.t["next_step_manual_raw"].format(path=rel_csv_path))
+            print(self.t["next_step_manual_target"].format(target=target))
+            print(f"\n{self.t['next_step_data'].format(pkg=pkg)}")
+            print(self.t["next_step_train"].format(pkg=pkg))
+            print(self.t["next_step_eval"].format(pkg=pkg))
 
     def update_report(self, scenario: str, meta: dict[str, Any], df: pd.DataFrame):
         md = [
