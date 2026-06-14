@@ -21,6 +21,20 @@ Synthetic data is an excellent tool for:
 3.  The generated artifacts will be stored in `data/synthetic/`.
 4.  A summary of the generation is available in `reports/synthetic-data-summary.md`.
 
+## Project Integration (Auto-Activation)
+
+By default, generating synthetic data creates files in `data/synthetic/` but doesn't change your project's main training source.
+
+To automatically point your ML pipeline to use the synthetic data, edit `configs/synthetic_data.json` and set:
+```json
+"activate_as_project_dataset": true
+```
+
+When this flag is `true`, running the `synthetic` command will:
+1. Generate the CSV file.
+2. Update `configs/config.json` to set `data.raw_path` to the new synthetic file.
+3. Update `configs/config.json` to set the correct `target.column` for the chosen scenario.
+
 ## Available Scenarios
 
 ### 1. Classification

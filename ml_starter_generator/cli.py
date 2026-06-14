@@ -112,9 +112,11 @@ TRANSLATIONS = {
         "include_baseline_lab": "Include educational Baseline Lab?",
         "include_bandit_lab": "Include educational Multi-Armed Bandit Lab?",
         "include_monitoring": "Include lightweight monitoring/drift stub?",
-        "include_synthetic_data": "Include configurable Synthetic Data Lab?",
+        "include_synthetic_data": "Include configurable Synthetic Data Lab (for testing/learning)?",
+        "synthetic_panel_title": "Synthetic Data Lab",
+        "synthetic_panel_text": "The Synthetic Data Lab generates deterministic datasets for experimentation.\nSetting 'activate_as_project_dataset' to true in its config will automatically\npoint your project to use the generated synthetic data.",
         "dependency_note_title": "Dependency Note",
-        "dependency_note_text": "Dataset Advisor and Baseline Lab require basic ML dependencies (pandas, scikit-learn).",
+        "dependency_note_text": "Dataset Advisor, Baseline Lab, and Synthetic Lab require basic ML dependencies (pandas, scikit-learn).",
         "enable_ml_basics": "Enable basic ML dependencies now?",
         "output_location": "Output location",
         "dir_current": "Current directory",
@@ -258,9 +260,11 @@ TRANSLATIONS = {
         "include_baseline_lab": "Incluir Baseline Lab educacional?",
         "include_bandit_lab": "Incluir Bandit Lab educacional (Multi-Armed Bandit)?",
         "include_monitoring": "Incluir stub de monitoramento/drift leve?",
-        "include_synthetic_data": "Incluir Synthetic Data Lab configurável?",
+        "include_synthetic_data": "Incluir Synthetic Data Lab configurável (para testes/estudo)?",
+        "synthetic_panel_title": "Synthetic Data Lab",
+        "synthetic_panel_text": "O Synthetic Data Lab gera datasets determinísticos para experimentação.\nDefinir 'activate_as_project_dataset' como true na configuração irá automaticamente\napontar seu projeto para usar os dados sintéticos gerados.",
         "dependency_note_title": "Nota de Dependência",
-        "dependency_note_text": "O Dataset Advisor e o Baseline Lab requerem dependências básicas de ML (pandas, scikit-learn).",
+        "dependency_note_text": "O Dataset Advisor, Baseline Lab e Synthetic Lab requerem dependências básicas de ML (pandas, scikit-learn).",
         "enable_ml_basics": "Ativar dependências básicas de ML agora?",
         "output_location": "Local de saída",
         "dir_current": "Diretório atual",
@@ -834,6 +838,10 @@ def main() -> None:
     # If bandit lab is enabled, we also need the workspace to view it.
     if optional_options.get("bandit_lab"):
         optional_options["learning_workspace"] = True
+
+    # Explain Synthetic Lab if selected
+    if optional_options.get("synthetic_data"):
+        UI.panel(t["synthetic_panel_title"], t["synthetic_panel_text"])
 
     needs_ml_basics = (
         optional_options.get("advisor") or
