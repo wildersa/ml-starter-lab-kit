@@ -276,7 +276,7 @@ class TestGenerator(unittest.TestCase):
 
     def test_custom_profile(self):
         # Custom profile, selecting only eda and metrics
-        optionals = ["y", "n", "y", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n"]
+        optionals = ["y", "n", "y", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n"]
         run_generator(
             project_name="custom_proj",
             package_name="custom_pkg",

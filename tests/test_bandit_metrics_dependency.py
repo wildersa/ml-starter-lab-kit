@@ -31,7 +31,7 @@ class TestBanditMetricsDependency(unittest.TestCase):
         # 9: advisor, 10: learning, 11: baseline_lab, 12: bandit_lab
 
         # We want to enable bandit_lab (index 12) and DISABLE metrics (index 2)
-        optionals = ["n"] * 14
+        optionals = ["n"] * 15
         optionals[2] = "n" # Metrics
         optionals[12] = "y" # Bandit Lab
 

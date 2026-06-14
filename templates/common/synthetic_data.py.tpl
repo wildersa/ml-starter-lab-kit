@@ -268,7 +268,9 @@ class SyntheticDataLab:
 
         md.append("")
         md.append("### Data Preview")
-        md.append(df.head().to_markdown(index=False))
+        md.append("```")
+        md.append(df.head().to_string(index=False))
+        md.append("```")
 
         with open(self.report_path, "w", encoding="utf-8") as f:
             f.write("\n".join(md))
