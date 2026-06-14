@@ -112,6 +112,7 @@ TRANSLATIONS = {
         "include_baseline_lab": "Include educational Baseline Lab?",
         "include_bandit_lab": "Include educational Multi-Armed Bandit Lab?",
         "include_monitoring": "Include lightweight monitoring/drift stub?",
+        "include_synthetic_data": "Include configurable Synthetic Data Lab?",
         "dependency_note_title": "Dependency Note",
         "dependency_note_text": "Dataset Advisor and Baseline Lab require basic ML dependencies (pandas, scikit-learn).",
         "enable_ml_basics": "Enable basic ML dependencies now?",
@@ -257,6 +258,7 @@ TRANSLATIONS = {
         "include_baseline_lab": "Incluir Baseline Lab educacional?",
         "include_bandit_lab": "Incluir Bandit Lab educacional (Multi-Armed Bandit)?",
         "include_monitoring": "Incluir stub de monitoramento/drift leve?",
+        "include_synthetic_data": "Incluir Synthetic Data Lab configurável?",
         "dependency_note_title": "Nota de Dependência",
         "dependency_note_text": "O Dataset Advisor e o Baseline Lab requerem dependências básicas de ML (pandas, scikit-learn).",
         "enable_ml_basics": "Ativar dependências básicas de ML agora?",
@@ -515,6 +517,7 @@ def get_options_by_profile(profile: str) -> dict[str, bool]:
         "baseline_lab": False,
         "bandit_lab": False,
         "monitoring": False,
+        "synthetic_data": False,
     }
 
     if profile == "minimal":
@@ -529,6 +532,7 @@ def get_options_by_profile(profile: str) -> dict[str, bool]:
         options["learning"] = True
         options["baseline_lab"] = True
         options["monitoring"] = True
+        options["synthetic_data"] = True
         return options
 
     if profile == "full":
@@ -698,6 +702,8 @@ def print_summary(root: Path, values: dict[str, str], t: dict[str, str], include
             steps.append(f"   - {t['next_step_advisor']}:   python -m {pkg}.lab advisor")
         if values.get("GENERATE_BANDIT") == "true":
             steps.append(f"   - {t['next_step_bandit']}:   python -m {pkg}.lab bandit")
+        if values.get("GENERATE_SYNTHETIC") == "true":
+            steps.append(f"   - Synthetic Data:  python -m {pkg}.lab synthetic")
         steps.append(f"   - {t['next_step_4_train']}:    python -m {pkg}.lab train")
         steps.append(f"   - {t['next_step_4_eval']}: python -m {pkg}.lab evaluate")
         if values.get("GENERATE_MONITOR") == "true":
@@ -713,6 +719,8 @@ def print_summary(root: Path, values: dict[str, str], t: dict[str, str], include
             steps.append(f"   - {t['next_step_advisor']}:   python -m {pkg}.lab advisor")
         if values.get("GENERATE_BANDIT") == "true":
             steps.append(f"   - {t['next_step_bandit']}:   python -m {pkg}.lab bandit")
+        if values.get("GENERATE_SYNTHETIC") == "true":
+            steps.append(f"   - Synthetic Data:  python -m {pkg}.lab synthetic")
         if values.get("GENERATE_MONITOR") == "true":
             steps.append(f"   - {t['next_step_monitor']}: python -m {pkg}.lab monitor")
 
@@ -801,6 +809,7 @@ def main() -> None:
             "baseline_lab": ask_yes_no(t["include_baseline_lab"], False, lang=lang),
             "bandit_lab": ask_yes_no(t["include_bandit_lab"], False, lang=lang),
             "monitoring": ask_yes_no(t["include_monitoring"], False, lang=lang),
+            "synthetic_data": ask_yes_no(t["include_synthetic_data"], False, lang=lang),
         }
     else:
         optional_options = get_options_by_profile(profile)
@@ -811,6 +820,7 @@ def main() -> None:
         optional_options["learning"] = True
         optional_options["baseline_lab"] = True
         optional_options["monitoring"] = True
+        optional_options["synthetic_data"] = True
         optional_options["learning_workspace"] = True
 
     # P1-D: Gate Bandit Lab.
@@ -825,7 +835,11 @@ def main() -> None:
     if optional_options.get("bandit_lab"):
         optional_options["learning_workspace"] = True
 
-    needs_ml_basics = (optional_options.get("advisor") or optional_options.get("baseline_lab"))
+    needs_ml_basics = (
+        optional_options.get("advisor") or
+        optional_options.get("baseline_lab") or
+        optional_options.get("synthetic_data")
+    )
     if needs_ml_basics and not include_ml_basics:
         if experience_mode != "guided":
             UI.panel(t["dependency_note_title"], t["dependency_note_text"])
@@ -914,6 +928,7 @@ def main() -> None:
         "GENERATE_BASELINE": "true" if optional_options.get("baseline_lab") else "false",
         "GENERATE_BANDIT": "true" if optional_options.get("bandit_lab") else "false",
         "GENERATE_MONITOR": "true" if optional_options.get("monitoring") else "false",
+        "GENERATE_SYNTHETIC": "true" if optional_options.get("synthetic_data") else "false",
     }
 
     UI.section(t["final_summary"], 7)

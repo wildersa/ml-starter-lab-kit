@@ -56,6 +56,14 @@ def run_monitor():
         print("\n[INFO] Monitoring stub is not enabled in this project.")
         print("To enable it, generate a project with the 'guided' mode or 'recommended' profile.")
 
+def run_synthetic():
+    try:
+        synthetic = importlib.import_module(".synthetic_data", package=__package__)
+        synthetic.main()
+    except ImportError:
+        print("\n[INFO] Synthetic Data Lab is not enabled in this project.")
+        print("To enable it, generate a project with the 'recommended' or 'full' profile.")
+
 {% if GENERATE_BANDIT == "true" %}
 def run_bandit_dashboard():
     # Bandit Dashboard is a Streamlit app named bandit_dashboard.py inside the package
@@ -129,6 +137,9 @@ def main():
     monitor_parser.add_argument("--current", help="Path to current (new) data")
     monitor_parser.add_argument("--output", help="Path to save report")
 
+    synthetic_parser = subparsers.add_parser("synthetic", help="Run configurable Synthetic Data Lab")
+    synthetic_parser.add_argument("--config", help="Path to synthetic data config")
+
     {% if GENERATE_BANDIT == "true" %}
     subparsers.add_parser("bandit-dashboard", help="Visual explorer for Bandit Lab results")
     {% endif %}
@@ -153,6 +164,8 @@ def main():
         run_bandit()
     elif args.command == "monitor":
         run_monitor()
+    elif args.command == "synthetic":
+        run_synthetic()
     {% if GENERATE_BANDIT == "true" %}
     elif args.command == "bandit-dashboard":
         run_bandit_dashboard()

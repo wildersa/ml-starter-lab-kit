@@ -129,7 +129,7 @@ class TestBanditGating(unittest.TestCase):
         output_dir = self.test_dir / "minimal_custom_bandit"
 
         # custom optionals: eda, preproc, metrics, opt, feat, viz, nb, rep, exp, advisor, learn, baseline, bandit
-        optionals = ["n"] * 12 + ["y", "n"]
+        optionals = ["n"] * 12 + ["y", "n", "n", "n"]
 
         run_generator(
             project_name="Minimal Custom Bandit",

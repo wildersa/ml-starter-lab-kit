@@ -83,6 +83,7 @@ def create_docs(root: Path, values: dict[str, str], *, force: bool) -> None:
         "docs/data-dictionary.md": load_template("data-dictionary.md", values, folder="project/docs"),
         f"docs/evaluation{suffix}.md": load_template(f"evaluation{suffix}.md", values, folder="project/docs"),
         f"docs/monitoring{suffix}.md": load_template(f"monitoring{suffix}.md", values, folder="project/docs"),
+        f"docs/synthetic-data-lab{suffix}.md": load_template(f"synthetic-data-lab{suffix}.md", values, folder="project/docs"),
         "reports/modeling-notes.md": load_template("modeling-notes.md", values, folder="project/reports"),
         ".gitignore": load_template("gitignore", values, folder="project"),
         ".env.example": load_template("env.example", values, folder="project"),
@@ -165,6 +166,8 @@ def create_optional_files(
         "bandit_lab": package_path / "bandit_lab.py",
         "bandit_dashboard": package_path / "bandit_dashboard.py",
         "bandit_config": root / "configs/bandit_config.json",
+        "synthetic_data": package_path / "synthetic_data.py",
+        "synthetic_config": root / "configs/synthetic_data.json",
     }
 
     template_names = {
@@ -185,15 +188,25 @@ def create_optional_files(
         "bandit_lab": "bandit_lab.py.tpl",
         "bandit_dashboard": "bandit_dashboard.py.tpl",
         "bandit_config": "bandit_config.json.tpl",
+        "synthetic_data": "synthetic_data.py.tpl",
+        "synthetic_config": "synthetic_data.json.tpl",
     }
 
     # Special wiring for Bandit Lab: it REQUIRES metrics.py
     if options.get("bandit_lab"):
         options["metrics"] = True
 
+    # Special wiring for Synthetic Data: it might be enabled but not in the mapping?
+    # Ensure synthetic_config is treated like synthetic_data
+    if options.get("synthetic_data"):
+        options["synthetic_config"] = True
+
     for key, enabled in options.items():
         if enabled and key in mapping:
-            content = load_template(template_names[key], values)
+            folder = "common"
+            if "config" in key:
+                folder = "project/configs"
+            content = load_template(template_names[key], values, folder=folder)
             write_text(mapping[key], content, force=force)
 
     # Config and Dashboard are specific to Bandit Lab and not in the main loop above
