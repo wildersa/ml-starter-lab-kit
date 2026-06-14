@@ -2,6 +2,7 @@
   "scenario": "classification",
   "seed": 42,
   "output_dir": "data/synthetic",
+  "activate_as_project_dataset": false,
   "parameters": {
     "n_samples": 1000,
     "n_features": 10,
