@@ -141,7 +141,7 @@ class TestOutputLogic(unittest.TestCase):
             package_name=package_name,
             output_dir=output_dir,
             optional_profile="4",
-            optionals=["y"] + ["n"]*14
+            optionals=["y"] + ["n"]*15
         )
 
         # Ensure no dataset exists

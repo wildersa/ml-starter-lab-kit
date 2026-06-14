@@ -835,7 +835,11 @@ def main() -> None:
     if optional_options.get("bandit_lab"):
         optional_options["learning_workspace"] = True
 
-    needs_ml_basics = (optional_options.get("advisor") or optional_options.get("baseline_lab"))
+    needs_ml_basics = (
+        optional_options.get("advisor") or
+        optional_options.get("baseline_lab") or
+        optional_options.get("synthetic_data")
+    )
     if needs_ml_basics and not include_ml_basics:
         if experience_mode != "guided":
             UI.panel(t["dependency_note_title"], t["dependency_note_text"])

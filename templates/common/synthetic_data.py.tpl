@@ -222,10 +222,10 @@ class SyntheticDataLab:
                 df = self.generate_bandit_contextual(params)
             else:
                 print(self.t["invalid_scenario"].format(scenario=scenario))
-                return
+                sys.exit(1)
         except Exception as e:
             print(f"Error: {e}")
-            return
+            sys.exit(1)
 
         # Save artifacts
         filename = f"{scenario}.csv"

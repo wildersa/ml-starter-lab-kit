@@ -69,7 +69,7 @@ class TestGenerator(unittest.TestCase):
             dataset_path="data/raw/train.csv",
             target_column="target",
             output_dir=self.test_dir,
-            optionals=["y"] * 15
+            optionals=["y"] * 16
         )
 
         pkg_path = self.test_dir / "src/opt_pkg"
