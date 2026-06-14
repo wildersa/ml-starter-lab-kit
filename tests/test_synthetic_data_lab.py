@@ -127,5 +127,64 @@ class TestSyntheticDataLab(unittest.TestCase):
 
         pd.testing.assert_frame_equal(data_paths[0], data_paths[1])
 
+    def test_synthetic_data_validation_failures(self):
+        """Verify that invalid config fails with non-zero exit code and no artifacts."""
+        package_name = "synth_fail_pkg"
+        output_dir = self.test_dir / "synth_fail_project"
+
+        run_generator(
+            project_name="Synthetic Failure Project",
+            package_name=package_name,
+            output_dir=output_dir,
+            task="2",
+            experience_mode="1",
+            optional_profile="3"
+        )
+
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(output_dir / "src")
+        config_path = output_dir / "configs/synthetic_data.json"
+
+        # 1. Invalid Scenario
+        with open(config_path, "r") as f:
+            config = json.load(f)
+        config["scenario"] = "invalid_scenario_name"
+        with open(config_path, "w") as f:
+            json.dump(config, f)
+
+        result = subprocess.run(
+            [sys.executable, "-m", f"{package_name}.lab", "synthetic"],
+            cwd=output_dir,
+            env=env,
+            capture_output=True,
+            text=True
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Error: Unknown scenario", result.stdout + result.stderr)
+
+        # Ensure no CSV was generated for the invalid scenario
+        invalid_csv = output_dir / "data/synthetic/invalid_scenario_name.csv"
+        self.assertFalse(invalid_csv.exists())
+
+        # 2. Invalid Parameter (e.g. string where number expected in scikit-learn scenarios)
+        with open(config_path, "r") as f:
+            config = json.load(f)
+        config["scenario"] = "classification"
+        config["parameters"] = {"n_samples": "not_a_number"}
+        with open(config_path, "w") as f:
+            json.dump(config, f)
+
+        result = subprocess.run(
+            [sys.executable, "-m", f"{package_name}.lab", "synthetic"],
+            cwd=output_dir,
+            env=env,
+            capture_output=True,
+            text=True
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Error:", result.stdout + result.stderr)
+
 if __name__ == "__main__":
     unittest.main()
