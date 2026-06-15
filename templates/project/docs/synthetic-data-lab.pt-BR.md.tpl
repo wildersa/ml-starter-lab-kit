@@ -59,3 +59,10 @@ O Synthetic Data Lab é **determinístico**. Desde que você use a mesma semente
 - **Aprendizado Não Supervisionado**: Use Agrupamento para testar segmentação e redução de dimensionalidade.
 - **Séries Temporais**: Use o cenário de Time Series para testar modelos de previsão como ARIMA, Prophet ou LSTMs.
 - **Decisões Adaptativas (Bandits)**: Eventos sintéticos permitem simular ambientes onde as decisões impactam interações futuras, ao contrário de datasets supervisionados estáticos.
+
+## Saiba mais
+
+- **Fonte Prática**: scikit-learn [Dataset Generation Documentation](https://scikit-learn.org/stable/datasets/sample_generators.html).
+- **Avaliação**: scikit-learn [Model Evaluation Guide](https://scikit-learn.org/stable/modules/model_evaluation.html).
+
+**Limitação**: Dados sintéticos são úteis para testes de pipeline e fins educacionais, mas não capturam a complexidade e o ruído de ambientes de produção reais. Sempre valide seus modelos com dados reais antes do deploy.

@@ -55,3 +55,10 @@ Uma abordagem Bayesiana que mantém uma distribuição de probabilidade para cad
 ## 4. Próximos Passos
 
 Se você vem de um histórico de aprendizado supervisionado, recomendamos a leitura do **[Passo a Passo do Bandit](bandit-walkthrough.pt-BR.md)** para entender como mapear seu conjunto de dados para esses conceitos.
+
+## Saiba mais
+
+- **Teoria**: Aleksandrs Slivkins, [Introduction to Multi-Armed Bandits](https://arxiv.org/abs/1904.07272).
+- **Métricas Gerais de ML**: scikit-learn [Model Evaluation Guide](https://scikit-learn.org/stable/modules/model_evaluation.html).
+
+**Limitação**: O MAB Lab utiliza simulações simplificadas. Resultados no mundo real podem variar devido a fatores ambientais complexos não capturados nestes modelos.

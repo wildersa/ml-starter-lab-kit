@@ -55,3 +55,10 @@ A Bayesian approach that maintains a probability distribution for each arm and s
 ## 4. Next Steps
 
 If you are coming from a supervised learning background, we recommend reading the **[Bandit Walkthrough](bandit-walkthrough.md)** to understand how to map your dataset to these concepts.
+
+## Learn more
+
+- **Theory**: Aleksandrs Slivkins, [Introduction to Multi-Armed Bandits](https://arxiv.org/abs/1904.07272).
+- **General ML Metrics**: scikit-learn [Model Evaluation Guide](https://scikit-learn.org/stable/modules/model_evaluation.html).
+
+**Limitation**: The MAB Lab uses simplified simulations. Real-world results may vary due to complex environmental factors not captured in these models.
