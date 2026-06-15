@@ -40,9 +40,11 @@ Follow this path to understand how to go from a raw dataset to a monitored model
 | What can go wrong? | [Common mistakes](common-mistakes/README.md) |
 | What does this term mean? | [Glossary](glossary/README.md) |
 | How is Multi-Armed Bandit different from normal training? | [Multi-Armed Bandit Lab reference](mab-lab.md) |
+| How do I use the Synthetic Data Lab? | [Synthetic Data Flow](workflows/synthetic-data.md) |
 
 ## Project usage
 
 - [Starter and generated project layout](usage/project-layout.md)
+- [Synthetic Data Flow](workflows/synthetic-data.md)
 - [Experiment visualization strategy](experiment-visualization.md)
 - [Multi-Armed Bandit Lab reference](mab-lab.md)
