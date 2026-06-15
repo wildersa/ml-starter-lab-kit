@@ -26,6 +26,7 @@ Follow this path to understand how to go from a raw dataset to a monitored model
 - [Metrics reference](metrics/README.md): Detailed metric definitions.
 - [Checklists](checklists/README.md): What to verify before moving to the next step.
 - [Glossary](glossary/README.md): ML terminology for beginners.
+- [Theory and references](references.md): Curated external sources for deeper learning.
 
 ## By question
 
@@ -39,6 +40,7 @@ Follow this path to understand how to go from a raw dataset to a monitored model
 | What should I check before training? | [Before training checklist](checklists/before-training.md) |
 | What can go wrong? | [Common mistakes](common-mistakes/README.md) |
 | What does this term mean? | [Glossary](glossary/README.md) |
+| Where can I find more in-depth theory? | [Theory and references](references.md) |
 | How is Multi-Armed Bandit different from normal training? | [Multi-Armed Bandit Lab reference](mab-lab.md) |
 | How do I use the Synthetic Data Lab? | [Synthetic Data Flow](workflows/synthetic-data.md) |
 
@@ -48,3 +50,4 @@ Follow this path to understand how to go from a raw dataset to a monitored model
 - [Synthetic Data Flow](workflows/synthetic-data.md)
 - [Experiment visualization strategy](experiment-visualization.md)
 - [Multi-Armed Bandit Lab reference](mab-lab.md)
+- [Theory and reference map](references.md)
