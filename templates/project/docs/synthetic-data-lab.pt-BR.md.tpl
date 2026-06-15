@@ -21,6 +21,20 @@ Dados sintéticos são uma ferramenta excelente para:
 3.  Os artefatos gerados serão armazenados em `data/synthetic/`.
 4.  Um resumo da geração está disponível em `reports/synthetic-data-summary.md`.
 
+## Integração com o Projeto (Auto-Ativação)
+
+Por padrão, a geração de dados sintéticos cria arquivos em `data/synthetic/`, mas não altera a fonte de treinamento principal do seu projeto.
+
+Para apontar automaticamente seu pipeline de ML para usar os dados sintéticos, edite `configs/synthetic_data.json` e defina:
+```json
+"activate_as_project_dataset": true
+```
+
+Quando esta flag for `true`, executar o comando `synthetic` irá:
+1. Gerar o arquivo CSV.
+2. Atualizar o `configs/config.json` para definir `data.raw_path` para o novo arquivo sintético.
+3. Atualizar o `configs/config.json` para definir a `target.column` correta para o cenário escolhido.
+
 ## Cenários Disponíveis
 
 ### 1. Classificação (Classification)
