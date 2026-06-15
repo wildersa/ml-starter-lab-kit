@@ -46,6 +46,7 @@ Siga este caminho para entender como ir de um conjunto de dados bruto a um model
 
 ## Uso do projeto
 
+- [Guia de redação para docs de aprendizado](authoring/learning-docs.pt-BR.md)
 - [Layout do starter e do projeto gerado](usage/project-layout.pt-BR.md)
 - [Fluxo de Dados Sintéticos](workflows/synthetic-data.pt-BR.md)
 - [Estratégia de visualização de experimentos](experiment-visualization.md)
