@@ -44,6 +44,7 @@ Follow this path to understand how to go from a raw dataset to a monitored model
 
 ## Project usage
 
+- [Authoring guide for learning docs](authoring/learning-docs.md)
 - [Starter and generated project layout](usage/project-layout.md)
 - [Synthetic Data Flow](workflows/synthetic-data.md)
 - [Experiment visualization strategy](experiment-visualization.md)
