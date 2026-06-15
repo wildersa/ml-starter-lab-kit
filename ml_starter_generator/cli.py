@@ -167,6 +167,33 @@ TRANSLATIONS = {
         "summary_mlflow": "MLflow Tracking",
         "yes": "yes",
         "no": "no",
+        "bandit_action_question": "1. What action should the system choose?",
+        "bandit_action_label": "Action",
+        "bandit_action_offer": "offer/product",
+        "bandit_action_message": "message/channel",
+        "bandit_action_recommendation": "recommendation",
+        "bandit_action_custom": "custom",
+        "bandit_reward_question": "2. What reward will be observed?",
+        "bandit_reward_label": "Reward",
+        "bandit_reward_click": "click",
+        "bandit_reward_conversion": "conversion",
+        "bandit_reward_acceptance": "acceptance",
+        "bandit_reward_revenue": "revenue",
+        "bandit_reward_custom": "custom metric",
+        "bandit_context_question": "3. Is there user/event context?",
+        "bandit_context_label": "Context",
+        "bandit_context_simple": "simple bandit (no context)",
+        "bandit_context_contextual": "contextual bandit (uses features)",
+        "bandit_delay_question": "4. Is the reward immediate or delayed?",
+        "bandit_delay_label": "Delay",
+        "bandit_delay_immediate": "immediate",
+        "bandit_delay_delayed": "delayed",
+        "bandit_baseline_question": "5. What initial baseline should be used?",
+        "bandit_baseline_label": "Baseline",
+        "bandit_baseline_fixed": "fixed arm",
+        "bandit_baseline_historical": "historical best arm",
+        "bandit_baseline_random": "random",
+        "bandit_baseline_custom": "custom",
     },
     "pt-BR": {
         "language_name": "Português do Brasil",
@@ -315,6 +342,33 @@ TRANSLATIONS = {
         "summary_mlflow": "Rastreamento MLflow",
         "yes": "sim",
         "no": "não",
+        "bandit_action_question": "1. Qual ação o sistema deve escolher?",
+        "bandit_action_label": "Ação",
+        "bandit_action_offer": "oferta/produto",
+        "bandit_action_message": "mensagem/canal",
+        "bandit_action_recommendation": "recomendação",
+        "bandit_action_custom": "personalizado",
+        "bandit_reward_question": "2. Qual recompensa será observada?",
+        "bandit_reward_label": "Recompensa",
+        "bandit_reward_click": "clique",
+        "bandit_reward_conversion": "conversão",
+        "bandit_reward_acceptance": "aceitação",
+        "bandit_reward_revenue": "receita",
+        "bandit_reward_custom": "métrica personalizada",
+        "bandit_context_question": "3. Existe contexto de usuário/evento?",
+        "bandit_context_label": "Contexto",
+        "bandit_context_simple": "bandit simples (sem contexto)",
+        "bandit_context_contextual": "bandit contextual (usa features)",
+        "bandit_delay_question": "4. A recompensa é imediata ou atrasada?",
+        "bandit_delay_label": "Atraso",
+        "bandit_delay_immediate": "imediata",
+        "bandit_delay_delayed": "atrasada",
+        "bandit_baseline_question": "5. Qual referência inicial deve ser usada?",
+        "bandit_baseline_label": "Referência",
+        "bandit_baseline_fixed": "braço fixo",
+        "bandit_baseline_historical": "melhor braço histórico",
+        "bandit_baseline_random": "aleatório",
+        "bandit_baseline_custom": "personalizado",
     }
 }
 
@@ -551,6 +605,58 @@ def run_problem_framing_wizard(task: str, t: dict[str, str], lang: str) -> dict[
     UI.panel(t['problem_framing_panel_title'], t['problem_framing_panel_text'])
     print(t['press_enter_defaults'])
 
+    if task == "bandit":
+        # 1. Action?
+        print(f"\n{t['bandit_action_question']}")
+        print(f"   - {t['bandit_action_offer']}")
+        print(f"   - {t['bandit_action_message']}")
+        print(f"   - {t['bandit_action_recommendation']}")
+        print(f"   - {t['bandit_action_custom']}")
+        action = ask(t["bandit_action_label"], t["bandit_action_offer"])
+
+        # 2. Reward?
+        print(f"\n{t['bandit_reward_question']}")
+        print(f"   - {t['bandit_reward_click']}")
+        print(f"   - {t['bandit_reward_conversion']}")
+        print(f"   - {t['bandit_reward_acceptance']}")
+        print(f"   - {t['bandit_reward_revenue']}")
+        print(f"   - {t['bandit_reward_custom']}")
+        reward = ask(t["bandit_reward_label"], t["bandit_reward_click"])
+
+        # 3. Context?
+        print(f"\n{t['bandit_context_question']}")
+        print(f"   - {t['bandit_context_simple']}")
+        print(f"   - {t['bandit_context_contextual']}")
+        context = ask(t["bandit_context_label"], t["bandit_context_contextual"])
+
+        # 4. Delay?
+        print(f"\n{t['bandit_delay_question']}")
+        print(f"   - {t['bandit_delay_immediate']}")
+        print(f"   - {t['bandit_delay_delayed']}")
+        delay = ask(t["bandit_delay_label"], t["bandit_delay_immediate"])
+
+        # 5. Baseline?
+        print(f"\n{t['bandit_baseline_question']}")
+        print(f"   - {t['bandit_baseline_fixed']}")
+        print(f"   - {t['bandit_baseline_historical']}")
+        print(f"   - {t['bandit_baseline_random']}")
+        print(f"   - {t['bandit_baseline_custom']}")
+        baseline = ask(t["bandit_baseline_label"], t["bandit_baseline_random"])
+
+        # 6. Any domain note?
+        domain_note = ask(f"\n{t['domain_note_question']}", "")
+
+        return {
+            "goal": t["task_bandit"],
+            "bandit_action": action,
+            "bandit_reward": reward,
+            "bandit_context": context,
+            "bandit_delay": delay,
+            "bandit_baseline": baseline,
+            "domain_note": domain_note,
+            "language": lang
+        }
+
     # 1. Main goal?
     print(f"\n{t['goal_question']}")
     goals = {
@@ -758,6 +864,8 @@ def main() -> None:
 
     if task == "unsupervised":
         target_column = ""
+    elif task == "bandit":
+        target_column = ask(t["target_column"], "reward")
     else:
         target_column = ask(t["target_column"], "target")
 
