@@ -114,5 +114,27 @@ class TestCLIUX(unittest.TestCase):
         self.assertIn("Target column:     my_target", output)
         self.assertIn("Output directory:  " + str(self.test_dir.resolve()), output)
 
+    def test_synthetic_data_lab_panel_visibility(self):
+        # Case 1: Synthetic Data Lab enabled (recommended profile)
+        output_enabled = run_generator(
+            project_name="synth_on",
+            task="2",
+            optional_profile="2", # recommended (includes synthetic)
+            output_dir=self.test_dir
+        )
+        self.assertIn("[Synthetic Data Lab]", output_enabled)
+        self.assertIn("activate_as_project_dataset", output_enabled)
+
+        # Case 2: Synthetic Data Lab disabled (minimal profile)
+        shutil.rmtree(self.test_dir)
+        os.makedirs(self.test_dir)
+        output_disabled = run_generator(
+            project_name="synth_off",
+            task="2",
+            optional_profile="1", # minimal
+            output_dir=self.test_dir
+        )
+        self.assertNotIn("[Synthetic Data Lab]", output_disabled)
+
 if __name__ == "__main__":
     unittest.main()
