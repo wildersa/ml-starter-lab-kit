@@ -26,6 +26,7 @@ Siga este caminho para entender como ir de um conjunto de dados bruto a um model
 - [Referência de métricas](metrics/README.pt-BR.md): Definições detalhadas de métricas.
 - [Checklists](checklists/README.pt-BR.md): O que verificar antes de avançar para a próxima etapa.
 - [Glossário](glossary/README.pt-BR.md): Terminologia de ML para iniciantes.
+- [Teoria e referências](references.pt-BR.md): Fontes externas selecionadas para aprofundamento.
 
 ## Por pergunta
 
@@ -39,6 +40,7 @@ Siga este caminho para entender como ir de um conjunto de dados bruto a um model
 | O que checar antes de treinar? | [Checklist antes do treino](checklists/before-training.pt-BR.md) |
 | O que pode dar errado? | [Erros comuns](common-mistakes/README.pt-BR.md) |
 | O que esse termo significa? | [Glossário](glossary/README.pt-BR.md) |
+| Onde encontro teoria mais aprofundada? | [Teoria e referências](references.pt-BR.md) |
 | Como Multi-Armed Bandit difere de treino supervisionado? | [Referência do Multi-Armed Bandit Lab](mab-lab.md) |
 | Como uso o Synthetic Data Lab? | [Fluxo de Dados Sintéticos](workflows/synthetic-data.pt-BR.md) |
 
@@ -48,3 +50,4 @@ Siga este caminho para entender como ir de um conjunto de dados bruto a um model
 - [Fluxo de Dados Sintéticos](workflows/synthetic-data.pt-BR.md)
 - [Estratégia de visualização de experimentos](experiment-visualization.md)
 - [Referência do Multi-Armed Bandit Lab](mab-lab.md)
+- [Mapa de teoria e referências](references.pt-BR.md)
