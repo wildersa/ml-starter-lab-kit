@@ -101,3 +101,10 @@ During the simulation, the Bandit Lab generates a history that looks like this:
 | 103 | 28 | 1200 | Arm C | 1 | 0 |
 
 **Conclusion**: In the Bandit Lab, the **target original** (`y`) is not enough. You must model the interaction (Action -> Reward) to truly optimize your business decisions.
+
+## Learn more
+
+- **Theory**: Aleksandrs Slivkins, [Introduction to Multi-Armed Bandits](https://arxiv.org/abs/1904.07272).
+- **General ML Metrics**: scikit-learn [Model Evaluation Guide](https://scikit-learn.org/stable/modules/model_evaluation.html).
+
+**Limitation**: Transitioning from a static dataset to a bandit model involves assumptions about how historical actions map to rewards. These assumptions should be validated with domain experts.

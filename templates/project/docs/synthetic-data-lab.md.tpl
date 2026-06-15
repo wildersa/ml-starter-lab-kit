@@ -73,3 +73,10 @@ The Synthetic Data Lab is **deterministic**. As long as you use the same `seed` 
 - **Unsupervised Learning**: Use Clustering to test segmentation and dimensionality reduction.
 - **Time Series**: Use the Time Series scenario to test forecasting models like ARIMA, Prophet, or LSTMs.
 - **Adaptive Decisions (Bandits)**: Synthetic events allow you to simulate environments where decisions impact future interactions, unlike static supervised datasets.
+
+## Learn more
+
+- **Practical Source**: scikit-learn [Dataset Generation Documentation](https://scikit-learn.org/stable/datasets/sample_generators.html).
+- **Evaluation**: scikit-learn [Model Evaluation Guide](https://scikit-learn.org/stable/modules/model_evaluation.html).
+
+**Limitation**: Synthetic data is useful for pipeline testing and educational purposes but does not capture the complexity and noise of real-world production environments. Always validate your models with real data before deployment.
