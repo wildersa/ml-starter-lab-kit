@@ -89,20 +89,7 @@ def get_demo_data(task: str, goal: str = "") -> str:
         )
 
     if task == "bandit":
-        # Multi-Armed Bandit demo: arm name and reward
-        return (
-            "arm_name,reward\n"
-            "arm_a,1\n"
-            "arm_b,0\n"
-            "arm_a,0\n"
-            "arm_c,1\n"
-            "arm_b,1\n"
-            "arm_a,1\n"
-            "arm_c,0\n"
-            "arm_b,0\n"
-            "arm_a,1\n"
-            "arm_c,1\n"
-        )
+        return _get_bandit_demo_data()
 
     # Default/Generic: minimal placeholder
     return (
@@ -113,3 +100,78 @@ def get_demo_data(task: str, goal: str = "") -> str:
         "4.0,2.5,1\n"
         "5.0,4.0,0\n"
     )
+
+
+def _get_bandit_demo_data() -> str:
+    """
+    Generates a richer contextual Bandit demo dataset for bank campaigns.
+    Deterministic and lightweight (100 rows).
+    """
+    arms = [
+        "term_deposit_email",
+        "term_deposit_phone",
+        "investment_advisor_call",
+        "credit_card_push"
+    ]
+    jobs = ["admin", "technician", "services", "management", "retired"]
+    segments = ["low_value", "medium_value", "high_value"]
+    channels = ["email", "phone", "mobile", "branch"]
+
+    rows = []
+    headers = [
+        "event_id", "timestamp", "customer_id", "age", "balance", "job",
+        "segment", "channel_preference", "previous_contacts", "arm_name",
+        "action_probability", "policy_name", "reward", "conversion",
+        "revenue", "delay_days"
+    ]
+    rows.append(",".join(headers))
+
+    for i in range(100):
+        # Deterministic but varied values using modulo and prime multipliers
+        event_id = f"evt_{1000 + i}"
+        timestamp = f"2023-10-01 {10 + (i // 10):02d}:{i % 60:02d}:00"
+        customer_id = f"cust_{2000 + (i % 25)}"  # 25 unique customers
+        age = 18 + (i * 13 % 60)
+        balance = 100 + (i * 173 % 15000)
+        job = jobs[i % len(jobs)]
+        segment = segments[i % len(segments)]
+        channel_pref = channels[i % len(channels)]
+        prev_contacts = (i * 3) % 8
+
+        # Behavior Policy simulation (deterministic)
+        arm_idx = (i * 7) % len(arms)
+        arm_name = arms[arm_idx]
+        action_prob = 0.25
+        policy_name = "deterministic_uniform_logging_policy"
+
+        # Reward logic: Some combinations are better
+        # 1. High balance customers like Advisor calls
+        # 2. Young customers like email/push
+        # 3. Retired customers like phone calls
+        score = 0
+        if arm_name == "investment_advisor_call" and balance > 8000:
+            score += 40
+        if arm_name == "term_deposit_email" and age < 30:
+            score += 30
+        if arm_name == "credit_card_push" and age < 40 and segment == "medium_value":
+            score += 25
+        if arm_name == "term_deposit_phone" and job == "retired":
+            score += 35
+
+        # Base conversion chance + score-based chance
+        deterministic_random = (i * 31) % 100
+        conversion = 1 if (deterministic_random < (5 + score)) else 0
+
+        reward = conversion
+        revenue = conversion * (150 if arm_name == "investment_advisor_call" else 40)
+        delay_days = (i * 11 % 5) if conversion else 0
+
+        row = [
+            event_id, timestamp, customer_id, str(age), str(balance), job,
+            segment, channel_pref, str(prev_contacts), arm_name,
+            f"{action_prob:.2f}", policy_name, str(reward), str(conversion),
+            str(revenue), str(delay_days)
+        ]
+        rows.append(",".join(row))
+
+    return "\n".join(rows) + "\n"
