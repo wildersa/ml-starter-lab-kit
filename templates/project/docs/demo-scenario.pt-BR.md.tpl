@@ -74,6 +74,38 @@ Esta demonstração simula um arquivo de metadados para uma tarefa de classifica
 | height | Numérico | Altura da imagem | Metadados |
 {% endif %}
 
+{% if DEMO_SUBTYPE == "bandit" %}
+## Cenário: Campanha Bancária (Multi-Armed Bandit)
+Esta demonstração simula uma campanha de marketing usando um Multi-Armed Bandit para decidir qual oferta mostrar a cada cliente.
+
+### Dicionário de Dados
+| Coluna | Tipo | Descrição | Papel |
+|---|---|---|---|
+| event_id | Texto | Identificador único do evento | ID |
+| timestamp | DateTime | Quando a decisão foi tomada | Contexto |
+| customer_id | Texto | Identificador único do cliente | Contexto |
+| age | Numérico | Idade do cliente | Contexto |
+| balance | Numérico | Saldo anual médio | Contexto |
+| job | Categórico | Tipo de trabalho | Contexto |
+| segment | Categórico | Segmento de valor do cliente | Contexto |
+| channel_preference | Categórico | Canal de comunicação preferencial | Contexto |
+| previous_contacts | Numérico | Número de contatos anteriores | Contexto |
+| arm_name | Categórico | A oferta selecionada pela política de comportamento | **Braço/Ação (Arm/Action)** |
+| action_probability | Numérico | Probabilidade de selecionar este braço sob a política de comportamento | Propensão |
+| policy_name | Texto | Nome da política que tomou a decisão | Metadados |
+| reward | Numérico | Resultado binário (1 para sucesso, 0 para nenhum) | **Alvo (Target)** |
+| conversion | Numérico | O mesmo que a recompensa, usado para relatórios de negócios | Resultado |
+| revenue | Numérico | Valor financeiro gerado pela conversão | Resultado |
+| delay_days | Numérico | Dias até que a recompensa fosse observada | Atraso |
+
+### Relação Contexto-Ação-Recompensa
+Neste cenário, diferentes clientes respondem melhor a diferentes ofertas (braços):
+* **Investment Advisor Call**: Melhor para clientes com saldo alto.
+* **Term Deposit Email**: Melhor para clientes mais jovens (<30).
+* **Credit Card Push**: Melhor para clientes de valor médio abaixo de 40 anos.
+* **Term Deposit Phone**: Melhor para clientes aposentados.
+{% endif %}
+
 ## Caminho de Aprendizado Pretendido
 1. Explore o arquivo `data/raw/demo_dataset.csv`.
 2. Execute `python -m {{PACKAGE_NAME}}.guide` para validar a configuração.
