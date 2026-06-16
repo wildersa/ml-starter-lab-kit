@@ -142,7 +142,7 @@ def _get_bandit_demo_data() -> str:
         arm_idx = (i * 7) % len(arms)
         arm_name = arms[arm_idx]
         action_prob = 0.25
-        policy_name = "initial_random_exploration"
+        policy_name = "deterministic_uniform_logging_policy"
 
         # Reward logic: Some combinations are better
         # 1. High balance customers like Advisor calls

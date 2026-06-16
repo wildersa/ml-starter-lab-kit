@@ -92,7 +92,7 @@ Esta demonstração simula uma campanha de marketing usando um Multi-Armed Bandi
 | previous_contacts | Numérico | Número de contatos anteriores | Contexto |
 | arm_name | Categórico | A oferta selecionada pela política de comportamento | **Braço/Ação (Arm/Action)** |
 | action_probability | Numérico | Probabilidade de selecionar este braço sob a política de comportamento | Propensão |
-| policy_name | Texto | Nome da política que tomou a decisão | Metadados |
+| policy_name | Texto | Nome da política que tomou a decisão (deterministic uniform logging) | Metadados |
 | reward | Numérico | Resultado binário (1 para sucesso, 0 para nenhum) | **Alvo (Target)** |
 | conversion | Numérico | O mesmo que a recompensa, usado para relatórios de negócios | Resultado |
 | revenue | Numérico | Valor financeiro gerado pela conversão | Resultado |
