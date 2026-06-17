@@ -93,5 +93,11 @@ class TestNavigationRefresh(unittest.TestCase):
         self.assertIn("Ponte para o Bandit Lab", synth_doc_pt_content)
         self.assertIn("dados logados", synth_doc_pt_content.lower())
 
+    def test_static_docs_pt_br_links(self):
+        # Verify that static Portuguese documentation index has correct localized links
+        index_pt = Path("docs/README.pt-BR.md").read_text()
+        self.assertIn("[Referência do Multi-Armed Bandit Lab](mab-lab.pt-BR.md)", index_pt)
+        self.assertIn("[Guia de Bandit](mab-lab.pt-BR.md)", index_pt)
+
 if __name__ == "__main__":
     unittest.main()

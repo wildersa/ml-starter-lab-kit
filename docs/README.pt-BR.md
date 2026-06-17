@@ -50,7 +50,7 @@ Além do aprendizado supervisionado padrão, você pode explorar:
 | O que pode dar errado? | [Erros comuns](common-mistakes/README.pt-BR.md) |
 | O que esse termo significa? | [Glossário](glossary/README.pt-BR.md) |
 | Onde encontro teoria mais aprofundada? | [Teoria e referências](references.pt-BR.md) |
-| Como Multi-Armed Bandit difere de treino supervisionado? | [Referência do Multi-Armed Bandit Lab](mab-lab.md) |
+| Como Multi-Armed Bandit difere de treino supervisionado? | [Referência do Multi-Armed Bandit Lab](mab-lab.pt-BR.md) |
 | Como uso o Synthetic Data Lab? | [Fluxo de Dados Sintéticos](workflows/synthetic-data.pt-BR.md) |
 
 ## Uso do projeto
@@ -59,5 +59,5 @@ Além do aprendizado supervisionado padrão, você pode explorar:
 - [Layout do starter e do projeto gerado](usage/project-layout.pt-BR.md)
 - [Fluxo de Dados Sintéticos](workflows/synthetic-data.pt-BR.md)
 - [Estratégia de visualização de experimentos](experiment-visualization.md)
-- [Referência do Multi-Armed Bandit Lab](mab-lab.md)
+- [Referência do Multi-Armed Bandit Lab](mab-lab.pt-BR.md)
 - [Mapa de teoria e referências](references.pt-BR.md)
