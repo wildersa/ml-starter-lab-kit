@@ -129,20 +129,35 @@ python -m {{PACKAGE_NAME}}.lab workspace
 1. **Check**: Valida se os dados estão prontos.
 2. **Explore (EDA)**: Gera o resumo do dataset.
 3. **Workspace**: Abre o app Streamlit para insights interativos.
+{% endif %}
+
+{% if GENERATE_BANDIT == "true" or GENERATE_SYNTHETIC == "true" %}
+## Labs Educacionais e Dados Sintéticos
+
+{% if GENERATE_SYNTHETIC == "true" %}
+- **Synthetic Data Lab**: Gere conjuntos de dados determinísticos para testar seu pipeline ou estudar o comportamento de ML.
+  Confira o **[Guia de Fluxo de Dados Sintéticos](docs/synthetic-data-lab.pt-BR.md)** para começar.
+{% endif %}
 
 {% if GENERATE_BANDIT == "true" %}
-### Labs Educacionais
-Este projeto inclui o **Bandit Lab (Multi-Armed Bandit)** como um exercício avançado de aprendizado. Diferente do aprendizado supervisionado, ele foca em tomada de decisão sequencial.
+- **Multi-Armed Bandit Lab**: Explore tomada de decisão adaptativa e experimentos sequenciais.
+  Confira o **[Passo a Passo do Bandit](docs/bandit-walkthrough.pt-BR.md)** e a **[Referência do MAB Lab](docs/mab-lab.pt-BR.md)**.
+{% endif %}
 
-Confira o **[Passo a Passo do Bandit](docs/bandit-walkthrough.pt-BR.md)** para aprender como mapear conjuntos de dados supervisionados para laboratórios de decisão adaptativa.
-
-Você pode explorá-lo via Workspace ou CLI:
-
+Você pode explorar esses labs via Workspace Visual (se ativado) ou CLI:
 ```bash
+{% if GENERATE_SYNTHETIC == "true" %}
+# Gerar dados sintéticos
+python -m {{PACKAGE_NAME}}.lab synthetic
+{% endif %}
+{% if GENERATE_BANDIT == "true" %}
+# Executar simulação de Bandit
 python -m {{PACKAGE_NAME}}.lab bandit
+{% endif %}
 ```
 {% endif %}
-{% else %}
+
+{% if LEARNING_ENABLED == "false" %}
 {% if GENERATE_ADVISOR == "true" %}
 ### 4. Execute o Dataset Advisor
 Se ativado, o Advisor realiza uma análise heurística mais profunda dos seus dados para sugerir estratégias de modelagem:

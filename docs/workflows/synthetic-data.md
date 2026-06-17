@@ -30,4 +30,17 @@ python -m <package>.lab evaluate  # Evaluates performance
 - **Learning**: Experiment with how imbalanced data (Classification) or noise (Regression) affects metrics.
 - **MAB Exploration**: Use Bandit scenarios to understand exploration/exploitation without real-world risk.
 
+## Comparison: Bandit Lab vs. Synthetic Data Lab
+
+It is important to distinguish between these two educational tools:
+
+| Feature | Synthetic Data Lab | Multi-Armed Bandit Lab |
+|---|---|---|
+| **Nature** | **Logged/Static Data**: Generates a CSV file of past events (e.g., `bank_campaign_bandit`). | **Active Simulation**: An interactive environment where an agent makes decisions and gets feedback. |
+| **Feedback Loop** | Fixed. You train models on logs of what already happened. | Dynamic. The agent's choice in round *N* can be evaluated immediately. |
+| **Primary Use** | Testing the `data.py` and `train.py` pipeline with Bandit-formatted logs. | Learning about exploration/exploitation strategies (Epsilon-Greedy, Thompson Sampling). |
+| **Artifact** | `data/synthetic/scenario.csv` | Markdown tables and plots in the Workspace. |
+
+The **`bank_campaign_bandit`** scenario in the Synthetic Data Lab acts as a bridge: it provides the realistic columns you would see in a real-world Bandit log, which you can then use to "warm up" or test your policies before running a full simulation.
+
 **Note**: Synthetic data is for testing and education. It does not reflect real-world performance.
