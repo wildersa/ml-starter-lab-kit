@@ -314,7 +314,7 @@ class SyntheticDataLab:
                 project_config["target"]["column"] = "target"
             elif scenario == "timeseries":
                 project_config["target"]["column"] = "value"
-            elif "bandit" in scenario:
+            elif scenario in ["bandit_simple", "bandit_contextual_events", "bank_campaign_bandit"]:
                 project_config["target"]["column"] = "reward"
 
             with open(config_path, "w", encoding="utf-8") as f:
@@ -397,7 +397,7 @@ class SyntheticDataLab:
             target = "target"
             if scenario == "timeseries":
                 target = "value"
-            elif "bandit" in scenario:
+            elif scenario in ["bandit_simple", "bandit_contextual_events", "bank_campaign_bandit"]:
                 target = "reward"
 
             print(self.t["next_step_manual_title"])
