@@ -46,6 +46,18 @@ class SyntheticDataLab:
                 "next_step_manual_title": "Manual configuration required:",
                 "next_step_manual_raw": "- Set 'data.raw_path' to '{path}'",
                 "next_step_manual_target": "- Set 'target.column' to '{target}'",
+                "bandit_report_section": "## Bandit Scenario Analysis",
+                "bandit_arm_stats": "### Arm Statistics",
+                "bandit_logged_data_title": "### Logged Contextual Bandit Data",
+                "bandit_logged_data_expl": "This dataset represents logged interactions where a behavior policy (logging policy) selected actions. It includes context, the selected action, and the observed reward.",
+                "bandit_prob_dist": "### Action Probability Distribution",
+                "bandit_delay_summary": "### Reward Delay Summary",
+                "table_arm": "Arm",
+                "table_events": "Events",
+                "table_conv_rate": "Conv. Rate",
+                "table_avg_revenue": "Avg. Revenue",
+                "table_total_revenue": "Total Revenue",
+                "table_avg_delay": "Avg. Delay (days)",
             },
             "pt-BR": {
                 "generating": "Gerando dados sintéticos para o cenário: {scenario}...",
@@ -66,6 +78,18 @@ class SyntheticDataLab:
                 "next_step_manual_title": "Configuração manual necessária:",
                 "next_step_manual_raw": "- Defina 'data.raw_path' como '{path}'",
                 "next_step_manual_target": "- Defina 'target.column' como '{target}'",
+                "bandit_report_section": "## Análise do Cenário de Bandit",
+                "bandit_arm_stats": "### Estatísticas dos Braços (Arms)",
+                "bandit_logged_data_title": "### Dados de Bandit Contextual Logados",
+                "bandit_logged_data_expl": "Este conjunto de dados representa interações registradas onde uma política de comportamento (logging policy) selecionou as ações. Inclui o contexto, a ação selecionada e a recompensa observada.",
+                "bandit_prob_dist": "### Distribuição de Probabilidade de Ação",
+                "bandit_delay_summary": "### Resumo de Atraso de Recompensa",
+                "table_arm": "Braço (Arm)",
+                "table_events": "Eventos",
+                "table_conv_rate": "Taxa de Conv.",
+                "table_avg_revenue": "Receita Média",
+                "table_total_revenue": "Receita Total",
+                "table_avg_delay": "Atraso Médio (dias)",
             }
         }
         self.t = self.translations.get(lang, self.translations["en"])
@@ -427,6 +451,52 @@ class SyntheticDataLab:
 
         for k, v in meta["parameters"].items():
             md.append(f"| {k} | {v} |")
+
+        if scenario == "bank_campaign_bandit":
+            md.append("")
+            md.append(self.t["bandit_report_section"])
+            md.append("")
+            md.append(self.t["bandit_logged_data_title"])
+            md.append(self.t["bandit_logged_data_expl"])
+            md.append("")
+
+            # Arm Statistics
+            md.append(self.t["bandit_arm_stats"])
+            md.append(f"| {self.t['table_arm']} | {self.t['table_events']} | {self.t['table_conv_rate']} | {self.t['table_avg_revenue']} | {self.t['table_total_revenue']} |")
+            md.append("| :--- | :--- | :--- | :--- | :--- |")
+
+            stats = df.groupby("arm_name").agg({
+                "reward": ["count", "mean"],
+                "revenue": ["mean", "sum"]
+            })
+
+            for arm, row in stats.iterrows():
+                count = int(row[("reward", "count")])
+                conv_rate = f"{row[('reward', 'mean')]:.2%}"
+                avg_rev = f"{row[('revenue', 'mean')]:.2f}"
+                total_rev = f"{row[('revenue', 'sum')]:.2f}"
+                md.append(f"| {arm} | {count} | {conv_rate} | {avg_rev} | {total_rev} |")
+
+            md.append("")
+
+            # Action Probability Distribution
+            md.append(self.t["bandit_prob_dist"])
+            prob_dist = df["action_probability"].value_counts(normalize=True).sort_index()
+            md.append("| Prob | % |")
+            md.append("| :--- | :--- |")
+            for prob, val in prob_dist.items():
+                md.append(f"| {prob:.4f} | {val:.2%} |")
+
+            md.append("")
+
+            # Delay Summary
+            md.append(self.t["bandit_delay_summary"])
+            md.append(self.t["table_header"])
+            md.append(self.t["table_sep"])
+            # delay_days is only relevant for converted users
+            converted = df[df["conversion"] == 1]
+            avg_delay = converted["delay_days"].mean() if not converted.empty else 0
+            md.append(f"| {self.t['table_avg_delay']} | {avg_delay:.2f} |")
 
         md.append("")
         md.append("### Data Preview")

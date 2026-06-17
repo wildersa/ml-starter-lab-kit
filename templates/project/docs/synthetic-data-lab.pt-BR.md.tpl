@@ -19,7 +19,7 @@ Dados sintéticos são uma ferramenta excelente para:
     python -m {{PACKAGE_NAME}}.lab synthetic
     ```
 3.  Os artefatos gerados serão armazenados em `data/synthetic/`.
-4.  Um resumo da geração está disponível em `reports/synthetic-data-summary.md`.
+4.  Um resumo da geração está disponível em `reports/synthetic-data-summary.md`. Para o cenário `bank_campaign_bandit`, este relatório inclui estatísticas detalhadas dos braços, taxas de conversão e análise de receita.
 
 ## Integração com o Projeto (Auto-Ativação)
 

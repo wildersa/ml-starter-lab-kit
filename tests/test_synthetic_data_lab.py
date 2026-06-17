@@ -273,5 +273,137 @@ class TestSyntheticDataLab(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("Error:", result.stdout + result.stderr)
 
+    def test_bank_campaign_bandit_report_content(self):
+        """P0.1-P0.5 Verify that for bank_campaign_bandit, the report contains Bandit-specific sections."""
+        package_name = "synth_report_pkg"
+        output_dir = self.test_dir / "synth_report_project"
+
+        run_generator(
+            project_name="Synthetic Report Project",
+            package_name=package_name,
+            output_dir=output_dir,
+            task="2",
+            experience_mode="1",
+            optional_profile="3"
+        )
+
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(output_dir / "src")
+        config_path = output_dir / "configs/synthetic_data.json"
+
+        with open(config_path, "r") as f:
+            config = json.load(f)
+        config["scenario"] = "bank_campaign_bandit"
+        with open(config_path, "w") as f:
+            json.dump(config, f)
+
+        subprocess.run(
+            [sys.executable, "-m", f"{package_name}.lab", "synthetic"],
+            cwd=output_dir,
+            env=env,
+            capture_output=True
+        )
+
+        report_path = output_dir / "reports/synthetic-data-summary.md"
+        self.assertTrue(report_path.exists())
+        content = report_path.read_text(encoding="utf-8")
+
+        # P0.1 Bandit/contextual logged-data section
+        self.assertIn("Bandit Scenario Analysis", content)
+        self.assertIn("Logged Contextual Bandit Data", content)
+
+        # P0.2 Conversion/reward information grouped by arm_name
+        self.assertIn("Arm Statistics", content)
+        self.assertIn("Conv. Rate", content)
+        self.assertIn("term_deposit_email", content)
+
+        # P0.3 Revenue grouped by arm_name
+        self.assertIn("Total Revenue", content)
+        self.assertIn("Avg. Revenue", content)
+
+        # P0.4 Action probability / logging policy interpretation
+        self.assertIn("Action Probability Distribution", content)
+
+        # P0.5 Delayed reward information using delay_days
+        self.assertIn("Reward Delay Summary", content)
+        self.assertIn("Avg. Delay (days)", content)
+
+    def test_non_bandit_report_remains_generic(self):
+        """P0.6 Verify that non-Bandit scenarios do not have Bandit sections."""
+        package_name = "synth_generic_pkg"
+        output_dir = self.test_dir / "synth_generic_project"
+
+        run_generator(
+            project_name="Synthetic Generic Project",
+            package_name=package_name,
+            output_dir=output_dir,
+            task="1", # Classification
+            experience_mode="1",
+            optional_profile="3"
+        )
+
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(output_dir / "src")
+
+        subprocess.run(
+            [sys.executable, "-m", f"{package_name}.lab", "synthetic"],
+            cwd=output_dir,
+            env=env,
+            capture_output=True
+        )
+
+        report_path = output_dir / "reports/synthetic-data-summary.md"
+        content = report_path.read_text(encoding="utf-8")
+
+        self.assertNotIn("Bandit Scenario Analysis", content)
+        self.assertNotIn("Arm Statistics", content)
+        self.assertNotIn("Action Probability Distribution", content)
+        self.assertNotIn("Reward Delay Summary", content)
+
+    def test_bank_campaign_bandit_report_content_pt_br(self):
+        """Verify PT-BR localized report for bank_campaign_bandit."""
+        package_name = "synth_report_pt_pkg"
+        output_dir = self.test_dir / "synth_report_pt_project"
+
+        run_generator(
+            project_name="Synthetic Report PT Project",
+            package_name=package_name,
+            output_dir=output_dir,
+            task="2",
+            experience_mode="1",
+            optional_profile="3"
+        )
+
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(output_dir / "src")
+
+        # Force PT-BR in problem_profile.json
+        profile_path = output_dir / "configs/problem_profile.json"
+        profile = {"language": "pt-BR"}
+        with open(profile_path, "w") as f:
+            json.dump(profile, f)
+
+        config_path = output_dir / "configs/synthetic_data.json"
+        with open(config_path, "r") as f:
+            config = json.load(f)
+        config["scenario"] = "bank_campaign_bandit"
+        with open(config_path, "w") as f:
+            json.dump(config, f)
+
+        subprocess.run(
+            [sys.executable, "-m", f"{package_name}.lab", "synthetic"],
+            cwd=output_dir,
+            env=env,
+            capture_output=True
+        )
+
+        report_path = output_dir / "reports/synthetic-data-summary.md"
+        content = report_path.read_text(encoding="utf-8")
+
+        self.assertIn("Análise do Cenário de Bandit", content)
+        self.assertIn("Estatísticas dos Braços (Arms)", content)
+        self.assertIn("Taxa de Conv.", content)
+        self.assertIn("Atraso Médio (dias)", content)
+
 if __name__ == "__main__":
     unittest.main()

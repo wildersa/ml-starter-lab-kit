@@ -19,7 +19,7 @@ Synthetic data is an excellent tool for:
     python -m {{PACKAGE_NAME}}.lab synthetic
     ```
 3.  The generated artifacts will be stored in `data/synthetic/`.
-4.  A summary of the generation is available in `reports/synthetic-data-summary.md`.
+4.  A summary of the generation is available in `reports/synthetic-data-summary.md`. For the `bank_campaign_bandit` scenario, this report includes detailed arm statistics, conversion rates, and revenue analysis.
 
 ## Project Integration (Auto-Activation)
 
