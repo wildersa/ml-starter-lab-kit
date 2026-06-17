@@ -1,8 +1,11 @@
 # Feature Engineering
 
-Feature engineering means creating useful input columns for a model.
+Feature engineering is the process of **creating or transforming** input columns to improve model performance.
 
-A feature is useful when it gives information that would be available at prediction time.
+While **Feature Analysis** evaluates the importance of existing columns, **Feature Engineering** focuses on building new ones from raw data or existing features.
+
+### The Golden Rule
+A feature is only valid if it is **available at prediction time**. If a feature relies on information that wouldn't be known when the model is actually used, it causes "data leakage" and creates false confidence in model results.
 
 ## Common feature types
 
