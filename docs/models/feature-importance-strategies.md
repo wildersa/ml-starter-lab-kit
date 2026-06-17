@@ -9,11 +9,11 @@ This guide provides a strategy matrix to help you choose the right analysis tech
 | Problem Type | Model Family | Analysis Technique | Primary Metrics | Split Strategy |
 |---|---|---|---|---|
 | **Classification** | Tree/Boosting | Gini Importance, Permutation | F1-Score, AUC | Stratified Random |
-| **Classification** | Linear | Coefficients (Scaled) | Accuracy, Log Loss | Stratified Random |
+| **Classification** | Linear/Kernel | Coefficients, Support Vectors | Accuracy, Log Loss | Stratified Random |
 | **Regression** | Tree/Boosting | Variance Reduction, Permutation | MAE, RMSE | Random |
-| **Regression** | Linear | Coefficients (Scaled) | R-squared, MAE | Random |
+| **Regression** | Linear/Kernel | Coefficients, Dual Weights | R-squared, MAE | Random |
 | **Time Series** | Linear/Tree/Deep | Permutation Importance | MAE, RMSE, WAPE | Time-based (Window) |
-| **Clustering** | Distance-based | Centroid analysis, Silhouette | Silhouette Score | None (Full Data) |
+| **Clustering** | Distance/Kernel | Centroid analysis, Silhouette | Silhouette Score | None (Full Data) |
 | **Adaptive (Bandit)** | Linear/Probabilistic | Weight analysis, Propensity | Reward, Regret, Lift | Logged Policy Split |
 | **Vision** | Neural/Deep | Saliency maps, Activation | Accuracy, mAP | Random/Stratified |
 
@@ -22,12 +22,14 @@ This guide provides a strategy matrix to help you choose the right analysis tech
 ### 1. Model-Specific Importance
 - **Linear Models**: Use coefficients. Features must be on the same scale (e.g., via standard scaling techniques) for the magnitude to be comparable.
 - **Tree-Based Models**: Use built-in importance measures based on impurity or gain. These are fast but can be biased toward high-cardinality categorical features.
+- **Kernel Models**: Analysis depends on support vector influence or dual-space weights. Importance is often harder to interpret directly compared to linear coefficients.
 - **Probabilistic Models**: Use posterior weights or feature impact on probability distribution.
 
 ### 2. Model-Agnostic (Permutation Importance)
 This technique shuffles a single feature and measures the drop in the model's score.
 - **Best for**: Comparing different model families on equal footing.
-- **Benefit**: It accounts for interactions and does not depend on model internals.
+- **Benefit**: It can reflect how the model utilizes interactions between features to make predictions.
+- **Caution**: If features are highly correlated (collinearity), permutation importance can be misleading, as the model may rely on a correlated proxy, resulting in lower reported importance for both.
 - **Requirement**: Requires a held-out validation set to avoid measuring how much the model "overfit" to a feature.
 
 ### 3. Univariate Predictive Screening
@@ -56,9 +58,5 @@ Analyzing bandit logs requires care because the data is "biased" by the policy t
 - **Correlation is not Causation**: High importance means the model *used* the feature to lower the error; it does not prove the feature *caused* the outcome in the real world.
 - **Collinearity**: If two features are highly correlated, a model might split the "importance" between them, making both look less significant than they actually are.
 - **Metric Dependency**: A feature might be vital for optimizing RMSE but irrelevant for optimizing MAE.
-
-## Learn More
-
-Consult standard open-source documentation for your chosen library regarding "Permutation Importance" and "Feature Selection" for further technical details.
 
 *Source: Strategy based on common best practices for model inspection.*
