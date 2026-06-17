@@ -1,8 +1,11 @@
 # Feature Engineering
 
-Feature engineering, ou engenharia de features, é criar colunas úteis para o modelo.
+Feature engineering, ou engenharia de features, é o processo de **criar ou transformar** colunas de entrada para melhorar o desempenho do modelo.
 
-Uma feature é boa quando traz uma informação disponível no momento da previsão.
+Enquanto a **Análise de Features** avalia a importância de colunas existentes, a **Engenharia de Features** foca em construir novas colunas a partir de dados brutos ou features já existentes.
+
+### A Regra de Ouro
+Uma feature só é válida se estiver **disponível no momento da previsão**. Se uma feature depende de informações que não seriam conhecidas quando o modelo for realmente usado, ela causa "vazamento de dados" (data leakage) e cria uma falsa confiança nos resultados.
 
 ## Tipos comuns de features
 

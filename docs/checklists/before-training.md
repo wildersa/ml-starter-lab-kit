@@ -7,9 +7,9 @@ Use this checklist before fitting a model.
 - [ ] The dataset source is documented.
 - [ ] Basic EDA was done.
 - [ ] Missing values were inspected.
-- [ ] Suspicious leakage columns were checked.
+- [ ] Suspicious high-signal columns (potential leakage) were checked.
 - [ ] The split strategy matches the problem.
 - [ ] A simple baseline is planned.
-- [ ] Candidate features are documented.
+- [ ] Candidate feature analysis (before/after delta) was performed.
 - [ ] The main metric is defined.
 - [ ] Limitations are already being tracked.
