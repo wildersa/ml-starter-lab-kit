@@ -55,7 +55,7 @@ Veja [layout do starter e do projeto gerado](docs/usage/project-layout.pt-BR.md)
 - **unsupervised**: Para agrupamento (clustering) e redução de dimensionalidade.
 - **timeseries**: Para previsão e análise de séries temporais.
 - **vision**: Para classificação e detecção de imagens.
-- **bandit**: Para Multi-Armed Bandits e tomada de decisão sequencial.
+- **bandit**: Para Multi-Armed Bandits e decisões adaptativas (exploração-explotação).
 
 ## Funcionalidades Principais
 

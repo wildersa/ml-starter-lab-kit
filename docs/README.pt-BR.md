@@ -22,7 +22,7 @@ Siga este caminho para entender como ir de um conjunto de dados bruto a um model
 Além do aprendizado supervisionado padrão, você pode explorar:
 
 - **Decisões Adaptativas (MAB)**: Aprenda a lidar com tomada de decisão sequencial onde suas escolhas impactam o feedback recebido.
-  - [Guia de Bandit](mab-lab.md) (Conceito e Simulação)
+  - [Guia de Bandit](mab-lab.pt-BR.md) (Conceito e Simulação)
 - **Synthetic Data Lab**: Domine a arte da experimentação controlada gerando e testando em padrões de dados conhecidos.
   - [Fluxo de Dados Sintéticos](workflows/synthetic-data.pt-BR.md)
 

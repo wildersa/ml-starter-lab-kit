@@ -55,7 +55,7 @@ See [starter and generated project layout](docs/usage/project-layout.md) and a [
 - **unsupervised**: For clustering and dimensionality reduction.
 - **timeseries**: For forecasting and sequence analysis.
 - **vision**: For image classification and detection.
-- **bandit**: For Multi-Armed Bandits and sequential decision-making.
+- **bandit**: For Multi-Armed Bandits and adaptive decisions (exploration-exploitation).
 
 ## Key Features
 
