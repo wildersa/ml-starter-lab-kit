@@ -68,7 +68,7 @@ Gera uma tabela de eventos de Bandit contextual determinística simulando uma ca
 - **Contexto**: `age`, `balance`, `job`, `segment`, `channel_preference`, `previous_contacts`.
 - **Braços/Ações**: `term_deposit_email`, `term_deposit_phone`, `investment_advisor_call`, `credit_card_push`.
 - **Resultados de Negócio**: `reward`, `conversion`, `revenue`, `delay_days`.
-- **Valor Educacional**: Demonstra como perfis específicos de clientes respondem de forma diferente a vários canais e ofertas.
+- **Ponte para o Bandit Lab**: Este cenário é o ponto de partida ideal para experimentação de Bandit. Ele fornece os **dados logados** (o que aconteceu no passado) que você pode usar para avaliar novas políticas antes de executá-las na simulação ativa do **Bandit Lab**.
 
 ## Reprodutibilidade
 

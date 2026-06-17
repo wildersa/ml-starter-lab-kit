@@ -55,6 +55,12 @@ Veja [layout do starter e do projeto gerado](docs/usage/project-layout.pt-BR.md)
 - **unsupervised**: Para agrupamento (clustering) e redução de dimensionalidade.
 - **timeseries**: Para previsão e análise de séries temporais.
 - **vision**: Para classificação e detecção de imagens.
+- **bandit**: Para Multi-Armed Bandits e tomada de decisão sequencial.
+
+## Funcionalidades Principais
+
+- **Synthetic Data Lab**: Gere conjuntos de dados determinísticos (Classificação, Regressão, MAB, etc.) para testar pipelines ou estudar o comportamento de ML sem dados reais.
+- **Workspace Interativo**: Um ambiente visual guiado (usando Streamlit) para EDA, treino de baselines e avaliação de modelos.
 
 ## Documentação
 

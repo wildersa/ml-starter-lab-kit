@@ -17,6 +17,15 @@ Follow this path to understand how to go from a raw dataset to a monitored model
 7.  **Production & Monitoring**: [Drift and Retraining](concepts/evaluation-and-monitoring.md#6-drift-and-retraining)
 8.  **Avoid Pitfalls**: [Common Mistakes](common-mistakes/README.md)
 
+## Specialized Educational Paths
+
+Beyond standard supervised learning, you can explore:
+
+- **Adaptive Decisions (MAB)**: Learn how to handle sequential decision-making where your choices impact the feedback you receive.
+  - [Bandit Walkthrough](mab-lab.md) (Concept & Simulation)
+- **Synthetic Data Lab**: Master the art of controlled experimentation by generating and testing on known data patterns.
+  - [Synthetic Data Flow](workflows/synthetic-data.md)
+
 ## Navigation by Topic
 
 - [Learning paths](learning-paths.md): Specific paths for tabular, vision, and time-series.

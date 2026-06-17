@@ -68,7 +68,7 @@ Generates a deterministic contextual Bandit event table simulating a bank market
 - **Context**: `age`, `balance`, `job`, `segment`, `channel_preference`, `previous_contacts`.
 - **Arms/Actions**: `term_deposit_email`, `term_deposit_phone`, `investment_advisor_call`, `credit_card_push`.
 - **Business Outcomes**: `reward`, `conversion`, `revenue`, `delay_days`.
-- **Educational Value**: Demonstrates how specific customer profiles respond differently to various channels and offers.
+- **Bridge to Bandit Lab**: This scenario is the perfect starting point for Bandit experimentation. It provides the **logged data** (what happened in the past) that you can use to evaluate new policies before running them in the active **Bandit Lab** simulation.
 
 ## Reproducibility
 

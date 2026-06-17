@@ -17,6 +17,15 @@ Siga este caminho para entender como ir de um conjunto de dados bruto a um model
 7.  **Produção e Monitoramento**: [Drift e Retreinamento](concepts/evaluation-and-monitoring.pt-BR.md#6-drift-deriva-e-retreinamento)
 8.  **Evite Armadilhas**: [Erros Comuns](common-mistakes/README.pt-BR.md)
 
+## Trilhas Educacionais Especializadas
+
+Além do aprendizado supervisionado padrão, você pode explorar:
+
+- **Decisões Adaptativas (MAB)**: Aprenda a lidar com tomada de decisão sequencial onde suas escolhas impactam o feedback recebido.
+  - [Guia de Bandit](mab-lab.md) (Conceito e Simulação)
+- **Synthetic Data Lab**: Domine a arte da experimentação controlada gerando e testando em padrões de dados conhecidos.
+  - [Fluxo de Dados Sintéticos](workflows/synthetic-data.pt-BR.md)
+
 ## Navegação por Tópico
 
 - [Trilhas de aprendizado](learning-paths.pt-BR.md): Trilhas específicas para tabular, visão e séries temporais.
