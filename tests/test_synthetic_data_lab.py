@@ -36,7 +36,8 @@ class TestSyntheticDataLab(unittest.TestCase):
             "clustering",
             "timeseries",
             "bandit_simple",
-            "bandit_contextual_events"
+            "bandit_contextual_events",
+            "bank_campaign_bandit"
         ]
 
         env = os.environ.copy()
@@ -95,6 +96,17 @@ class TestSyntheticDataLab(unittest.TestCase):
                 self.assertIn("action", df.columns)
                 self.assertIn("reward", df.columns)
                 self.assertTrue(any(c.startswith("context_") for c in df.columns))
+            elif scenario == "bank_campaign_bandit":
+                # P0.1 Assert bank_campaign_bandit output has required columns and non-empty event rows.
+                required_cols = [
+                    "event_id", "timestamp", "customer_id", "age", "balance", "job",
+                    "segment", "channel_preference", "previous_contacts", "arm_name",
+                    "action_probability", "policy_name", "reward", "conversion",
+                    "revenue", "delay_days"
+                ]
+                for col in required_cols:
+                    self.assertIn(col, df.columns)
+                self.assertGreater(len(df), 0)
 
     def test_synthetic_data_determinism(self):
         """Verify that synthetic data generation is deterministic with the same seed."""
@@ -126,6 +138,81 @@ class TestSyntheticDataLab(unittest.TestCase):
             data_paths.append(df)
 
         pd.testing.assert_frame_equal(data_paths[0], data_paths[1])
+
+        # P0.2 Verify bank_campaign_bandit is deterministic
+        data_paths = []
+        for i in range(2):
+            with open(output_dir / "configs/synthetic_data.json", "r") as f:
+                config = json.load(f)
+            config["scenario"] = "bank_campaign_bandit"
+            config["seed"] = 42
+            with open(output_dir / "configs/synthetic_data.json", "w") as f:
+                json.dump(config, f)
+
+            subprocess.run(
+                [sys.executable, "-m", f"{package_name}.lab", "synthetic"],
+                cwd=output_dir,
+                env=env,
+                capture_output=True
+            )
+            df = pd.read_csv(output_dir / "data/synthetic/bank_campaign_bandit.csv")
+            data_paths.append(df)
+
+        pd.testing.assert_frame_equal(data_paths[0], data_paths[1])
+
+    def test_synthetic_data_activation_bandit(self):
+        """P0.3 Verify activation treats bank_campaign_bandit as Bandit and sets target to reward."""
+        package_name = "synth_act_pkg"
+        output_dir = self.test_dir / "synth_act_project"
+
+        run_generator(
+            project_name="Synthetic Activation Project",
+            package_name=package_name,
+            output_dir=output_dir,
+            task="2",
+            experience_mode="1",
+            optional_profile="3"
+        )
+
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(output_dir / "src")
+        config_path = output_dir / "configs/synthetic_data.json"
+
+        with open(config_path, "r") as f:
+            config = json.load(f)
+        config["scenario"] = "bank_campaign_bandit"
+        config["activate_as_project_dataset"] = True
+        with open(config_path, "w") as f:
+            json.dump(config, f)
+
+        subprocess.run(
+            [sys.executable, "-m", f"{package_name}.lab", "synthetic"],
+            cwd=output_dir,
+            env=env,
+            capture_output=True
+        )
+
+        # Check project config
+        with open(output_dir / "configs/config.json", "r") as f:
+            proj_config = json.load(f)
+
+        self.assertEqual(proj_config["target"]["column"], "reward")
+        self.assertIn("bank_campaign_bandit.csv", proj_config["data"]["raw_path"])
+
+    def test_synthetic_data_docs_content(self):
+        """P0.4 Verify EN/PT-BR Synthetic Data Lab docs mention bank_campaign_bandit and explain concepts."""
+        # We can check the templates directly since they are in the repo
+        templates_dir = Path("templates/project/docs")
+        en_doc = (templates_dir / "synthetic-data-lab.md.tpl").read_text(encoding="utf-8")
+        pt_doc = (templates_dir / "synthetic-data-lab.pt-BR.md.tpl").read_text(encoding="utf-8")
+
+        for doc in [en_doc, pt_doc]:
+            self.assertIn("bank_campaign_bandit", doc.lower())
+            # Check for context, action/arm, reward, delay
+            self.assertTrue(any(x in doc.lower() for x in ["context", "contexto"]))
+            self.assertTrue(any(x in doc.lower() for x in ["arm", "action", "braço", "ação"]))
+            self.assertTrue(any(x in doc.lower() for x in ["reward", "recompensa"]))
+            self.assertTrue(any(x in doc.lower() for x in ["delay", "atraso"]))
 
     def test_synthetic_data_validation_failures(self):
         """Verify that invalid config fails with non-zero exit code and no artifacts."""

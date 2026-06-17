@@ -216,6 +216,85 @@ class SyntheticDataLab:
 
         return df
 
+    def generate_bank_campaign_bandit(self, params: dict[str, Any]):
+        n_samples = params.get("n_samples", 1000)
+        np.random.seed(self.seed)
+
+        arms = [
+            "term_deposit_email",
+            "term_deposit_phone",
+            "investment_advisor_call",
+            "credit_card_push"
+        ]
+        jobs = ["admin", "technician", "services", "management", "retired"]
+        segments = ["low_value", "medium_value", "high_value"]
+        channels = ["email", "phone", "mobile", "branch"]
+
+        # Generate Context
+        ages = np.random.randint(18, 70, n_samples)
+        balances = np.random.randint(100, 15000, n_samples)
+        job_indices = np.random.randint(0, len(jobs), n_samples)
+        segment_indices = np.random.randint(0, len(segments), n_samples)
+        channel_indices = np.random.randint(0, len(channels), n_samples)
+        prev_contacts = np.random.randint(0, 10, n_samples)
+
+        # Generate Actions (Uniform random for logging policy)
+        arm_indices = np.random.randint(0, len(arms), n_samples)
+
+        data = []
+        for i in range(n_samples):
+            age = ages[i]
+            balance = balances[i]
+            job = jobs[job_indices[i]]
+            segment = segments[segment_indices[i]]
+            channel_pref = channels[channel_indices[i]]
+            contacts = prev_contacts[i]
+            arm_name = arms[arm_indices[i]]
+
+            # Reward logic
+            score = 0
+            # senior_high_balance customers respond better to investment_advisor_call
+            if arm_name == "investment_advisor_call" and age > 50 and balance > 5000:
+                score += 3.0
+            # customers with email preference respond better to email arms
+            if arm_name == "term_deposit_email" and channel_pref == "email":
+                score += 2.0
+            # young_low_balance customers respond better to credit_card_push
+            if arm_name == "credit_card_push" and age < 30 and balance < 2000:
+                score += 2.5
+
+            # many previous contacts reduce conversion probability
+            if contacts > 5:
+                score -= 1.5
+
+            prob = 1 / (1 + np.exp(- (score - 2.0))) # Base probability roughly 12% if score=0
+            conversion = 1 if np.random.random() < prob else 0
+
+            reward = conversion
+            revenue = conversion * (150 if arm_name == "investment_advisor_call" else 40)
+            delay_days = np.random.poisson(2) if conversion else 0
+
+            data.append({
+                "event_id": f"evt_{1000 + i}",
+                "timestamp": f"2023-10-01 {10 + (i // 3600):02d}:{(i // 60) % 60:02d}:{i % 60:02d}",
+                "customer_id": f"cust_{2000 + (i % (n_samples // 4 + 1))}",
+                "age": age,
+                "balance": balance,
+                "job": job,
+                "segment": segment,
+                "channel_preference": channel_pref,
+                "previous_contacts": contacts,
+                "arm_name": arm_name,
+                "action_probability": 1.0 / len(arms),
+                "policy_name": "uniform_random_logging_policy",
+                "reward": reward,
+                "conversion": conversion,
+                "revenue": revenue,
+                "delay_days": delay_days
+            })
+
+        return pd.DataFrame(data)
+
     def activate_dataset(self, scenario: str, csv_path: Path):
         config_path = project_root() / "configs/config.json"
         if not config_path.exists():
@@ -235,7 +314,7 @@ class SyntheticDataLab:
                 project_config["target"]["column"] = "target"
             elif scenario == "timeseries":
                 project_config["target"]["column"] = "value"
-            elif scenario.startswith("bandit"):
+            elif scenario in ["bandit_simple", "bandit_contextual_events", "bank_campaign_bandit"]:
                 project_config["target"]["column"] = "reward"
 
             with open(config_path, "w", encoding="utf-8") as f:
@@ -265,6 +344,8 @@ class SyntheticDataLab:
                 df = self.generate_bandit_simple(params)
             elif scenario == "bandit_contextual_events":
                 df = self.generate_bandit_contextual(params)
+            elif scenario == "bank_campaign_bandit":
+                df = self.generate_bank_campaign_bandit(params)
             else:
                 print(self.t["invalid_scenario"].format(scenario=scenario))
                 sys.exit(1)
@@ -316,7 +397,7 @@ class SyntheticDataLab:
             target = "target"
             if scenario == "timeseries":
                 target = "value"
-            elif scenario.startswith("bandit"):
+            elif scenario in ["bandit_simple", "bandit_contextual_events", "bank_campaign_bandit"]:
                 target = "reward"
 
             print(self.t["next_step_manual_title"])

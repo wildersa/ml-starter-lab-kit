@@ -63,6 +63,13 @@ Gera eventos com contexto (features), ações (braços) e recompensas.
 - **Estrutura**: Colunas de contexto, coluna de ação, coluna de recompensa.
 - **Avançado**: Suporta `delay_steps` opcionais para simular recompensas atrasadas.
 
+### 7. Bank Campaign Bandit (`bank_campaign_bandit`)
+Gera uma tabela de eventos de Bandit contextual determinística simulando uma campanha de marketing bancário.
+- **Contexto**: `age`, `balance`, `job`, `segment`, `channel_preference`, `previous_contacts`.
+- **Braços/Ações**: `term_deposit_email`, `term_deposit_phone`, `investment_advisor_call`, `credit_card_push`.
+- **Resultados de Negócio**: `reward`, `conversion`, `revenue`, `delay_days`.
+- **Valor Educacional**: Demonstra como perfis específicos de clientes respondem de forma diferente a vários canais e ofertas.
+
 ## Reprodutibilidade
 
 O Synthetic Data Lab é **determinístico**. Desde que você use a mesma semente (`seed`) na configuração, os dados gerados serão idênticos em diferentes execuções.

@@ -16,7 +16,8 @@
     "clustering",
     "timeseries",
     "bandit_simple",
-    "bandit_contextual_events"
+    "bandit_contextual_events",
+    "bank_campaign_bandit"
   ],
   "scenario_examples": {
     "regression": {
@@ -47,6 +48,9 @@
       "n_features": 4,
       "arms": ["strategy_a", "strategy_b"],
       "include_delay": true
+    },
+    "bank_campaign_bandit": {
+      "n_samples": 1000
     }
   }
 }
