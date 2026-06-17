@@ -17,6 +17,8 @@ except ImportError:
 from .core.config import project_root
 
 class SyntheticDataLab:
+    BANDIT_SCENARIOS = ["bandit_simple", "bandit_contextual_events", "bank_campaign_bandit"]
+
     def __init__(self, config: dict[str, Any], lang: str = "en"):
         self.config = config
         self.lang = lang
@@ -295,6 +297,13 @@ class SyntheticDataLab:
 
         return pd.DataFrame(data)
 
+    def _get_target_column(self, scenario: str) -> str:
+        if scenario == "timeseries":
+            return "value"
+        if scenario in self.BANDIT_SCENARIOS:
+            return "reward"
+        return "target"
+
     def activate_dataset(self, scenario: str, csv_path: Path):
         config_path = project_root() / "configs/config.json"
         if not config_path.exists():
@@ -310,12 +319,9 @@ class SyntheticDataLab:
             project_config["data"]["raw_path"] = str(rel_csv_path)
 
             # Update target column based on scenario
-            if scenario in ["classification", "regression"]:
-                project_config["target"]["column"] = "target"
-            elif scenario == "timeseries":
-                project_config["target"]["column"] = "value"
-            elif scenario in ["bandit_simple", "bandit_contextual_events", "bank_campaign_bandit"]:
-                project_config["target"]["column"] = "reward"
+            target_scenarios = ["classification", "regression", "timeseries"] + self.BANDIT_SCENARIOS
+            if scenario in target_scenarios:
+                project_config["target"]["column"] = self._get_target_column(scenario)
 
             with open(config_path, "w", encoding="utf-8") as f:
                 json.dump(project_config, f, indent=2, ensure_ascii=False)
@@ -394,11 +400,7 @@ class SyntheticDataLab:
             print(self.t["next_step_eval"].format(pkg=pkg))
         else:
             rel_csv_path = csv_path.relative_to(project_root())
-            target = "target"
-            if scenario == "timeseries":
-                target = "value"
-            elif scenario in ["bandit_simple", "bandit_contextual_events", "bank_campaign_bandit"]:
-                target = "reward"
+            target = self._get_target_column(scenario)
 
             print(self.t["next_step_manual_title"])
             print(self.t["next_step_manual_raw"].format(path=rel_csv_path))
