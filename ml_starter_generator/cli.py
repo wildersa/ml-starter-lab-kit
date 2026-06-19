@@ -440,16 +440,28 @@ def ask_yes_no(prompt: str, default: bool = True, lang: str = "en") -> bool:
     default_label = f"{y_label}/{n_label}"
     colored_label = UI.color(default_label, UI.CYAN)
     full_prompt = f"{prompt} [{colored_label}]: "
-    print(full_prompt, end="", flush=True)
-    value = input().strip().lower()
 
-    if not value:
-        return default
+    while True:
+        print(full_prompt, end="", flush=True)
+        value = input().strip().lower()
 
-    if lang == "pt-BR":
-        return value in {"s", "sim", "y", "yes"}
+        if not value:
+            return default
 
-    return value in {"y", "yes"}
+        if value in {"y", "yes"}:
+            return True
+        if value in {"n", "no"}:
+            return False
+
+        if lang == "pt-BR":
+            if value in {"s", "sim"}:
+                return True
+            if value in {"não", "nao"}:
+                return False
+
+        t = TRANSLATIONS.get(lang, TRANSLATIONS["en"])
+        msg = t.get("invalid_option", "Invalid option.")
+        print(msg)
 
 
 def choose_numbered(
@@ -476,21 +488,11 @@ def choose_numbered(
             if 0 <= idx < len(options):
                 return options[idx][0]
 
-        # Check if it's the exact value or a substring match for backward compatibility
+        # Check if it's the exact value or exact label
         choice_lower = choice.lower()
         for val, label in options:
-            if choice_lower == val.lower():
+            if choice_lower == val.lower() or choice_lower == label.lower():
                 return val
-
-        # If not an exact match, try substring match but only for non-numeric input
-        # and only for choices longer than 1 character to avoid accidental matches.
-        if not choice.isdigit() and len(choice_lower) > 1:
-            for val, label in options:
-                # Backward compatibility: avoid matching '3' to '3.12' if not exactly '3.12'
-                if val in {"3.12", "3.14"}:
-                    continue
-                if choice_lower in val.lower() or choice_lower in label.lower():
-                    return val
 
         msg = t["invalid_option"] if t and "invalid_option" in t else "Invalid option."
         print(msg)
