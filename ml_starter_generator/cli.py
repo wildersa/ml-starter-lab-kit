@@ -452,111 +452,107 @@ def ask_yes_no(prompt: str, default: bool = True, lang: str = "en") -> bool:
     return value in {"y", "yes"}
 
 
-def choose_language() -> str:
-    print()
-    print("1. English")
-    print("2. Português do Brasil")
+def choose_numbered(
+    prompt: str,
+    options: list[tuple[str, str]],
+    default_idx: int = 0,
+    t: dict[str, str] | None = None,
+    print_options: bool = True
+) -> str:
+    """Helper for numbered selection menus."""
+    if print_options:
+        print()
+        for i, (_, label) in enumerate(options, 1):
+            print(f"{i}. {label}")
+
+    default_val = str(default_idx + 1)
 
     while True:
-        choice = ask("Choose language / Escolha o idioma", "1")
-        if choice == "1" or choice.lower() == "en":
-            return "en"
-        if choice == "2" or choice.lower() == "pt-br":
-            return "pt-BR"
-        print("Invalid option / Opção inválida.")
+        choice = ask(prompt, default_val)
+
+        # Check if it's a number
+        if choice.isdigit():
+            idx = int(choice) - 1
+            if 0 <= idx < len(options):
+                return options[idx][0]
+
+        # Check if it's the exact value or a substring match for backward compatibility
+        choice_lower = choice.lower()
+        for val, label in options:
+            if choice_lower == val.lower():
+                return val
+
+        # If not an exact match, try substring match but only for non-numeric input
+        # and only for choices longer than 1 character to avoid accidental matches.
+        if not choice.isdigit() and len(choice_lower) > 1:
+            for val, label in options:
+                # Backward compatibility: avoid matching '3' to '3.12' if not exactly '3.12'
+                if val in {"3.12", "3.14"}:
+                    continue
+                if choice_lower in val.lower() or choice_lower in label.lower():
+                    return val
+
+        msg = t["invalid_option"] if t and "invalid_option" in t else "Invalid option."
+        print(msg)
+
+
+def choose_language() -> str:
+    options = [("en", "English"), ("pt-BR", "Português do Brasil")]
+    return choose_numbered("Choose language / Escolha o idioma", options, default_idx=0)
 
 
 def choose_task(t: dict[str, str]) -> str:
-    print()
-    print(f"{t['choose_task']}:")
-    print(f"1. generic       - {t['task_generic']}")
-    print(f"2. supervised    - {t['task_supervised']}")
-    print(f"3. unsupervised  - {t['task_unsupervised']}")
-    print(f"4. timeseries    - {t['task_timeseries']}")
-    print(f"5. vision        - {t['task_vision']}")
-    print(f"6. bandit        - {t['task_bandit']}")
-
-    while True:
-        choice = ask(t['choose_option'], "2")
-        if choice in TASKS:
-            return TASKS[choice]
-        if choice in TASKS.values():
-            return choice
-        print(t['invalid_option'])
+    options = [
+        ("generic", f"generic       - {t['task_generic']}"),
+        ("supervised", f"supervised    - {t['task_supervised']}"),
+        ("unsupervised", f"unsupervised  - {t['task_unsupervised']}"),
+        ("timeseries", f"timeseries    - {t['task_timeseries']}"),
+        ("vision", f"vision        - {t['task_vision']}"),
+        ("bandit", f"bandit        - {t['task_bandit']}"),
+    ]
+    print(f"\n{t['choose_task']}:")
+    return choose_numbered(t['choose_option'], options, default_idx=1, t=t)
 
 
 def choose_experience_mode(t: dict[str, str]) -> str:
-    print()
-    print(f"{t['experience_mode']}:")
-    print(f"1. minimal - {t['mode_minimal']}")
-    print(f"2. guided  - {t['mode_guided']}")
-
-    while True:
-        choice = ask(t['choose_option'], "1")
-        if choice == "1" or choice == "minimal":
-            return "minimal"
-        if choice == "2" or choice == "guided":
-            return "guided"
-        print(t['invalid_option'])
+    options = [
+        ("minimal", f"minimal - {t['mode_minimal']}"),
+        ("guided", f"guided  - {t['mode_guided']}"),
+    ]
+    print(f"\n{t['experience_mode']}:")
+    return choose_numbered(t['choose_option'], options, default_idx=0, t=t)
 
 
 def choose_python_profile(t: dict[str, str]) -> str:
-    print()
-    print(f"{t['python_profile']}:")
-    print(f"1. safe   - {t['profile_safe']}")
-    print(f"2. modern - {t['profile_modern']}")
-
-    while True:
-        choice = ask(t['choose_option'], "1")
-        if choice == "1" or choice == "safe":
-            return "3.12"
-        if choice == "2" or choice == "modern":
-            return "3.14"
-        print(t['invalid_option'])
+    options = [
+        ("3.12", f"safe   - {t['profile_safe']}"),
+        ("3.14", f"modern - {t['profile_modern']}"),
+    ]
+    print(f"\n{t['python_profile']}:")
+    return choose_numbered(t['choose_option'], options, default_idx=0, t=t)
 
 
 def choose_torch_variant(t: dict[str, str]) -> str:
-    print()
-    print(f"{t['torch_support']}:")
-    print(f"1. none     - {t['torch_none']}")
-    print(f"2. cpu      - {t['torch_cpu']}")
-    print(f"3. cuda126  - {t['torch_cuda126']}")
-    print(f"4. cuda128  - {t['torch_cuda128']}")
-
-    mapping = {
-        "1": "none",
-        "2": "cpu",
-        "3": "cu126",
-        "4": "cu128"
-    }
-
-    while True:
-        choice = ask(t['choose_option'], "1")
-        if choice in mapping:
-            return mapping[choice]
-        if choice in mapping.values():
-            return choice
-        print(t['invalid_option'])
+    options = [
+        ("none", f"none     - {t['torch_none']}"),
+        ("cpu", f"cpu      - {t['torch_cpu']}"),
+        ("cu126", f"cuda 12.6  - {t['torch_cuda126']}"),
+        ("cu128", f"cuda 12.8  - {t['torch_cuda128']}"),
+    ]
+    print(f"\n{t['torch_support']}:")
+    return choose_numbered(t['choose_option'], options, default_idx=0, t=t)
 
 
 def choose_optional_profile(t: dict[str, str], experience_mode: str = "minimal") -> str:
-    print()
-    print(f"{t['optional_profile']}:")
-    print(f"1. minimal     - {t['profile_minimal']}")
-    print(f"2. recommended - {t['profile_recommended']}")
-    print(f"3. full        - {t['profile_full']}")
-    print(f"4. custom      - {t['profile_custom']}")
-
-    default_choice = "1" if experience_mode == "minimal" else "2"
-
-    while True:
-        choice = ask(t['choose_option'], default_choice)
-        if choice in {"1", "2", "3", "4"}:
-            mapping = {"1": "minimal", "2": "recommended", "3": "full", "4": "custom"}
-            return mapping[choice]
-        if choice in {"minimal", "recommended", "full", "custom"}:
-            return choice
-        print(t['invalid_option'])
+    options = [
+        ("minimal", f"minimal     - {t['profile_minimal']}"),
+        ("recommended", f"recommended - {t['profile_recommended']}"),
+        ("full", f"full        - {t['profile_full']}"),
+        ("custom", f"custom      - {t['profile_custom']}"),
+    ]
+    print(f"\n{t['optional_profile']}:")
+    default_idx = 0 if experience_mode == "minimal" else 1
+    return choose_numbered(t['choose_option'], options, default_idx=default_idx, t=t)
 
 
 def get_options_by_profile(profile: str) -> dict[str, bool]:
@@ -608,40 +604,56 @@ def run_problem_framing_wizard(task: str, t: dict[str, str], lang: str) -> dict[
     if task == "bandit":
         # 1. Action?
         print(f"\n{t['bandit_action_question']}")
-        print(f"   - {t['bandit_action_offer']}")
-        print(f"   - {t['bandit_action_message']}")
-        print(f"   - {t['bandit_action_recommendation']}")
-        print(f"   - {t['bandit_action_custom']}")
-        action = ask(t["bandit_action_label"], t["bandit_action_offer"])
+        action_options = [
+            (t['bandit_action_offer'], t['bandit_action_offer']),
+            (t['bandit_action_message'], t['bandit_action_message']),
+            (t['bandit_action_recommendation'], t['bandit_action_recommendation']),
+            ("custom", t['bandit_action_custom']),
+        ]
+        action = choose_numbered(t["bandit_action_label"], action_options, default_idx=0, t=t)
+        if action == "custom":
+            action = ask(t["bandit_action_label"], "")
 
         # 2. Reward?
         print(f"\n{t['bandit_reward_question']}")
-        print(f"   - {t['bandit_reward_click']}")
-        print(f"   - {t['bandit_reward_conversion']}")
-        print(f"   - {t['bandit_reward_acceptance']}")
-        print(f"   - {t['bandit_reward_revenue']}")
-        print(f"   - {t['bandit_reward_custom']}")
-        reward = ask(t["bandit_reward_label"], t["bandit_reward_click"])
+        reward_options = [
+            (t['bandit_reward_click'], t['bandit_reward_click']),
+            (t['bandit_reward_conversion'], t['bandit_reward_conversion']),
+            (t['bandit_reward_acceptance'], t['bandit_reward_acceptance']),
+            (t['bandit_reward_revenue'], t['bandit_reward_revenue']),
+            ("custom", t['bandit_reward_custom']),
+        ]
+        reward = choose_numbered(t["bandit_reward_label"], reward_options, default_idx=0, t=t)
+        if reward == "custom":
+            reward = ask(t["bandit_reward_label"], "")
 
         # 3. Context?
         print(f"\n{t['bandit_context_question']}")
-        print(f"   - {t['bandit_context_simple']}")
-        print(f"   - {t['bandit_context_contextual']}")
-        context = ask(t["bandit_context_label"], t["bandit_context_contextual"])
+        context_options = [
+            (t['bandit_context_simple'], t['bandit_context_simple']),
+            (t['bandit_context_contextual'], t['bandit_context_contextual']),
+        ]
+        context = choose_numbered(t["bandit_context_label"], context_options, default_idx=1, t=t)
 
         # 4. Delay?
         print(f"\n{t['bandit_delay_question']}")
-        print(f"   - {t['bandit_delay_immediate']}")
-        print(f"   - {t['bandit_delay_delayed']}")
-        delay = ask(t["bandit_delay_label"], t["bandit_delay_immediate"])
+        delay_options = [
+            (t['bandit_delay_immediate'], t['bandit_delay_immediate']),
+            (t['bandit_delay_delayed'], t['bandit_delay_delayed']),
+        ]
+        delay = choose_numbered(t["bandit_delay_label"], delay_options, default_idx=0, t=t)
 
         # 5. Baseline?
         print(f"\n{t['bandit_baseline_question']}")
-        print(f"   - {t['bandit_baseline_fixed']}")
-        print(f"   - {t['bandit_baseline_historical']}")
-        print(f"   - {t['bandit_baseline_random']}")
-        print(f"   - {t['bandit_baseline_custom']}")
-        baseline = ask(t["bandit_baseline_label"], t["bandit_baseline_random"])
+        baseline_options = [
+            (t['bandit_baseline_fixed'], t['bandit_baseline_fixed']),
+            (t['bandit_baseline_historical'], t['bandit_baseline_historical']),
+            (t['bandit_baseline_random'], t['bandit_baseline_random']),
+            ("custom", t['bandit_baseline_custom']),
+        ]
+        baseline = choose_numbered(t["bandit_baseline_label"], baseline_options, default_idx=2, t=t)
+        if baseline == "custom":
+            baseline = ask(t["bandit_baseline_label"], "")
 
         # 6. Any domain note?
         domain_note = ask(f"\n{t['domain_note_question']}", "")
@@ -659,7 +671,14 @@ def run_problem_framing_wizard(task: str, t: dict[str, str], lang: str) -> dict[
 
     # 1. Main goal?
     print(f"\n{t['goal_question']}")
-    goals = {
+    goal_options = [
+        (t["goal_predict_category"], t["goal_predict_category"]),
+        (t["goal_predict_number"], t["goal_predict_number"]),
+        (t["goal_group_records"], t["goal_group_records"]),
+        (t["goal_forecast_values"], t["goal_forecast_values"]),
+        (t["goal_work_images_text"], t["goal_work_images_text"]),
+    ]
+    goals_map = {
         "supervised": t["goal_predict_category"],
         "unsupervised": t["goal_group_records"],
         "timeseries": t["goal_forecast_values"],
@@ -667,57 +686,44 @@ def run_problem_framing_wizard(task: str, t: dict[str, str], lang: str) -> dict[
         "bandit": t["task_bandit"],
         "generic": t["goal_predict_category"]
     }
-    default_goal = goals.get(task, t["goal_predict_category"])
-    print(f"   - {t['goal_predict_category']}")
-    print(f"   - {t['goal_predict_number']}")
-    print(f"   - {t['goal_group_records']}")
-    print(f"   - {t['goal_forecast_values']}")
-    print(f"   - {t['goal_work_images_text']}")
-    goal = ask(t["goal_label"], default_goal)
+    default_goal = goals_map.get(task, t["goal_predict_category"])
+    default_idx = 0
+    for i, (val, _) in enumerate(goal_options):
+        if val == default_goal:
+            default_idx = i
+            break
+    goal = choose_numbered(t["goal_label"], goal_options, default_idx=default_idx, t=t)
 
     # 2. What matters most?
     print(f"\n{t['priority_question']}")
-    print(f"   1. {t['priority_interpretability']}")
-    print(f"   2. {t['priority_performance']}")
-    print(f"   3. {t['priority_speed']}")
-    print(f"   4. {t['priority_imbalanced']}")
-    print(f"   5. {t['priority_learning']}")
-
-    while True:
-        choice = ask(t["priority_label"], "5")
-        choice_lower = choice.lower()
-        if not choice or choice == "5" or "learn" in choice_lower or "aprendizado" in choice_lower:
-            priority = t["priority_learning"]
-            break
-        if choice == "1" or "interpret" in choice_lower:
-            priority = t["priority_interpretability"]
-            break
-        if choice == "2" or "perform" in choice_lower or "desempenho" in choice_lower:
-            priority = t["priority_performance"]
-            break
-        if choice == "3" or "speed" in choice_lower or "veloci" in choice_lower or "simpl" in choice_lower:
-            priority = t["priority_speed"]
-            break
-        if choice == "4" or "imbalance" in choice_lower or "desbalance" in choice_lower:
-            priority = t["priority_imbalanced"]
-            break
-        print(t["invalid_option"])
+    priority_options = [
+        (t['priority_interpretability'], t['priority_interpretability']),
+        (t['priority_performance'], t['priority_performance']),
+        (t['priority_speed'], t['priority_speed']),
+        (t['priority_imbalanced'], t['priority_imbalanced']),
+        (t['priority_learning'], t['priority_learning']),
+    ]
+    priority = choose_numbered(t["priority_label"], priority_options, default_idx=4, t=t)
 
     # 3. Which error is more costly?
     print(f"\n{t['error_cost_question']}")
-    print(f"   - {t['error_cost_fp']}")
-    print(f"   - {t['error_cost_fn']}")
-    print(f"   - {t['error_cost_both']}")
-    print(f"   - {t['error_cost_not_sure']}")
-    error_cost = ask(t["error_cost_label"], t["error_cost_not_sure"])
+    error_options = [
+        (t['error_cost_fp'], t['error_cost_fp']),
+        (t['error_cost_fn'], t['error_cost_fn']),
+        (t['error_cost_both'], t['error_cost_both']),
+        (t['error_cost_not_sure'], t['error_cost_not_sure']),
+    ]
+    error_cost = choose_numbered(t["error_cost_label"], error_options, default_idx=3, t=t)
 
     # 4. Expected dataset size?
     print(f"\n{t['size_question']}")
-    print(f"   - {t['size_small']}")
-    print(f"   - {t['size_medium']}")
-    print(f"   - {t['size_large']}")
-    print(f"   - {t['size_not_sure']}")
-    dataset_size = ask(t["size_label"], t["size_not_sure"])
+    size_options = [
+        (t['size_small'], t['size_small']),
+        (t['size_medium'], t['size_medium']),
+        (t['size_large'], t['size_large']),
+        (t['size_not_sure'], t['size_not_sure']),
+    ]
+    dataset_size = choose_numbered(t["size_label"], size_options, default_idx=3, t=t)
 
     # 5. Prefer simple baseline first?
     prefer_baseline = "yes" if ask_yes_no(f"\n{t['baseline_question']}", True, lang=lang) else "no"
@@ -969,24 +975,24 @@ def main() -> None:
     current_dir = Path.cwd().resolve()
     nested_dir = (current_dir / package_name).resolve()
 
-    print(f"1. {t['dir_current']}: {current_dir}")
-    print(f"2. {t['dir_nested']}: {nested_dir}")
-    print(f"3. {t['dir_sibling']}: {sibling_dir}")
-    print(f"4. {t['dir_custom']}")
+    output_options = [
+        ("current", f"{t['dir_current']}: {current_dir}"),
+        ("nested", f"{t['dir_nested']}: {nested_dir}"),
+        ("sibling", f"{t['dir_sibling']}: {sibling_dir}"),
+        ("custom", t["dir_custom"]),
+    ]
 
     while True:
-        choice = ask(t["choose_option"], "3")
-        if choice == "1":
+        choice = choose_numbered(t["choose_option"], output_options, default_idx=2, t=t)
+
+        if choice == "current":
             output_dir = current_dir
-        elif choice == "2":
+        elif choice == "nested":
             output_dir = nested_dir
-        elif choice == "3":
+        elif choice == "sibling":
             output_dir = sibling_dir
-        elif choice == "4":
+        elif choice == "custom":
             output_dir = Path(ask(t["enter_custom_path"])).resolve()
-        else:
-            print(t["invalid_option"])
-            continue
 
         is_inside = False
         try:
