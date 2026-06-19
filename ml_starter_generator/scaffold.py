@@ -84,7 +84,9 @@ def create_docs(root: Path, values: dict[str, str], *, force: bool) -> None:
         f"docs/evaluation{suffix}.md": load_template(f"evaluation{suffix}.md", values, folder="project/docs"),
         f"docs/monitoring{suffix}.md": load_template(f"monitoring{suffix}.md", values, folder="project/docs"),
         f"docs/synthetic-data-lab{suffix}.md": load_template(f"synthetic-data-lab{suffix}.md", values, folder="project/docs"),
+        f"docs/learning-path{suffix}.md": load_template(f"learning-path{suffix}.md", values, folder="project/docs"),
         "reports/modeling-notes.md": load_template("modeling-notes.md", values, folder="project/reports"),
+        f"reports/experiment-notes{suffix}.md": load_template(f"experiment-notes{suffix}.md", values, folder="project/reports"),
         ".gitignore": load_template("gitignore", values, folder="project"),
         ".env.example": load_template("env.example", values, folder="project"),
     }
