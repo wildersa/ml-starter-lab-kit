@@ -14,7 +14,7 @@ class TestGuideOnboarding(unittest.TestCase):
         shutil.rmtree(self.test_dir)
 
     def test_terminal_summary_guide_order(self):
-        """P0.1 - Post-create terminal next steps mention guide before data."""
+        """P0.1 - Post-create terminal next steps point to START_HERE.md."""
         output = run_generator(
             project_name=self.project_name,
             package_name=self.package_name,
@@ -29,16 +29,7 @@ class TestGuideOnboarding(unittest.TestCase):
 
         next_steps_output = output.split("[Next steps]")[1]
 
-        guide_cmd = f"python -m {self.package_name}.lab check"
-        data_cmd = f"python -m {self.package_name}.lab eda"
-
-        self.assertIn(guide_cmd, next_steps_output)
-        self.assertIn(data_cmd, next_steps_output)
-
-        guide_idx = next_steps_output.find(guide_cmd)
-        data_idx = next_steps_output.find(data_cmd)
-
-        self.assertLess(guide_idx, data_idx, "Guide command should be before data command in terminal summary")
+        self.assertIn("START_HERE.md", next_steps_output)
 
     def test_readme_suggested_flow_and_commands_order(self):
         """P0.2 - Generated README Suggested flow / Suggested commands mention guide before data."""
@@ -102,22 +93,17 @@ class TestGuideOnboarding(unittest.TestCase):
 
         next_steps_output = output.split("[Próximos passos]")[1]
 
-        guide_cmd = f"python -m {self.package_name}.lab check"
-        data_cmd = f"python -m {self.package_name}.lab eda"
-
-        self.assertIn(guide_cmd, next_steps_output)
-        self.assertIn(data_cmd, next_steps_output)
-
-        guide_idx = next_steps_output.find(guide_cmd)
-        data_idx = next_steps_output.find(data_cmd)
-
-        self.assertLess(guide_idx, data_idx, "Guide command should be before data command in PT-BR terminal summary")
+        self.assertIn("START_HERE.md", next_steps_output)
 
         readme_path = self.test_dir / "README.md"
         content = readme_path.read_text(encoding="utf-8")
 
         # Check Suggested commands in PT-BR README
         commands_section = content.split("## Comandos sugeridos")[1]
+
+        guide_cmd = f"python -m {self.package_name}.lab check"
+        data_cmd = f"python -m {self.package_name}.lab eda"
+
         guide_idx_readme = commands_section.find(guide_cmd)
         data_idx_readme = commands_section.find(data_cmd)
 

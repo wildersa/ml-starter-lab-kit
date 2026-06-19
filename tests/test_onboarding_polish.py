@@ -20,8 +20,9 @@ class TestOnboardingPolish(unittest.TestCase):
             experience_mode="1"  # minimal
         )
 
-        # Check terminal summary
+        # Check terminal summary - should point to START_HERE.md
         next_steps = output.split("[Next steps]")[1]
+        self.assertIn("START_HERE.md", next_steps)
         self.assertNotIn("workspace", next_steps.lower())
         self.assertNotIn("streamlit", next_steps.lower())
 
@@ -36,7 +37,7 @@ class TestOnboardingPolish(unittest.TestCase):
         self.assertNotIn("python -m min_pkg.lab baseline", content)
 
     def test_guided_visual_first_onboarding(self):
-        """P0.2 - Guided Learning onboarding makes Streamlit workspace the main path."""
+        """P0.2 - Guided Learning onboarding makes START_HERE.md the main entry point."""
         output = run_generator(
             project_name="gui_proj",
             package_name="gui_pkg",
@@ -46,8 +47,7 @@ class TestOnboardingPolish(unittest.TestCase):
 
         # Check terminal summary
         next_steps = output.split("[Next steps]")[1]
-        self.assertIn("python -m gui_pkg.lab workspace", next_steps)
-        self.assertIn("Interactive Learning Workspace", next_steps)
+        self.assertIn("START_HERE.md", next_steps)
 
         # Check README
         readme_path = self.test_dir / "README.md"
@@ -56,17 +56,18 @@ class TestOnboardingPolish(unittest.TestCase):
         self.assertIn("python -m gui_pkg.lab workspace", content)
 
     def test_eda_first_rule_documented(self):
-        """P0.3 - Guided onboarding explains the EDA-first rule."""
-        output = run_generator(
+        """P0.3 - Onboarding guide explains the EDA-first rule."""
+        run_generator(
             project_name="eda_rule_proj",
             package_name="eda_rule_pkg",
             output_dir=self.test_dir,
             experience_mode="2"  # guided
         )
 
-        # Check terminal summary
-        next_steps = output.split("[Next steps]")[1]
-        self.assertIn("IMPORTANT: Run EDA before Advisor, Baseline, or Learning Notes", next_steps)
+        # Check START_HERE.md
+        guide_path = self.test_dir / "START_HERE.md"
+        content = guide_path.read_text()
+        self.assertIn("do not skip", content.lower())
 
         # Check README
         readme_path = self.test_dir / "README.md"

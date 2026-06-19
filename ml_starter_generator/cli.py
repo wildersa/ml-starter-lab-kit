@@ -9,6 +9,7 @@ from .config import create_config, create_problem_profile
 from .scaffold import (
     create_dirs,
     create_readme,
+    create_onboarding_guide,
     create_package_files,
     create_optional_files,
     create_tests,
@@ -164,6 +165,8 @@ TRANSLATIONS = {
         "next_step_bandit": "Bandit Lab (adaptive decisions)",
         "next_step_monitor": "Monitoring/Drift (educational stub)",
         "next_step_demo": "Check the demo scenario and data dictionary in docs/demo-scenario.md",
+        "next_step_open_guide": "Open START_HERE.md in the created project.",
+        "next_step_start_eda": "Start with EDA: notebooks/01_eda.ipynb or python -m {pkg}.lab eda",
         "summary_mlflow": "MLflow Tracking",
         "yes": "yes",
         "no": "no",
@@ -339,6 +342,8 @@ TRANSLATIONS = {
         "next_step_bandit": "Bandit Lab (decisões adaptativas)",
         "next_step_monitor": "Monitoramento/Drift (stub educacional)",
         "next_step_demo": "Consulte o cenário de demo e o dicionário de dados em docs/demo-scenario.md",
+        "next_step_open_guide": "Abra START_HERE.md no projeto criado.",
+        "next_step_start_eda": "Comece pela EDA: notebooks/01_eda.ipynb ou python -m {pkg}.lab eda",
         "summary_mlflow": "Rastreamento MLflow",
         "yes": "sim",
         "no": "não",
@@ -763,84 +768,11 @@ def print_summary(root: Path, values: dict[str, str], t: dict[str, str], include
     print(f"{t['destination']}: {UI.color(str(root.resolve()), UI.CYAN)}")
     print()
 
-    current_dir = Path.cwd().resolve()
-    target_dir = root.resolve()
-    steps = []
-
-    # 1. Navigation
-    if target_dir == current_dir:
-        steps.append(f"1. {t['next_step_already_in']}")
-    else:
-        try:
-            rel_path = target_dir.relative_to(current_dir)
-            steps.append(f"1. {t['next_step_cd']}: cd {rel_path}")
-        except ValueError:
-            steps.append(f"1. {t['next_step_cd']}: cd {target_dir}")
-
-    # 2. Environment/Package Setup
-    if include_pyproject:
-        python_version = values.get("PYTHON_VERSION", "3.12")
-        steps.append(f"2. {t['next_step_setup']}:")
-        if sys.platform == "win32":
-            steps.append(f"   py -{python_version} -m venv .venv")
-            steps.append("   .venv\\Scripts\\activate")
-        else:
-            steps.append(f"   python{python_version} -m venv .venv")
-            steps.append("   source .venv/bin/activate")
-        steps.append("   python --version")
-        steps.append("   pip install -r requirements.txt")
-        steps.append(f"3. {t['next_step_install']}:")
-        steps.append("   pip install -e .")
-        next_idx = 4
-    else:
-        steps.append(f"2. {t['next_step_no_setup']}")
-        next_idx = 3
-
-    # 3. Data/Config
-    steps.append(f"{next_idx}. {t['next_step_1']}: {values['DATASET_PATH']}")
-    if values.get("INCLUDE_DEMO") == "true":
-        steps.append(f"   - {t['next_step_demo']}")
-
-    steps.append(f"{next_idx+1}. {t['next_step_2']}: configs/config.json")
-    steps.append(f"{next_idx+2}. {t['next_step_3']}: src/{values['PACKAGE_NAME']}/features.py")
-    steps.append(f"{next_idx+3}. {t['next_step_guide']}: python -m {values['PACKAGE_NAME']}.lab check")
-
-    # 5. Pipeline or Workspace
-    run_idx = next_idx + 4
     pkg = values['PACKAGE_NAME']
-    if values.get("LEARNING_MODE") == "guided":
-        steps.append(f"{run_idx}. {t['next_step_workspace']}:")
-        steps.append(f"   python -m {pkg}.lab workspace")
-        steps.append(f"   ({t['next_step_eda_first']})")
-
-        steps.append(f"\n   {t['next_step_4']} (CLI):")
-        if values.get("GENERATE_EDA") == "true":
-            steps.append(f"   - {t['next_step_4_data']}:     python -m {pkg}.lab eda")
-        if values.get("GENERATE_ADVISOR") == "true":
-            steps.append(f"   - {t['next_step_advisor']}:   python -m {pkg}.lab advisor")
-        if values.get("GENERATE_BANDIT") == "true":
-            steps.append(f"   - {t['next_step_bandit']}:   python -m {pkg}.lab bandit")
-        if values.get("GENERATE_SYNTHETIC") == "true":
-            steps.append(f"   - Synthetic Data:  python -m {pkg}.lab synthetic")
-        steps.append(f"   - {t['next_step_4_train']}:    python -m {pkg}.lab train")
-        steps.append(f"   - {t['next_step_4_eval']}: python -m {pkg}.lab evaluate")
-        if values.get("GENERATE_MONITOR") == "true":
-            steps.append(f"   - {t['next_step_monitor']}: python -m {pkg}.lab monitor")
-    else:
-        steps.append(f"{run_idx}. {t['next_step_4']}:")
-        if values.get("GENERATE_EDA") == "true":
-            steps.append(f"   - {t['next_step_4_data']}:     python -m {pkg}.lab eda")
-        steps.append(f"   - {t['next_step_4_train']}:    python -m {pkg}.lab train")
-        steps.append(f"   - {t['next_step_4_eval']}: python -m {pkg}.lab evaluate")
-
-        if values.get("GENERATE_ADVISOR") == "true":
-            steps.append(f"   - {t['next_step_advisor']}:   python -m {pkg}.lab advisor")
-        if values.get("GENERATE_BANDIT") == "true":
-            steps.append(f"   - {t['next_step_bandit']}:   python -m {pkg}.lab bandit")
-        if values.get("GENERATE_SYNTHETIC") == "true":
-            steps.append(f"   - Synthetic Data:  python -m {pkg}.lab synthetic")
-        if values.get("GENERATE_MONITOR") == "true":
-            steps.append(f"   - {t['next_step_monitor']}: python -m {pkg}.lab monitor")
+    steps = [
+        f"1. {t['next_step_open_guide']}",
+        f"2. {t['next_step_start_eda'].format(pkg=pkg)}"
+    ]
 
     UI.panel(t["next_steps"], "\n".join(steps))
 
@@ -1044,6 +976,7 @@ def main() -> None:
         "ADVISOR_COMMAND": advisor_cmd,
         "LANGUAGE": lang,
         "ENABLE_MLFLOW": "true" if include_mlflow else "false",
+        "GENERATE_DOCS": "true" if include_docs else "false",
         "LEARNING_ENABLED": "true" if experience_mode == "guided" else "false",
         "LEARNING_MODE": experience_mode,
         "GENERATE_EDA": "true" if optional_options.get("eda") else "false",
@@ -1080,6 +1013,7 @@ def main() -> None:
     create_config(output_dir, values, force=force, problem_profile=problem_profile)
     create_problem_profile(output_dir, problem_profile, force=force)
     create_readme(output_dir, values, force=force)
+    create_onboarding_guide(output_dir, values, force=force)
     create_package_files(output_dir, values, force=force)
     create_optional_files(output_dir, package_name, values, optional_options, force=force)
     create_tests(output_dir, values, force=force)
