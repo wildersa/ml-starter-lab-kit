@@ -75,6 +75,8 @@ def run_generator(
     is_guided = (experience_mode == "2" or experience_mode == "guided")
     if not is_guided:
         inputs.append(include_docs)
+        # Skip optional profile templates header if needed?
+        # No, choose_optional_profile(t) shows it and asks.
         inputs.append(optional_profile)
         if optional_profile == "4" or optional_profile == "custom":
             # The number of custom options might change.
