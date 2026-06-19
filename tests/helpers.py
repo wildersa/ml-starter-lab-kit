@@ -65,6 +65,7 @@ def run_generator(
     # Environment
     inputs.append(include_pyproject)
     if include_pyproject.lower() in ["y", "yes", ""]:
+        # python_profile can be "1", "2", "3.12", or "3.14"
         inputs.append(python_profile)
         if not is_guided:
             inputs.append(include_ml_basics)

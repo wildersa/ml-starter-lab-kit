@@ -159,5 +159,27 @@ class TestWizardValidation(unittest.TestCase):
         # INCLUDE_DEMO affects raw_path in config.json
         self.assertEqual(config["data"]["raw_path"], "data/raw/demo_dataset.csv")
 
+    def test_substring_match_rejected(self):
+        """Verify that substring matches (like 'vis' for 'vision') are now rejected."""
+        output_dir = self.test_dir / "substring_reject"
+        # Task selection: "vis" (invalid substring), then 5 (vision)
+        inputs = [
+            "1", "substring_proj", "substring_pkg",
+            "vis", "5",
+            "1", "data.csv", "target", "n",
+            "", "", "", "", "", "", # Framing
+            "n", "n", "1", "4", str(output_dir), "y", "y"
+        ]
+        with patch("ml_starter_generator.cli.input", side_effect=inputs):
+            with patch("sys.stdout", new=io.StringIO()) as fake_out:
+                main()
+                output = fake_out.getvalue()
+
+        self.assertIn("Invalid option", output)
+        self.assertTrue((output_dir / "configs/config.json").exists())
+        with open(output_dir / "configs/config.json", "r") as f:
+            config = json.load(f)
+        self.assertEqual(config["project"]["task"], "vision")
+
 if __name__ == "__main__":
     unittest.main()

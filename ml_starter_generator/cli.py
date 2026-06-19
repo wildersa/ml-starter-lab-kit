@@ -488,21 +488,11 @@ def choose_numbered(
             if 0 <= idx < len(options):
                 return options[idx][0]
 
-        # Check if it's the exact value or a substring match for backward compatibility
+        # Check if it's the exact value or exact label
         choice_lower = choice.lower()
         for val, label in options:
-            if choice_lower == val.lower():
+            if choice_lower == val.lower() or choice_lower == label.lower():
                 return val
-
-        # If not an exact match, try substring match but only for non-numeric input
-        # and only for choices longer than 1 character to avoid accidental matches.
-        if not choice.isdigit() and len(choice_lower) > 1:
-            for val, label in options:
-                # Backward compatibility: avoid matching '3' to '3.12' if not exactly '3.12'
-                if val in {"3.12", "3.14"}:
-                    continue
-                if choice_lower in val.lower() or choice_lower in label.lower():
-                    return val
 
         msg = t["invalid_option"] if t and "invalid_option" in t else "Invalid option."
         print(msg)

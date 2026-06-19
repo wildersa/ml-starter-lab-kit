@@ -107,7 +107,7 @@ class TestProblemFraming(unittest.TestCase):
             optionals=optionals,
             include_ml_basics="y",
             problem_goal="predict a category",
-            problem_priority="imbalanced classes",
+            problem_priority="handling imbalanced classes",
             problem_error_cost="false negative",
             problem_size="small",
             problem_baseline="y"
