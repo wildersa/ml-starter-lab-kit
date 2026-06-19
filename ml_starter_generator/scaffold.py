@@ -36,6 +36,16 @@ def create_readme(root: Path, values: dict[str, str], *, force: bool) -> None:
     write_text(root / "README.md", content, force=force)
 
 
+def create_onboarding_guide(root: Path, values: dict[str, str], *, force: bool) -> None:
+    lang = values.get("LANGUAGE", "en")
+    template_name = "START_HERE.md"
+    if lang == "pt-BR":
+        template_name = "START_HERE.pt-BR.md"
+
+    content = load_template(template_name, values, folder="project")
+    write_text(root / "START_HERE.md", content, force=force)
+
+
 def create_package_files(root: Path, values: dict[str, str], *, force: bool) -> None:
     package = values["PACKAGE_NAME"]
     base = root / "src" / package

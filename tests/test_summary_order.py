@@ -24,35 +24,9 @@ class TestCLISummaryOrder(unittest.TestCase):
             optional_profile="2" # recommended (includes EDA)
         )
 
-        # Verify Navigation
-        self.assertIn("cd ", output)
-
-        # Verify setup steps
-        # Changed to flexible check because of versioned venv command
-        self.assertIn("-m venv .venv", output)
-        self.assertIn("pip install -r requirements.txt", output)
-        self.assertIn("pip install -e .", output)
-        self.assertIn("python --version", output)
-
-        # Verify order: navigation -> setup -> data/config -> run
-        # We need to find the occurrence within [Next steps] panel
-        next_steps_output = output.split("[Next steps]")[1]
-
-        nav_idx = next_steps_output.find("cd ")
-        setup_idx = next_steps_output.find("-m venv .venv")
-        install_idx = next_steps_output.find("pip install -e .")
-        # Find the line with the dataset path
-        dataset_line_idx = next_steps_output.find(self.test_dir.name + "/data/raw/dataset.csv")
-        if dataset_line_idx == -1:
-            # Fallback for how it might be displayed
-            dataset_line_idx = next_steps_output.find("data/raw/dataset.csv")
-
-        data_cmd_idx = next_steps_output.find(f"python -m {self.package_name}.lab eda")
-
-        self.assertLess(nav_idx, setup_idx, "Navigation should be before setup")
-        self.assertLess(setup_idx, install_idx, "Venv setup should be before editable install")
-        self.assertLess(install_idx, dataset_line_idx, "Editable install should be before dataset instructions")
-        self.assertLess(dataset_line_idx, data_cmd_idx, "Dataset instructions should be before running data module")
+        # Verify concise steps
+        self.assertIn("Open START_HERE.md", output)
+        self.assertIn("Start with EDA", output)
 
     def test_summary_order_without_pyproject(self):
         output = run_generator(
@@ -62,13 +36,9 @@ class TestCLISummaryOrder(unittest.TestCase):
             include_pyproject="n"
         )
 
-        # Should NOT promise editable install
-        self.assertNotIn("pip install -e .", output)
-        self.assertNotIn("-m venv .venv", output)
-
-        # P0.5: It must either show the correct PYTHONPATH=src style alternative or explicitly state that package setup is required
-        self.assertIn("PYTHONPATH=src", output)
-        self.assertIn("required", output.lower())
+        # Verify concise steps even without pyproject
+        self.assertIn("Open START_HERE.md", output)
+        self.assertIn("Start with EDA", output)
 
     def test_summary_current_directory(self):
         # Using option 1 for output location: current directory
@@ -81,8 +51,7 @@ class TestCLISummaryOrder(unittest.TestCase):
                 include_pyproject="y"
             )
 
-        self.assertIn("You are already in the project directory", output)
-        self.assertNotIn("cd ", output.split("[Next steps]")[1])
+        self.assertIn("Open START_HERE.md", output)
 
     def test_summary_pt_br(self):
         output = run_generator(
@@ -93,9 +62,8 @@ class TestCLISummaryOrder(unittest.TestCase):
             include_pyproject="y"
         )
 
-        self.assertIn("Navegue para o diretório do projeto", output)
-        self.assertIn("Configure o ambiente", output)
-        self.assertIn("Instale o pacote em modo editável", output)
+        self.assertIn("Abra START_HERE.md", output)
+        self.assertIn("Comece pela EDA", output)
 
 if __name__ == "__main__":
     unittest.main()
