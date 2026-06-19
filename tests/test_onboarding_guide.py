@@ -59,5 +59,43 @@ class TestOnboardingGuide(unittest.TestCase):
         self.assertIn("Abra START_HERE.md no projeto criado.", output)
         self.assertIn("Comece pela EDA: notebooks/01_eda.ipynb ou python -m pacote_legal.lab eda", output)
 
+    def test_onboarding_guide_without_docs(self):
+        """Verify that START_HERE.md does not contain broken links when docs are disabled."""
+        run_generator(
+            project_name="no_docs_proj",
+            package_name="no_docs_pkg",
+            task="2",
+            include_docs="n", # Disable docs
+            output_dir=self.test_dir
+        )
+
+        guide_path = self.test_dir / "START_HERE.md"
+        self.assertTrue(guide_path.exists())
+
+        content = guide_path.read_text()
+        self.assertNotIn("## 6. Documentation", content)
+        self.assertNotIn("docs/data-dictionary.md", content)
+        self.assertNotIn("docs/learning-path.md", content)
+
+    def test_onboarding_guide_with_docs(self):
+        """Verify that START_HERE.md contains the Documentation section when docs are enabled."""
+        run_generator(
+            project_name="with_docs_proj",
+            package_name="with_docs_pkg",
+            task="2",
+            include_docs="y", # Enable docs
+            output_dir=self.test_dir,
+            optional_profile="2" # Recommended (includes advisor)
+        )
+
+        guide_path = self.test_dir / "START_HERE.md"
+        self.assertTrue(guide_path.exists())
+
+        content = guide_path.read_text()
+        self.assertIn("## 6. Documentation", content)
+        self.assertIn("docs/data-dictionary.md", content)
+        self.assertIn("docs/learning-path.md", content)
+        self.assertIn("- **Advisor**:", content) # Should also have advisor
+
 if __name__ == "__main__":
     unittest.main()

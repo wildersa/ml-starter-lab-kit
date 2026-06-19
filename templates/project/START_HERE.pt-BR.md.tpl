@@ -45,18 +45,24 @@ python -m {{PACKAGE_NAME}}.lab check
 ### Passo 2: Análise Exploratória de Dados (EDA) — **NÃO PULE**
 Antes de treinar qualquer modelo, você deve entender seus dados.
 - **Notebook (Recomendado para iniciantes)**: Abra `notebooks/01_eda.ipynb`
+{% if GENERATE_EDA == "true" %}
 - **Alternativa CLI**: `python -m {{PACKAGE_NAME}}.lab eda`
+{% endif %}
 
 > **Nota**: A EDA gera artefatos necessários para o Advisor e para o Workspace de Aprendizado.
 
+{% if LEARNING_ENABLED == "true" %}
 ### Passo 3: Workspace de Aprendizado Interativo
 Se você estiver no Modo Guiado, abra o workspace visual:
 ```bash
 python -m {{PACKAGE_NAME}}.lab workspace
 ```
+{% endif %}
 
 ### Passo 4: Sugestões de Modelagem e Baselines
+{% if GENERATE_ADVISOR == "true" %}
 - **Advisor**: `python -m {{PACKAGE_NAME}}.lab advisor` (Sugestões de modelagem)
+{% endif %}
 - **Treinar Baseline**: `python -m {{PACKAGE_NAME}}.lab train`
 - **Avaliar**: `python -m {{PACKAGE_NAME}}.lab evaluate`
 
@@ -74,17 +80,23 @@ python -m {{PACKAGE_NAME}}.lab workspace
 - **Use Notebooks (`notebooks/`)**: Para exploração, visualização e aprendizado iterativo.
 - **Use Pipeline Python (`src/`)**: Para execução repetível, controle de versão e código pronto para produção.
 
+{% if GENERATE_DOCS == "true" %}
 ## 6. Documentação
 
 Consulte a pasta `docs/` para guias detalhados:
+- [Trilha de Aprendizado](docs/learning-path.pt-BR.md)
 - [Dicionário de Dados](docs/data-dictionary.md)
+- [Guia de Avaliação](docs/evaluation.pt-BR.md)
 {% if INCLUDE_DEMO == "true" %}
 - [Cenário de Demonstração](docs/demo-scenario.md)
 {% endif %}
-- [Trilha de Aprendizado](docs/learning-path.pt-BR.md)
 {% if GENERATE_BANDIT == "true" %}
 - [Guia do Bandit Lab](docs/mab-lab.pt-BR.md)
 {% endif %}
 {% if GENERATE_SYNTHETIC == "true" %}
 - [Guia de Dados Sintéticos](docs/synthetic-data-lab.pt-BR.md)
+{% endif %}
+{% if GENERATE_MONITOR == "true" %}
+- [Guia de Monitoramento](docs/monitoring.pt-BR.md)
+{% endif %}
 {% endif %}

@@ -976,6 +976,7 @@ def main() -> None:
         "ADVISOR_COMMAND": advisor_cmd,
         "LANGUAGE": lang,
         "ENABLE_MLFLOW": "true" if include_mlflow else "false",
+        "GENERATE_DOCS": "true" if include_docs else "false",
         "LEARNING_ENABLED": "true" if experience_mode == "guided" else "false",
         "LEARNING_MODE": experience_mode,
         "GENERATE_EDA": "true" if optional_options.get("eda") else "false",
