@@ -9,6 +9,7 @@ Use como referência rápida, não como guia teórico profundo.
 | Guia | Use para |
 |---|---|
 | [Dados Sintéticos](synthetic-data.pt-BR.md) | gerar dados para testes e estudo |
+| [Análise pré-modelagem](pre-modeling-analysis.pt-BR.md) | taxonomia e fluxo para entendimento de dados |
 | [EDA](eda.pt-BR.md) | primeiro olhar sobre o dataset |
 | [Pré-processamento](preprocessing.pt-BR.md) | nulos, encoding, scaling, conversão de tipos |
 | [Feature engineering](../models/feature-engineering.pt-BR.md) | criar colunas úteis de entrada |
