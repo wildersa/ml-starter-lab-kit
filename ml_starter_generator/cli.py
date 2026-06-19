@@ -440,16 +440,28 @@ def ask_yes_no(prompt: str, default: bool = True, lang: str = "en") -> bool:
     default_label = f"{y_label}/{n_label}"
     colored_label = UI.color(default_label, UI.CYAN)
     full_prompt = f"{prompt} [{colored_label}]: "
-    print(full_prompt, end="", flush=True)
-    value = input().strip().lower()
 
-    if not value:
-        return default
+    while True:
+        print(full_prompt, end="", flush=True)
+        value = input().strip().lower()
 
-    if lang == "pt-BR":
-        return value in {"s", "sim", "y", "yes"}
+        if not value:
+            return default
 
-    return value in {"y", "yes"}
+        if value in {"y", "yes"}:
+            return True
+        if value in {"n", "no"}:
+            return False
+
+        if lang == "pt-BR":
+            if value in {"s", "sim"}:
+                return True
+            if value in {"não", "nao"}:
+                return False
+
+        t = TRANSLATIONS.get(lang, TRANSLATIONS["en"])
+        msg = t.get("invalid_option", "Invalid option.")
+        print(msg)
 
 
 def choose_numbered(
