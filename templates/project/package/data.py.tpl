@@ -4,6 +4,19 @@ from .core.config import load_config, project_root
 from .core.data import load_csv, save_csv
 
 
+def load_raw_data():
+    """Loads raw data using config."""
+    config = load_config()
+    raw_path = config["data"]["raw_path"]
+
+    # Try to use pandas if available
+    try:
+        import pandas as pd
+        return pd.read_csv(project_root() / raw_path)
+    except ImportError:
+        return load_csv(raw_path)
+
+
 def main() -> None:
     config = load_config()
     raw_path = config["data"]["raw_path"]

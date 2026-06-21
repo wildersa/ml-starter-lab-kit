@@ -30,11 +30,11 @@ class TestOnboardingGuide(unittest.TestCase):
         self.assertIn(f"- **Project Name**: {self.project_name}", content)
         self.assertIn("- **ML Task**: supervised", content)
         self.assertIn(f"- **Package Name**: `{self.package_name}`", content)
-        self.assertIn("notebooks/01_eda.ipynb", content)
+        self.assertIn("notebooks/00_start_here.ipynb", content)
 
         # Verify concise terminal output
         self.assertIn("Open START_HERE.md in the created project.", output)
-        self.assertIn(f"Start with EDA: notebooks/01_eda.ipynb or python -m {self.package_name}.lab eda", output)
+        self.assertIn("Start with the learning trail: notebooks/00_start_here.ipynb", output)
         # Verify old long steps are NOT in output
         self.assertNotIn("Review and adjust metadata in", output)
         self.assertNotIn("Define your features in", output)
@@ -53,11 +53,11 @@ class TestOnboardingGuide(unittest.TestCase):
 
         content = guide_path.read_text()
         self.assertIn("# Bem-vindo ao projeto_legal!", content)
-        self.assertIn("notebooks/01_eda.ipynb", content)
+        self.assertIn("notebooks/00_start_here.ipynb", content)
 
         # Verify concise terminal output
         self.assertIn("Abra START_HERE.md no projeto criado.", output)
-        self.assertIn("Comece pela EDA: notebooks/01_eda.ipynb ou python -m pacote_legal.lab eda", output)
+        self.assertIn("Comece pela trilha de aprendizado: notebooks/00_start_here.ipynb", output)
 
     def test_onboarding_guide_without_docs(self):
         """Verify that START_HERE.md does not contain broken links when docs are disabled."""

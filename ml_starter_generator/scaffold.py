@@ -75,14 +75,46 @@ def create_tests(root: Path, values: dict[str, str], *, force: bool) -> None:
     write_text(root / "tests/test_features.py", content, force=force)
 
 
-def create_notebook_placeholder(root: Path, values: dict[str, str], *, force: bool) -> None:
-    content = load_template("01_eda.ipynb", values, folder="notebooks")
+def create_notebook_trail(root: Path, values: dict[str, str], *, force: bool) -> None:
+    task = values.get("TASK", "generic")
 
-    write_text(
-        root / "notebooks/01_eda.ipynb",
-        content,
-        force=force,
-    )
+    # Common notebooks
+    notebook_files = [
+        ("00_start_here.ipynb", "00_start_here.ipynb"),
+        ("01_data_understanding.ipynb", "01_data_understanding.ipynb"),
+        ("02_eda.ipynb", "02_eda.ipynb"),
+        ("06_experiment_notes_and_next_steps.ipynb", "06_experiment_notes_and_next_steps.ipynb"),
+    ]
+
+    # Task-specific notebook 03
+    if task in ["supervised", "unsupervised", "generic", "vision"]:
+        notebook_files.append(("03_preprocessing_and_features.ipynb", "03_preprocessing_and_features.ipynb"))
+    elif task == "timeseries":
+        notebook_files.append(("03_temporal_split.ipynb", "03_temporal_split.ipynb"))
+    elif task == "bandit":
+        notebook_files.append(("03_actions_rewards_context.ipynb", "03_actions_rewards_context.ipynb"))
+
+    # Task-specific notebook 04
+    if task == "supervised":
+        notebook_files.append(("04_baseline_classification_or_regression.ipynb", "04_baseline_classification_or_regression.ipynb"))
+    elif task == "unsupervised":
+        notebook_files.append(("04_clustering_baseline.ipynb", "04_clustering_baseline.ipynb"))
+    elif task == "timeseries":
+        notebook_files.append(("04_naive_temporal_baseline.ipynb", "04_naive_temporal_baseline.ipynb"))
+    elif task == "bandit":
+        notebook_files.append(("04_policy_simulation_baseline.ipynb", "04_policy_simulation_baseline.ipynb"))
+    else: # generic, vision
+        notebook_files.append(("04_baseline_model.ipynb", "04_baseline_model.ipynb"))
+
+    # Task-specific notebook 05
+    if task == "unsupervised":
+        notebook_files.append(("05_cluster_interpretation.ipynb", "05_cluster_interpretation.ipynb"))
+    else:
+        notebook_files.append(("05_evaluation_and_interpretation.ipynb", "05_evaluation_and_interpretation.ipynb"))
+
+    for rel_path, template_name in notebook_files:
+        content = load_template(template_name, values, folder="notebooks")
+        write_text(root / "notebooks" / rel_path, content, force=force)
 
 
 def create_docs(root: Path, values: dict[str, str], *, force: bool) -> None:

@@ -24,7 +24,7 @@ class TestOnboardingConsistency(unittest.TestCase):
 
         # Should contain the correct commands
         self.assertIn("START_HERE.md", output)
-        self.assertIn("python -m consistency_pkg.lab eda", output)
+        self.assertIn("notebooks/00_start_here.ipynb", output)
 
         # Should NOT contain the old src. prefix
         self.assertNotIn("python -m src.consistency_pkg.data", output)

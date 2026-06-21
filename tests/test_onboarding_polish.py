@@ -56,7 +56,7 @@ class TestOnboardingPolish(unittest.TestCase):
         self.assertIn("python -m gui_pkg.lab workspace", content)
 
     def test_eda_first_rule_documented(self):
-        """P0.3 - Onboarding guide explains the EDA-first rule."""
+        """P0.3 - Onboarding guide explains the notebook trail."""
         run_generator(
             project_name="eda_rule_proj",
             package_name="eda_rule_pkg",
@@ -67,12 +67,12 @@ class TestOnboardingPolish(unittest.TestCase):
         # Check START_HERE.md
         guide_path = self.test_dir / "START_HERE.md"
         content = guide_path.read_text()
-        self.assertIn("do not skip", content.lower())
+        self.assertIn("learning trail", content.lower())
 
         # Check README
         readme_path = self.test_dir / "README.md"
         content = readme_path.read_text()
-        self.assertIn("IMPORTANT**: You must run the **Exploratory Data Analysis (EDA)** step", content)
+        self.assertIn("Follow the Notebook Trail", content)
 
     def test_cli_alternatives_documented(self):
         """P0.4 - CLI alternatives are documented for Guided Learning."""
