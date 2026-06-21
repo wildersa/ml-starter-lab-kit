@@ -24,7 +24,7 @@ class TestLocalization(unittest.TestCase):
             package_name=self.package_name,
             output_dir=self.test_dir,
             optional_profile="4", # custom
-            optionals=["y"] + ["n"] * 8 + ["y", "n", "n", "n", "n", "n"] # eda and advisor
+            optionals=["y"] + ["n"] * 8 + ["y"] + ["n"] * 6 # eda(0) and advisor(9)
         )
 
         # CLI Output
@@ -93,7 +93,7 @@ class TestLocalization(unittest.TestCase):
             package_name=self.package_name,
             output_dir=self.test_dir,
             optional_profile="4", # custom
-            optionals=["y"] + ["n"] * 8 + ["y", "n", "n", "n", "n", "n"] # eda and advisor
+            optionals=["y"] + ["n"] * 8 + ["y"] + ["n"] * 6 # eda(0) and advisor(9)
         )
 
         # CLI Output
