@@ -14,7 +14,7 @@ from .scaffold import (
     create_optional_files,
     create_tests,
     create_demo_data,
-    create_notebook_placeholder,
+    create_notebook_trail,
     create_docs,
     create_pyproject,
     create_env_files,
@@ -166,7 +166,7 @@ TRANSLATIONS = {
         "next_step_monitor": "Monitoring/Drift (educational stub)",
         "next_step_demo": "Check the demo scenario and data dictionary in docs/demo-scenario.md",
         "next_step_open_guide": "Open START_HERE.md in the created project.",
-        "next_step_start_eda": "Start with EDA: notebooks/01_eda.ipynb or python -m {pkg}.lab eda",
+        "next_step_start_notebooks": "Start with the learning trail: notebooks/00_start_here.ipynb",
         "summary_mlflow": "MLflow Tracking",
         "yes": "yes",
         "no": "no",
@@ -343,7 +343,7 @@ TRANSLATIONS = {
         "next_step_monitor": "Monitoramento/Drift (stub educacional)",
         "next_step_demo": "Consulte o cenário de demo e o dicionário de dados em docs/demo-scenario.md",
         "next_step_open_guide": "Abra START_HERE.md no projeto criado.",
-        "next_step_start_eda": "Comece pela EDA: notebooks/01_eda.ipynb ou python -m {pkg}.lab eda",
+        "next_step_start_notebooks": "Comece pela trilha de aprendizado: notebooks/00_start_here.ipynb",
         "summary_mlflow": "Rastreamento MLflow",
         "yes": "sim",
         "no": "não",
@@ -768,10 +768,9 @@ def print_summary(root: Path, values: dict[str, str], t: dict[str, str], include
     print(f"{t['destination']}: {UI.color(str(root.resolve()), UI.CYAN)}")
     print()
 
-    pkg = values['PACKAGE_NAME']
     steps = [
         f"1. {t['next_step_open_guide']}",
-        f"2. {t['next_step_start_eda'].format(pkg=pkg)}"
+        f"2. {t['next_step_start_notebooks']}"
     ]
 
     UI.panel(t["next_steps"], "\n".join(steps))
@@ -1017,7 +1016,7 @@ def main() -> None:
     create_package_files(output_dir, values, force=force)
     create_optional_files(output_dir, package_name, values, optional_options, force=force)
     create_tests(output_dir, values, force=force)
-    create_notebook_placeholder(output_dir, values, force=force)
+    create_notebook_trail(output_dir, values, force=force)
     create_demo_data(output_dir, values, problem_profile, force=force)
 
     if include_docs:

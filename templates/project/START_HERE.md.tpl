@@ -42,14 +42,12 @@ Validate if your dataset and configuration are ready:
 python -m {{PACKAGE_NAME}}.lab check
 ```
 
-### Step 2: Exploratory Data Analysis (EDA) — **DO NOT SKIP**
-Before training any model, you must understand your data.
-- **Notebook (Recommended for beginners)**: Open `notebooks/01_eda.ipynb`
-{% if GENERATE_EDA == "true" %}
-- **CLI Alternative**: `python -m {{PACKAGE_NAME}}.lab eda`
-{% endif %}
+### Step 2: Follow the Learning Trail (Notebooks) — **RECOMMENDED**
+The best way to learn is by following the sequential notebook trail.
+- **Start here**: Open `notebooks/00_start_here.ipynb`
+- **Sequence**: 00 (Start) → 01 (Understanding) → 02 (EDA) → 03 (Features) → 04 (Baseline) → 05 (Evaluation) → 06 (Notes).
 
-> **Note**: EDA generates artifacts required for the Advisor and Learning Workspace.
+> **Note**: These notebooks import code from `src/{{PACKAGE_NAME}}`, allowing you to see how the reusable modules work behind the scenes.
 
 {% if LEARNING_ENABLED == "true" %}
 ### Step 3: Interactive Learning Workspace
@@ -73,7 +71,7 @@ python -m {{PACKAGE_NAME}}.lab workspace
 - `data/raw/`: Place your dataset here (Default: `{{DATASET_PATH}}`).
 - `configs/config.json`: Main project configuration (Target column, paths).
 - `src/{{PACKAGE_NAME}}/features.py`: Define your feature engineering logic here.
-- `notebooks/01_eda.ipynb`: Your starting point for data exploration.
+- `notebooks/`: Your learning path, from data understanding to model evaluation.
 
 ## 5. Notebooks vs. Python Pipeline
 

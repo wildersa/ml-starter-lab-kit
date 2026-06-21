@@ -181,12 +181,9 @@ The generated `src/{{PACKAGE_NAME}}/train.py` is a **simple baseline**, not a fi
 1. Place the dataset in `data/raw/`
 2. Adjust `configs/config.json`
 3. Run `python -m {{PACKAGE_NAME}}.lab check` to validate readiness
-4. Perform EDA in the notebook{% if GENERATE_EDA == "true" %} (or run `python -m {{PACKAGE_NAME}}.lab eda`{% if LEARNING_ENABLED == "true" %} or use the workspace{% endif %}){% endif %}
-5. Edit `src/{{PACKAGE_NAME}}/features.py`
-6. Train the model (baseline)
-7. Evaluate results
-8. Run monitoring/drift check
-9. Document limitations and next steps
+4. **Follow the Notebook Trail**: Open `notebooks/00_start_here.ipynb` and follow the sequence (00 to 06).
+5. Edit `src/{{PACKAGE_NAME}}/features.py` as you progress through the notebooks.
+6. Use the CLI/Workspace for automation and interactive study.
 
 ## Suggested commands
 

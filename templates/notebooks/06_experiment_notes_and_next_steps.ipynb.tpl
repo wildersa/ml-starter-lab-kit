@@ -1,0 +1,91 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "{% if LANGUAGE == \"pt-BR\" %}\n",
+    "# 06 - Notas de Experimento e Próximos Passos\n",
+    "\n",
+    "Chegamos ao final deste ciclo de aprendizado. Agora é hora de documentar o que funcionou, o que não funcionou e planejar as próximas iterações.\n",
+    "\n",
+    "## O que este passo ensina:\n",
+    "- Como registrar resultados de forma estruturada.\n",
+    "- A importância da reprodutibilidade.\n",
+    "- Como planejar melhorias incrementais.\n",
+    "{% else %}\n",
+    "# 06 - Experiment Notes and Next Steps\n",
+    "\n",
+    "We have reached the end of this learning cycle. Now it is time to document what worked, what didn't, and plan the next iterations.\n",
+    "\n",
+    "## What this step teaches:\n",
+    "- How to record results in a structured way.\n",
+    "- The importance of reproducibility.\n",
+    "- How to plan incremental improvements.\n",
+    "{% endif %}"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "{% if LANGUAGE == \"pt-BR\" %}\n",
+    "## 1. Resumo do Experimento\n",
+    "\n",
+    "**Hipótese:** [Descreva o que você estava tentando testar]\n",
+    "\n",
+    "**Modelo:** [Ex: Random Forest com 100 estimadores]\n",
+    "\n",
+    "**Resultado Principal:** [Ex: Acurácia de 85% ou RMSE de 10.5]\n",
+    "\n",
+    "**O que aprendi:**\n",
+    "- [Lição 1]\n",
+    "- [Lição 2]\n",
+    "{% else %}\n",
+    "## 1. Experiment Summary\n",
+    "\n",
+    "**Hypothesis:** [Describe what you were trying to test]\n",
+    "\n",
+    "**Model:** [e.g., Random Forest with 100 estimators]\n",
+    "\n",
+    "**Main Result:** [e.g., 85% accuracy or 10.5 RMSE]\n",
+    "\n",
+    "**What I learned:**\n",
+    "- [Lesson 1]\n",
+    "- [Lesson 2]\n",
+    "{% endif %}"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "{% if LANGUAGE == \"pt-BR\" %}\n",
+    "## 2. Próximos Passos\n",
+    "\n",
+    "- [ ] Tentar novas features.\n",
+    "- [ ] Testar algoritmos de Gradient Boosting (ex: XGBoost, LightGBM).\n",
+    "- [ ] Realizar busca de hiperparâmetros (Hyperparameter Tuning).\n",
+    "{% else %}\n",
+    "## 2. Next Steps\n",
+    "\n",
+    "- [ ] Try new features.\n",
+    "- [ ] Test Gradient Boosting algorithms (e.g., XGBoost, LightGBM).\n",
+    "- [ ] Perform Hyperparameter Tuning.\n",
+    "{% endif %}"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "name": "python"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
