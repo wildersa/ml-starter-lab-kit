@@ -30,7 +30,7 @@ class TestNavigationRefresh(unittest.TestCase):
     def test_synthetic_navigation_present_when_enabled(self):
         # Verify Synthetic-specific navigation in README.md (using custom profile to enable it)
         optionals = ["n"] * 16
-        optionals[14] = "y" # synthetic
+        optionals[15] = "y" # synthetic
 
         run_generator(
             project_name="synth_proj",
@@ -65,7 +65,7 @@ class TestNavigationRefresh(unittest.TestCase):
     def test_bandit_bridge_description_in_synthetic_docs(self):
         # Verify the bridge description in the generated synthetic-data-lab.md
         optionals = ["n"] * 16
-        optionals[14] = "y" # synthetic
+        optionals[15] = "y" # synthetic
 
         run_generator(
             project_name="bridge_proj",

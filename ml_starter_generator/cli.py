@@ -898,6 +898,7 @@ def main() -> None:
 
     needs_ml_basics = (
         optional_options.get("advisor") or
+        optional_options.get("insights") or
         optional_options.get("baseline_lab") or
         optional_options.get("synthetic_data")
     )

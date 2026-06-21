@@ -63,5 +63,22 @@ class TestDataInsights(unittest.TestCase):
             start_here_content = f.read()
             self.assertIn("python -m insights_project.lab insights", start_here_content)
 
+    def test_insights_custom_selection(self):
+        # 16 optionals, insights is at index 10
+        optionals = ["n"] * 16
+        optionals[10] = "y"
+
+        run_generator(
+            project_name="custom_insights",
+            package_name="custom_insights",
+            task="2",
+            output_dir=self.test_dir,
+            optional_profile="4", # custom
+            optionals=optionals
+        )
+
+        insights_py = self.test_dir / "src/custom_insights/data_insights.py"
+        self.assertTrue(insights_py.exists(), "data_insights.py should be generated via custom selection")
+
 if __name__ == "__main__":
     unittest.main()

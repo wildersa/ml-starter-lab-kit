@@ -30,10 +30,10 @@ class TestBanditMetricsDependency(unittest.TestCase):
         # 5: visualization, 6: notebook_factory, 7: model_report, 8: experiment_log,
         # 9: advisor, 10: learning, 11: baseline_lab, 12: bandit_lab
 
-        # We want to enable bandit_lab (index 12) and DISABLE metrics (index 2)
+        # We want to enable bandit_lab (index 13) and DISABLE metrics (index 2)
         optionals = ["n"] * 16
         optionals[2] = "n" # Metrics
-        optionals[12] = "y" # Bandit Lab
+        optionals[13] = "y" # Bandit Lab
 
         run_generator(
             project_name="Bandit No Metrics Project",

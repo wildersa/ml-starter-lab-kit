@@ -72,7 +72,7 @@ class TestOutputLogic(unittest.TestCase):
         package_name = "eda_test_pkg"
         output_dir = self.test_dir / "eda_project"
 
-        # eda is the 1st optional tool
+        # eda is the 1st optional tool, total 16
         optionals = ["y"] + ["n"] * 15
 
         run_generator(
@@ -170,8 +170,8 @@ class TestOutputLogic(unittest.TestCase):
         package_name = "advisor_block_pkg"
         output_dir = self.test_dir / "advisor_block_project"
 
-        # eda is 1st, advisor is 10th
-        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "y", "n", "n", "n", "n", "n", "n", "n"]
+        # eda is 0, advisor is 9
+        optionals = ["y"] + ["n"] * 8 + ["y"] + ["n"] * 6
 
         run_generator(
             project_name="Advisor Block Project",
@@ -211,14 +211,16 @@ class TestOutputLogic(unittest.TestCase):
         package_name = "advisor_success_pkg"
         output_dir = self.test_dir / "advisor_success_project"
 
-        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "y", "n", "n", "n", "n", "n", "n", "n"]
+        # eda is 0, advisor is 9
+        optionals = ["y"] + ["n"] * 8 + ["y"] + ["n"] * 6
 
         run_generator(
             project_name="Advisor Success Project",
             package_name=package_name,
             output_dir=output_dir,
             optional_profile="4",
-            optionals=optionals
+            optionals=optionals,
+            include_ml_basics="y"
         )
 
         # Create dummy data
@@ -509,10 +511,8 @@ class TestOutputLogic(unittest.TestCase):
         output_dir = self.test_dir / "dep_gate_project"
 
         # custom profile:
-        # eda=y, preprocessing=n, metrics=n, optimization=n, feature_measurement=n,
-        # visualization=n, notebook_factory=n, model_report=n, experiment_log=n,
-        # advisor=n, learning=n, baseline_lab=y, bandit_lab=n
-        optionals = ["y", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "y", "n", "n", "n"]
+        # eda(0)=y, preproc(1)=n, metrics(2)=n, opt(3)=n, feat(4)=n, viz(5)=n, nb(6)=n, rep(7)=n, exp(8)=n, advisor(9)=n, insights(10)=n, learn(11)=n, baseline(12)=y, bandit(13)=n, monitor(14)=n, synthetic(15)=n
+        optionals = ["y"] + ["n"] * 11 + ["y"] + ["n"] * 3
 
         # include_ml_basics="n" initially, but should be prompted/enabled
         run_generator(
