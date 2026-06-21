@@ -58,6 +58,9 @@ python -m {{PACKAGE_NAME}}.lab workspace
 {% endif %}
 
 ### Passo 4: Sugestões de Modelagem e Baselines
+{% if GENERATE_INSIGHTS == "true" %}
+- **Intelligence**: `python -m {{PACKAGE_NAME}}.lab insights` (Qualidade e leakage)
+{% endif %}
 {% if GENERATE_ADVISOR == "true" %}
 - **Advisor**: `python -m {{PACKAGE_NAME}}.lab advisor` (Sugestões de modelagem)
 {% endif %}

@@ -30,6 +30,14 @@ def run_advisor():
         print("\n[INFO] Dataset Advisor is not enabled in this project.")
         print("To enable it, generate a project with the 'guided' mode or 'recommended' profile.")
 
+def run_insights():
+    try:
+        insights = importlib.import_module(".data_insights", package=__package__)
+        insights.main()
+    except ImportError:
+        print("\n[INFO] Dataset Intelligence is not enabled in this project.")
+        print("To enable it, generate a project with the 'guided' mode or 'recommended' profile.")
+
 def run_learn():
     try:
         learning = importlib.import_module(".learning", package=__package__)
@@ -138,6 +146,7 @@ def main():
     subparsers.add_parser("data", help="Run data preparation and processing")
     subparsers.add_parser("eda", help="Run exploratory data analysis")
     subparsers.add_parser("advisor", help="Run Dataset Advisor for modeling suggestions")
+    subparsers.add_parser("insights", help="Run Dataset Intelligence for quality/leakage/utility checks")
     subparsers.add_parser("learn", help="Generate dataset-contextual learning notes")
     subparsers.add_parser("baseline", help="Run Baseline Lab for simple model benchmarking")
     subparsers.add_parser("bandit", help="Run educational Multi-Armed Bandit Lab")
@@ -168,6 +177,8 @@ def main():
         run_eda()
     elif args.command == "advisor":
         run_advisor()
+    elif args.command == "insights":
+        run_insights()
     elif args.command == "learn":
         run_learn()
     elif args.command == "baseline":

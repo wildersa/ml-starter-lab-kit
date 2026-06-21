@@ -109,6 +109,7 @@ TRANSLATIONS = {
         "include_model_report": "Include model report template?",
         "include_experiment_log": "Include experiment log template?",
         "include_advisor": "Include explainable Dataset Advisor?",
+        "include_insights": "Include Dataset Intelligence report (quality/leakage/utility)?",
         "include_learning": "Include dataset-contextual learning notes?",
         "include_baseline_lab": "Include educational Baseline Lab?",
         "include_bandit_lab": "Include educational Multi-Armed Bandit Lab?",
@@ -286,6 +287,7 @@ TRANSLATIONS = {
         "include_model_report": "Incluir template de relatório de modelo?",
         "include_experiment_log": "Incluir template de log de experimentos?",
         "include_advisor": "Incluir Dataset Advisor explicável?",
+        "include_insights": "Incluir relatório de Inteligência de Dados (qualidade/leakage/utilidade)?",
         "include_learning": "Incluir notas de aprendizado contextuais ao dataset?",
         "include_baseline_lab": "Incluir Baseline Lab educacional?",
         "include_bandit_lab": "Incluir Bandit Lab educacional (Multi-Armed Bandit)?",
@@ -574,6 +576,7 @@ def get_options_by_profile(profile: str) -> dict[str, bool]:
         "model_report": False,
         "experiment_log": False,
         "advisor": False,
+        "insights": False,
         "learning": False,
         "baseline_lab": False,
         "bandit_lab": False,
@@ -590,6 +593,7 @@ def get_options_by_profile(profile: str) -> dict[str, bool]:
         options["metrics"] = True
         options["visualization"] = True
         options["advisor"] = True
+        options["insights"] = True
         options["learning"] = True
         options["baseline_lab"] = True
         options["monitoring"] = True
@@ -856,6 +860,7 @@ def main() -> None:
             "model_report": ask_yes_no(t["include_model_report"], False, lang=lang),
             "experiment_log": ask_yes_no(t["include_experiment_log"], False, lang=lang),
             "advisor": ask_yes_no(t["include_advisor"], False, lang=lang),
+            "insights": ask_yes_no(t["include_insights"], False, lang=lang),
             "learning": ask_yes_no(t["include_learning"], False, lang=lang),
             "baseline_lab": ask_yes_no(t["include_baseline_lab"], False, lang=lang),
             "bandit_lab": ask_yes_no(t["include_bandit_lab"], False, lang=lang),
@@ -868,6 +873,7 @@ def main() -> None:
     if experience_mode == "guided":
         optional_options["eda"] = True
         optional_options["advisor"] = True
+        optional_options["insights"] = True
         optional_options["learning"] = True
         optional_options["baseline_lab"] = True
         optional_options["monitoring"] = True
@@ -980,6 +986,7 @@ def main() -> None:
         "LEARNING_MODE": experience_mode,
         "GENERATE_EDA": "true" if optional_options.get("eda") else "false",
         "GENERATE_ADVISOR": "true" if optional_options.get("advisor") else "false",
+        "GENERATE_INSIGHTS": "true" if optional_options.get("insights") else "false",
         "GENERATE_LEARNING": "true" if optional_options.get("learning") else "false",
         "GENERATE_BASELINE": "true" if optional_options.get("baseline_lab") else "false",
         "GENERATE_BANDIT": "true" if optional_options.get("bandit_lab") else "false",
