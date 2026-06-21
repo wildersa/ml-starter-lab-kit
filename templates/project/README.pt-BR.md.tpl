@@ -181,12 +181,9 @@ O arquivo `src/{{PACKAGE_NAME}}/train.py` gerado é um **baseline simples**, nã
 1. Coloque o dataset em `data/raw/`
 2. Ajuste `configs/config.json`
 3. Execute `python -m {{PACKAGE_NAME}}.lab check` para validar a prontidão
-4. Realize a EDA no notebook{% if GENERATE_EDA == "true" %} (ou execute `python -m {{PACKAGE_NAME}}.lab eda`{% if LEARNING_ENABLED == "true" %} ou use o workspace{% endif %}){% endif %}
-5. Edite `src/{{PACKAGE_NAME}}/features.py`
-6. Treine o modelo (baseline)
-7. Avalie os resultados
-8. Execute a verificação de monitoramento/drift
-9. Documente limitações e próximos passos
+4. **Siga a Trilha de Notebooks**: Abra `notebooks/00_start_here.ipynb` e siga a sequência (00 a 06).
+5. Edite `src/{{PACKAGE_NAME}}/features.py` conforme avança nos notebooks.
+6. Use o CLI/Workspace para automação e estudo interativo.
 
 ## Comandos sugeridos
 

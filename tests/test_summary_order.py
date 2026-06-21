@@ -26,7 +26,7 @@ class TestCLISummaryOrder(unittest.TestCase):
 
         # Verify concise steps
         self.assertIn("Open START_HERE.md", output)
-        self.assertIn("Start with EDA", output)
+        self.assertIn("Start with the learning trail", output)
 
     def test_summary_order_without_pyproject(self):
         output = run_generator(
@@ -38,7 +38,7 @@ class TestCLISummaryOrder(unittest.TestCase):
 
         # Verify concise steps even without pyproject
         self.assertIn("Open START_HERE.md", output)
-        self.assertIn("Start with EDA", output)
+        self.assertIn("Start with the learning trail", output)
 
     def test_summary_current_directory(self):
         # Using option 1 for output location: current directory
@@ -63,7 +63,7 @@ class TestCLISummaryOrder(unittest.TestCase):
         )
 
         self.assertIn("Abra START_HERE.md", output)
-        self.assertIn("Comece pela EDA", output)
+        self.assertIn("Comece pela trilha de aprendizado", output)
 
 if __name__ == "__main__":
     unittest.main()

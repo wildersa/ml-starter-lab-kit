@@ -40,8 +40,8 @@ class TestGenerator(unittest.TestCase):
             self.assertIn("eda", config)
             self.assertIn("id_columns", config["eda"])
 
-        # Verify EDA notebook
-        eda_nb_path = self.test_dir / "notebooks/01_eda.ipynb"
+        # Verify notebook trail
+        eda_nb_path = self.test_dir / "notebooks/02_eda.ipynb"
         self.assertTrue(eda_nb_path.exists())
         with open(eda_nb_path) as f:
             nb_content = json.load(f)
@@ -49,6 +49,8 @@ class TestGenerator(unittest.TestCase):
             # Check for placeholders
             self.assertIn(self.project_name, str(nb_content))
             self.assertIn(self.package_name, str(nb_content))
+
+        self.assertTrue((self.test_dir / "notebooks/00_start_here.ipynb").exists())
 
     def test_create_generic_project(self):
         run_generator(
