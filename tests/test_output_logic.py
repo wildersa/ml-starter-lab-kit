@@ -72,8 +72,9 @@ class TestOutputLogic(unittest.TestCase):
         package_name = "eda_test_pkg"
         output_dir = self.test_dir / "eda_project"
 
-        # eda is the 1st optional tool, total 17
-        optionals = ["y"] + ["n"] * 16
+        # eda is the 1st optional tool, total 18. manifest(17) is enabled by default in helpers.
+        # But here we pass explicit custom optionals.
+        optionals = ["y"] + ["n"] * 17
 
         run_generator(
             project_name="EDA Project",
@@ -141,7 +142,7 @@ class TestOutputLogic(unittest.TestCase):
             package_name=package_name,
             output_dir=output_dir,
             optional_profile="4",
-            optionals=["y"] + ["n"]*16
+            optionals=["y"] + ["n"]*17
         )
 
         # Ensure no dataset exists
@@ -171,7 +172,7 @@ class TestOutputLogic(unittest.TestCase):
         output_dir = self.test_dir / "advisor_block_project"
 
         # eda is 0, advisor is 9
-        optionals = ["y"] + ["n"] * 8 + ["y"] + ["n"] * 7
+        optionals = ["y"] + ["n"] * 8 + ["y"] + ["n"] * 8
 
         run_generator(
             project_name="Advisor Block Project",
@@ -212,7 +213,7 @@ class TestOutputLogic(unittest.TestCase):
         output_dir = self.test_dir / "advisor_success_project"
 
         # eda is 0, advisor is 9
-        optionals = ["y"] + ["n"] * 8 + ["y"] + ["n"] * 7
+        optionals = ["y"] + ["n"] * 8 + ["y"] + ["n"] * 8
 
         run_generator(
             project_name="Advisor Success Project",
@@ -511,8 +512,8 @@ class TestOutputLogic(unittest.TestCase):
         output_dir = self.test_dir / "dep_gate_project"
 
         # custom profile:
-        # eda(0)=y, preproc(1)=n, metrics(2)=n, opt(3)=n, feat(4)=n, viz(5)=n, nb(6)=n, rep(7)=n, exp(8)=n, advisor(9)=n, insights(10)=n, learn(11)=n, baseline(12)=y, bandit(13)=n, monitor(14)=n, synthetic(15)=n
-        optionals = ["y"] + ["n"] * 12 + ["y"] + ["n"] * 3
+        # eda(0)=y, ..., baseline(13)=y, ..., manifest(17)=n
+        optionals = ["y"] + ["n"] * 12 + ["y"] + ["n"] * 4
 
         # include_ml_basics="n" initially, but should be prompted/enabled
         run_generator(

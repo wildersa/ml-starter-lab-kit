@@ -29,7 +29,7 @@ class TestNavigationRefresh(unittest.TestCase):
 
     def test_synthetic_navigation_present_when_enabled(self):
         # Verify Synthetic-specific navigation in README.md (using custom profile to enable it)
-        optionals = ["n"] * 17
+        optionals = ["n"] * 18
         optionals[16] = "y" # synthetic
 
         run_generator(
@@ -47,7 +47,7 @@ class TestNavigationRefresh(unittest.TestCase):
 
     def test_dataset_advisor_present_in_minimal_with_advisor(self):
         # Verify Dataset Advisor is still present in minimal mode when explicitly enabled
-        optionals = ["n"] * 17
+        optionals = ["n"] * 18
         optionals[9] = "y" # advisor
 
         run_generator(
@@ -64,7 +64,7 @@ class TestNavigationRefresh(unittest.TestCase):
 
     def test_bandit_bridge_description_in_synthetic_docs(self):
         # Verify the bridge description in the generated synthetic-data-lab.md
-        optionals = ["n"] * 17
+        optionals = ["n"] * 18
         optionals[16] = "y" # synthetic
 
         run_generator(

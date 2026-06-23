@@ -94,6 +94,14 @@ def run_model_card():
         print("\n[INFO] Model Card generation is not enabled in this project.")
         print("To enable it, generate a project with the 'guided' mode or 'recommended' profile.")
 
+def run_manifest():
+    try:
+        manifest = importlib.import_module(".pipeline_manifest", package=__package__)
+        manifest.main()
+    except ImportError:
+        print("\n[INFO] Pipeline Manifest generation is not enabled in this project.")
+        print("To enable it, generate a project with the 'guided' mode or 'recommended' profile.")
+
 {% if GENERATE_BANDIT == "true" %}
 def run_bandit_dashboard():
     # Bandit Dashboard is a Streamlit app named bandit_dashboard.py inside the package
@@ -177,6 +185,7 @@ def main():
     synthetic_parser.add_argument("--config", help="Path to synthetic data config")
 
     subparsers.add_parser("model-card", help="Generate reports/model-card.md artifact")
+    subparsers.add_parser("manifest", help="Generate reports/pipeline-manifest.json and reproducibility summary")
 
     {% if GENERATE_BANDIT == "true" %}
     subparsers.add_parser("bandit-dashboard", help="Visual explorer for Bandit Lab results")
@@ -212,6 +221,8 @@ def main():
         run_synthetic()
     elif args.command == "model-card":
         run_model_card()
+    elif args.command == "manifest":
+        run_manifest()
     {% if GENERATE_BANDIT == "true" %}
     elif args.command == "bandit-dashboard":
         run_bandit_dashboard()

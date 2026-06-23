@@ -215,6 +215,7 @@ def create_optional_files(
         "synthetic_data": package_path / "synthetic_data.py",
         "synthetic_config": root / "configs/synthetic_data.json",
         "model_card": package_path / "model_card.py",
+        "pipeline_manifest": package_path / "pipeline_manifest.py",
     }
 
     template_names = {
@@ -240,6 +241,7 @@ def create_optional_files(
         "synthetic_data": "synthetic_data.py.tpl",
         "synthetic_config": "synthetic_data.json.tpl",
         "model_card": "model_card.py.tpl",
+        "pipeline_manifest": "pipeline_manifest.py.tpl",
     }
 
     # Special wiring for Bandit Lab: it REQUIRES metrics.py
