@@ -30,7 +30,7 @@ def run_generator(
     output_dir_sequence=None
 ):
     if optionals is None:
-        optionals = ["n"] * 17
+        optionals = ["n"] * 18
 
     is_guided = (experience_mode == "2" or experience_mode == "guided")
 
@@ -121,14 +121,18 @@ def run_generator(
             if len(optionals) > 15 and optionals[15] == "y": has_monitoring = True
 
         has_synthetic = False
+        has_manifest = False
         if optional_profile == "2": # recommended
             has_synthetic = True
+            has_manifest = True
         elif optional_profile == "3": # full
             has_synthetic = True
+            has_manifest = True
         elif optional_profile == "4" or optional_profile == "custom":
             if len(optionals) > 16 and optionals[16] == "y": has_synthetic = True
+            if len(optionals) > 17 and optionals[17] == "y": has_manifest = True
 
-        if (has_advisor or has_insights or has_screening or has_baseline or has_synthetic) and include_ml_basics == "n":
+        if (has_advisor or has_insights or has_screening or has_baseline or has_synthetic or has_manifest) and include_ml_basics == "n":
             # The wizard will prompt to enable ML basics
             inputs.append("y")
 

@@ -113,7 +113,7 @@ class TestDataInsights(unittest.TestCase):
 
     def test_insights_custom_selection(self):
         # 17 optionals (after adding feature_screening), insights is at index 10
-        optionals = ["n"] * 17
+        optionals = ["n"] * 18
         optionals[10] = "y"
 
         run_generator(

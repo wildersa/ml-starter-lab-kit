@@ -243,6 +243,9 @@ python -m {{PACKAGE_NAME}}.lab evaluate
 # (Opcional) Gerar artefato de model card
 python -m {{PACKAGE_NAME}}.lab model-card
 
+# (Opcional) Gerar manifesto do pipeline e resumo de reprodutibilidade
+python -m {{PACKAGE_NAME}}.lab manifest
+
 {% if GENERATE_MONITOR == "true" %}
 # (Opcional) Executar stub educacional de monitoramento/drift
 python -m {{PACKAGE_NAME}}.lab monitor

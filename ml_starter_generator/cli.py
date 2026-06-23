@@ -117,6 +117,7 @@ TRANSLATIONS = {
         "include_bandit_lab": "Include educational Multi-Armed Bandit Lab?",
         "include_monitoring": "Include lightweight monitoring/drift stub?",
         "include_synthetic_data": "Include configurable Synthetic Data Lab (for testing/learning)?",
+        "include_pipeline_manifest": "Include pipeline manifest and reproducibility summary?",
         "synthetic_panel_title": "Synthetic Data Lab",
         "synthetic_panel_text": "The Synthetic Data Lab generates deterministic datasets for experimentation.\nSetting 'activate_as_project_dataset' to true in its config will automatically\npoint your project to use the generated synthetic data.",
         "dependency_note_title": "Dependency Note",
@@ -296,6 +297,7 @@ TRANSLATIONS = {
         "include_bandit_lab": "Incluir Bandit Lab educacional (Multi-Armed Bandit)?",
         "include_monitoring": "Incluir stub de monitoramento/drift leve?",
         "include_synthetic_data": "Incluir Synthetic Data Lab configurável (para testes/estudo)?",
+        "include_pipeline_manifest": "Incluir manifesto do pipeline e resumo de reprodutibilidade?",
         "synthetic_panel_title": "Synthetic Data Lab",
         "synthetic_panel_text": "O Synthetic Data Lab gera datasets determinísticos para experimentação.\nDefinir 'activate_as_project_dataset' como true na configuração irá automaticamente\napontar seu projeto para usar os dados sintéticos gerados.",
         "dependency_note_title": "Nota de Dependência",
@@ -587,6 +589,7 @@ def get_options_by_profile(profile: str) -> dict[str, bool]:
         "bandit_lab": False,
         "monitoring": False,
         "synthetic_data": False,
+        "pipeline_manifest": False,
     }
 
     if profile == "minimal":
@@ -605,6 +608,7 @@ def get_options_by_profile(profile: str) -> dict[str, bool]:
         options["baseline_lab"] = True
         options["monitoring"] = True
         options["synthetic_data"] = True
+        options["pipeline_manifest"] = True
         return options
 
     if profile == "full":
@@ -874,6 +878,7 @@ def main() -> None:
             "bandit_lab": ask_yes_no(t["include_bandit_lab"], False, lang=lang),
             "monitoring": ask_yes_no(t["include_monitoring"], False, lang=lang),
             "synthetic_data": ask_yes_no(t["include_synthetic_data"], False, lang=lang),
+            "pipeline_manifest": ask_yes_no(t["include_pipeline_manifest"], True, lang=lang),
         }
     else:
         optional_options = get_options_by_profile(profile)
@@ -887,6 +892,7 @@ def main() -> None:
         optional_options["baseline_lab"] = True
         optional_options["monitoring"] = True
         optional_options["synthetic_data"] = True
+        optional_options["pipeline_manifest"] = True
         optional_options["learning_workspace"] = True
 
     # P1-D: Gate Bandit Lab.
@@ -1004,6 +1010,7 @@ def main() -> None:
         "GENERATE_BANDIT": "true" if optional_options.get("bandit_lab") else "false",
         "GENERATE_MONITOR": "true" if optional_options.get("monitoring") else "false",
         "GENERATE_SYNTHETIC": "true" if optional_options.get("synthetic_data") else "false",
+        "GENERATE_MANIFEST": "true" if optional_options.get("pipeline_manifest") else "false",
     }
 
     UI.section(t["final_summary"], 7)
