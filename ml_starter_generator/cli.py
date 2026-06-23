@@ -18,6 +18,7 @@ from .scaffold import (
     create_docs,
     create_pyproject,
     create_env_files,
+    create_agent_files,
 )
 
 TRANSLATIONS = {
@@ -1026,6 +1027,7 @@ def main() -> None:
     create_tests(output_dir, values, force=force)
     create_notebook_trail(output_dir, values, force=force)
     create_demo_data(output_dir, values, problem_profile, force=force)
+    create_agent_files(output_dir, values, force=force)
 
     if include_docs:
         create_docs(output_dir, values, force=force)
