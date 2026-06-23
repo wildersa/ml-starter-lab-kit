@@ -263,6 +263,27 @@ def create_optional_files(
         write_text(mapping["bandit_dashboard"], content, force=force)
 
 
+def create_agent_files(root: Path, values: dict[str, str], *, force: bool) -> None:
+    files = {
+        "AGENTS.md": load_template("AGENTS.md", values, folder="project"),
+        ".agents/skills/ml-lab-tutor/SKILL.md": load_template(
+            "SKILL.md", values, folder="project/agents/skills/ml-lab-tutor"
+        ),
+        ".agents/skills/ml-lab-tutor/references/project-map.md": load_template(
+            "project-map.md", values, folder="project/agents/skills/ml-lab-tutor/references"
+        ),
+        ".agents/skills/ml-lab-tutor/references/learning-flow.md": load_template(
+            "learning-flow.md", values, folder="project/agents/skills/ml-lab-tutor/references"
+        ),
+        ".agents/skills/ml-lab-tutor/references/challenge-bank.md": load_template(
+            "challenge-bank.md", values, folder="project/agents/skills/ml-lab-tutor/references"
+        ),
+    }
+
+    for rel, content in files.items():
+        write_text(root / rel, content, force=force)
+
+
 def create_demo_data(
     root: Path,
     values: dict[str, str],
