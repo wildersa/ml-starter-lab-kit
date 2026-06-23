@@ -71,7 +71,7 @@ class TestGenerator(unittest.TestCase):
             dataset_path="data/raw/train.csv",
             target_column="target",
             output_dir=self.test_dir,
-            optionals=["y"] * 16
+            optionals=["y"] * 17
         )
 
         pkg_path = self.test_dir / "src/opt_pkg"
@@ -278,7 +278,7 @@ class TestGenerator(unittest.TestCase):
 
     def test_custom_profile(self):
         # Custom profile, selecting only eda and metrics
-        optionals = ["y", "n", "y", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n"]
+        optionals = ["y", "n", "y", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n"]
         run_generator(
             project_name="custom_proj",
             package_name="custom_pkg",

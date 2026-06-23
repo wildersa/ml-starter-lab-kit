@@ -112,8 +112,8 @@ class TestDataInsights(unittest.TestCase):
         self.assertIn("WARNING", md_content)
 
     def test_insights_custom_selection(self):
-        # 16 optionals, insights is at index 10
-        optionals = ["n"] * 16
+        # 17 optionals (after adding feature_screening), insights is at index 10
+        optionals = ["n"] * 17
         optionals[10] = "y"
 
         run_generator(

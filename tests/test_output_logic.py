@@ -72,8 +72,8 @@ class TestOutputLogic(unittest.TestCase):
         package_name = "eda_test_pkg"
         output_dir = self.test_dir / "eda_project"
 
-        # eda is the 1st optional tool, total 16
-        optionals = ["y"] + ["n"] * 15
+        # eda is the 1st optional tool, total 17
+        optionals = ["y"] + ["n"] * 16
 
         run_generator(
             project_name="EDA Project",
@@ -141,7 +141,7 @@ class TestOutputLogic(unittest.TestCase):
             package_name=package_name,
             output_dir=output_dir,
             optional_profile="4",
-            optionals=["y"] + ["n"]*15
+            optionals=["y"] + ["n"]*16
         )
 
         # Ensure no dataset exists
@@ -171,7 +171,7 @@ class TestOutputLogic(unittest.TestCase):
         output_dir = self.test_dir / "advisor_block_project"
 
         # eda is 0, advisor is 9
-        optionals = ["y"] + ["n"] * 8 + ["y"] + ["n"] * 6
+        optionals = ["y"] + ["n"] * 8 + ["y"] + ["n"] * 7
 
         run_generator(
             project_name="Advisor Block Project",
@@ -212,7 +212,7 @@ class TestOutputLogic(unittest.TestCase):
         output_dir = self.test_dir / "advisor_success_project"
 
         # eda is 0, advisor is 9
-        optionals = ["y"] + ["n"] * 8 + ["y"] + ["n"] * 6
+        optionals = ["y"] + ["n"] * 8 + ["y"] + ["n"] * 7
 
         run_generator(
             project_name="Advisor Success Project",
@@ -512,7 +512,7 @@ class TestOutputLogic(unittest.TestCase):
 
         # custom profile:
         # eda(0)=y, preproc(1)=n, metrics(2)=n, opt(3)=n, feat(4)=n, viz(5)=n, nb(6)=n, rep(7)=n, exp(8)=n, advisor(9)=n, insights(10)=n, learn(11)=n, baseline(12)=y, bandit(13)=n, monitor(14)=n, synthetic(15)=n
-        optionals = ["y"] + ["n"] * 11 + ["y"] + ["n"] * 3
+        optionals = ["y"] + ["n"] * 12 + ["y"] + ["n"] * 2
 
         # include_ml_basics="n" initially, but should be prompted/enabled
         run_generator(
