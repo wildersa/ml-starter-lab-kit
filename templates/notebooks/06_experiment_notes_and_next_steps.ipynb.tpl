@@ -74,6 +74,37 @@
     "- [ ] Perform Hyperparameter Tuning.\n",
     "{% endif %}"
    ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "{% if LANGUAGE == \"pt-BR\" %}\n",
+    "## 3. Gerar Model Card\n",
+    "\n",
+    "Agora que você concluiu seus experimentos, pode gerar um **Model Card** consolidado que resume os resultados, métricas e limitações do seu modelo.\n",
+    "\n",
+    "Execute o comando abaixo no seu terminal:\n",
+    "\n",
+    "```bash\n",
+    "python -m {{PACKAGE_NAME}}.lab model-card\n",
+    "```\n",
+    "\n",
+    "Isso criará o arquivo `reports/model-card.md` com base em todos os artefatos gerados ao longo do projeto.\n",
+    "{% else %}\n",
+    "## 3. Generate Model Card\n",
+    "\n",
+    "Now that you have completed your experiments, you can generate a consolidated **Model Card** that summarizes the results, metrics, and limitations of your model.\n",
+    "\n",
+    "Run the command below in your terminal:\n",
+    "\n",
+    "```bash\n",
+    "python -m {{PACKAGE_NAME}}.lab model-card\n",
+    "```\n",
+    "\n",
+    "This will create the `reports/model-card.md` file based on all the artifacts generated throughout the project.\n",
+    "{% endif %}"
+   ]
   }
  ],
  "metadata": {
