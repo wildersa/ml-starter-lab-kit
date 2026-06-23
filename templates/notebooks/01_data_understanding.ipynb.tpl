@@ -107,6 +107,33 @@
    "metadata": {},
    "source": [
     "{% if LANGUAGE == \"pt-BR\" %}\n",
+    "## 3. Inteligência de Dados (Opcional)\n",
+    "\n",
+    "Para uma análise automática de qualidade, leakage e utilidade das features, você pode executar o relatório de Dataset Intelligence:\n",
+    "\n",
+    "```bash\n",
+    "python -m {{PACKAGE_NAME}}.lab insights\n",
+    "```\n",
+    "\n",
+    "Isso gerará relatórios detalhados em `reports/data-quality-report.md`.\n",
+    "{% else %}\n",
+    "## 3. Dataset Intelligence (Optional)\n",
+    "\n",
+    "For an automatic analysis of quality, leakage, and feature utility, you can run the Dataset Intelligence report:\n",
+    "\n",
+    "```bash\n",
+    "python -m {{PACKAGE_NAME}}.lab insights\n",
+    "```\n",
+    "\n",
+    "This will generate detailed reports in `reports/data-quality-report.md`.\n",
+    "{% endif %}"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "{% if LANGUAGE == \"pt-BR\" %}\n",
     "## Interpretação\n",
     "- As colunas carregadas correspondem ao que você esperava?\n",
     "- Existem colunas que parecem ser IDs ou datas?\n",

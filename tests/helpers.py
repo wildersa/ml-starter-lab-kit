@@ -92,17 +92,21 @@ def run_generator(
         # Index mapping in cli.py: eda(0), preproc(1), metrics(2), opt(3), feat(4), viz(5), nb(6), rep(7), exp(8), advisor(9), learn(10), baseline(11)
 
         has_advisor = False
+        has_insights = False
         has_baseline = False
 
         if optional_profile == "2": # recommended
             has_advisor = True
+            has_insights = True
             has_baseline = True
         elif optional_profile == "3": # full
             has_advisor = True
+            has_insights = True
             has_baseline = True
         elif optional_profile == "4" or optional_profile == "custom":
             if optionals[9] == "y": has_advisor = True
-            if optionals[11] == "y": has_baseline = True
+            if len(optionals) > 10 and optionals[10] == "y": has_insights = True
+            if len(optionals) > 12 and optionals[12] == "y": has_baseline = True
 
         has_monitoring = False
         if optional_profile == "2": # recommended
@@ -110,7 +114,7 @@ def run_generator(
         elif optional_profile == "3": # full
             has_monitoring = True
         elif optional_profile == "4" or optional_profile == "custom":
-            if len(optionals) > 13 and optionals[13] == "y": has_monitoring = True
+            if len(optionals) > 14 and optionals[14] == "y": has_monitoring = True
 
         has_synthetic = False
         if optional_profile == "2": # recommended
@@ -118,9 +122,9 @@ def run_generator(
         elif optional_profile == "3": # full
             has_synthetic = True
         elif optional_profile == "4" or optional_profile == "custom":
-            if len(optionals) > 14 and optionals[14] == "y": has_synthetic = True
+            if len(optionals) > 15 and optionals[15] == "y": has_synthetic = True
 
-        if (has_advisor or has_baseline or has_synthetic) and include_ml_basics == "n":
+        if (has_advisor or has_insights or has_baseline or has_synthetic) and include_ml_basics == "n":
             # The wizard will prompt to enable ML basics
             inputs.append("y")
 

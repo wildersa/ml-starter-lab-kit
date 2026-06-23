@@ -204,6 +204,11 @@ python -m {{PACKAGE_NAME}}.lab check
 python -m {{PACKAGE_NAME}}.lab eda
 {% endif %}
 
+{% if GENERATE_INSIGHTS == "true" %}
+# (Opcional) Executar relatório de Inteligência de Dados (Qualidade/Leakage/Utilidade)
+python -m {{PACKAGE_NAME}}.lab insights
+{% endif %}
+
 {% if GENERATE_ADVISOR == "true" %}
 # (Opcional) Obter sugestões de modelagem
 python -m {{PACKAGE_NAME}}.lab advisor

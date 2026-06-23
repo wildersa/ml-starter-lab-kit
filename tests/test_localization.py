@@ -18,13 +18,15 @@ class TestLocalization(unittest.TestCase):
         shutil.rmtree(self.test_dir)
 
     def test_english_default_output(self):
+        # 16 optionals: eda(0), preproc(1), metrics(2), opt(3), feat(4), viz(5), nb(6), rep(7), exp(8), advisor(9), insights(10), ...
+        optionals = ["y"] + ["n"] * 8 + ["y"] + ["n"] * 6 # eda and advisor
         output = run_generator(
             language="1", # English
             project_name=self.project_name,
             package_name=self.package_name,
             output_dir=self.test_dir,
             optional_profile="4", # custom
-            optionals=["y"] + ["n"] * 8 + ["y", "n", "n", "n", "n", "n", "n"] # eda and advisor
+            optionals=optionals
         )
 
         # CLI Output
@@ -87,13 +89,14 @@ class TestLocalization(unittest.TestCase):
             self.assertIn('"report_title": "Dataset Advisor Report"', content)
 
     def test_portuguese_output(self):
+        optionals = ["y"] + ["n"] * 8 + ["y"] + ["n"] * 6 # eda and advisor
         output = run_generator(
             language="2", # pt-BR
             project_name=self.project_name,
             package_name=self.package_name,
             output_dir=self.test_dir,
             optional_profile="4", # custom
-            optionals=["y"] + ["n"] * 8 + ["y", "n", "n", "n", "n", "n", "n"] # eda and advisor
+            optionals=optionals
         )
 
         # CLI Output
