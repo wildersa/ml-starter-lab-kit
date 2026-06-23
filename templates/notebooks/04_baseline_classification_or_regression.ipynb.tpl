@@ -110,6 +110,49 @@
    "metadata": {},
    "source": [
     "{% if LANGUAGE == \"pt-BR\" %}\n",
+    "## 3. Modelo Diagnóstico e Importância de Features (Opcional)\n",
+    "\n",
+    "Para uma análise mais profunda, você pode executar o modelo diagnóstico. Ele usa uma Random Forest para medir a importância de cada feature e detectar possíveis vazamentos de dados (leakage):\n",
+    "\n",
+    "```bash\n",
+    "python -m {{PACKAGE_NAME}}.lab screening\n",
+    "```\n",
+    "\n",
+    "Isso gerará relatórios em `reports/quick-model-report.md`.\n",
+    "{% else %}\n",
+    "## 3. Diagnostic Model & Feature Importance (Optional)\n",
+    "\n",
+    "For a deeper analysis, you can run the diagnostic model. It uses a Random Forest to measure the importance of each feature and detect potential data leakage:\n",
+    "\n",
+    "```bash\n",
+    "python -m {{PACKAGE_NAME}}.lab screening\n",
+    "```\n",
+    "\n",
+    "This will generate reports in `reports/quick-model-report.md`.\n",
+    "{% endif %}"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# You can also load the importance results here if they exist\n",
+    "import pandas as pd\n",
+    "importance_path = '../reports/feature-importance.csv'\n",
+    "if os.path.exists(importance_path):\n",
+    "    imp_df = pd.read_csv(importance_path)\n",
+    "    display(imp_df.head(10))\n",
+    "else:\n",
+    "    print(\"Run 'python -m {{PACKAGE_NAME}}.lab screening' to generate feature importance.\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "{% if LANGUAGE == \"pt-BR\" %}\n",
     "## O que tentar a seguir:\n",
     "- Tente usar um modelo de árvore de decisão (`DecisionTreeClassifier` ou `Regressor`).\n",
     "- Verifique se a diferença de performance entre treino e teste indica overfitting.\n",

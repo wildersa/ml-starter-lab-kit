@@ -61,6 +61,9 @@ python -m {{PACKAGE_NAME}}.lab workspace
 {% if GENERATE_INSIGHTS == "true" %}
 - **Intelligence**: `python -m {{PACKAGE_NAME}}.lab insights` (Qualidade e leakage)
 {% endif %}
+{% if GENERATE_SCREENING == "true" %}
+- **Screening**: `python -m {{PACKAGE_NAME}}.lab screening` (Modelo rápido e importância)
+{% endif %}
 {% if GENERATE_ADVISOR == "true" %}
 - **Advisor**: `python -m {{PACKAGE_NAME}}.lab advisor` (Sugestões de modelagem)
 {% endif %}

@@ -209,6 +209,11 @@ python -m {{PACKAGE_NAME}}.lab eda
 python -m {{PACKAGE_NAME}}.lab insights
 {% endif %}
 
+{% if GENERATE_SCREENING == "true" %}
+# (Optional) Run Diagnostic Screening (Quick Model/Importance)
+python -m {{PACKAGE_NAME}}.lab screening
+{% endif %}
+
 {% if GENERATE_ADVISOR == "true" %}
 # (Optional) Get modeling advice
 python -m {{PACKAGE_NAME}}.lab advisor

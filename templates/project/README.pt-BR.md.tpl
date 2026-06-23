@@ -209,6 +209,11 @@ python -m {{PACKAGE_NAME}}.lab eda
 python -m {{PACKAGE_NAME}}.lab insights
 {% endif %}
 
+{% if GENERATE_SCREENING == "true" %}
+# (Opcional) Executar Triagem Diagnóstica (Modelo Rápido/Importância)
+python -m {{PACKAGE_NAME}}.lab screening
+{% endif %}
+
 {% if GENERATE_ADVISOR == "true" %}
 # (Opcional) Obter sugestões de modelagem
 python -m {{PACKAGE_NAME}}.lab advisor

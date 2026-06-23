@@ -96,8 +96,8 @@ class TestProblemFraming(unittest.TestCase):
         package_name = "advisor_pkg"
         output_dir = self.test_dir / project_name
 
-        # Include eda and advisor template, total 16
-        optionals = ["y"] + ["n"] * 8 + ["y"] + ["n"] * 6
+        # Include eda and advisor template, total 17
+        optionals = ["y"] + ["n"] * 8 + ["y"] + ["n"] * 7
 
         run_generator(
             project_name=project_name,
