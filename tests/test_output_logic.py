@@ -512,7 +512,7 @@ class TestOutputLogic(unittest.TestCase):
 
         # custom profile:
         # eda(0)=y, preproc(1)=n, metrics(2)=n, opt(3)=n, feat(4)=n, viz(5)=n, nb(6)=n, rep(7)=n, exp(8)=n, advisor(9)=n, insights(10)=n, learn(11)=n, baseline(12)=y, bandit(13)=n, monitor(14)=n, synthetic(15)=n
-        optionals = ["y"] + ["n"] * 12 + ["y"] + ["n"] * 2
+        optionals = ["y"] + ["n"] * 12 + ["y"] + ["n"] * 3
 
         # include_ml_basics="n" initially, but should be prompted/enabled
         run_generator(
