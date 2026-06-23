@@ -581,6 +581,7 @@ def get_options_by_profile(profile: str) -> dict[str, bool]:
         "advisor": False,
         "insights": False,
         "feature_screening": False,
+        "model_card": False,
         "learning": False,
         "baseline_lab": False,
         "bandit_lab": False,
@@ -599,6 +600,7 @@ def get_options_by_profile(profile: str) -> dict[str, bool]:
         options["advisor"] = True
         options["insights"] = True
         options["feature_screening"] = True
+        options["model_card"] = True
         options["learning"] = True
         options["baseline_lab"] = True
         options["monitoring"] = True

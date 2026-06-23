@@ -86,6 +86,14 @@ def run_synthetic():
         print("\n[INFO] Synthetic Data Lab is not enabled in this project.")
         print("To enable it, generate a project with the 'recommended' or 'full' profile.")
 
+def run_model_card():
+    try:
+        model_card = importlib.import_module(".model_card", package=__package__)
+        model_card.main()
+    except ImportError:
+        print("\n[INFO] Model Card generation is not enabled in this project.")
+        print("To enable it, generate a project with the 'guided' mode or 'recommended' profile.")
+
 {% if GENERATE_BANDIT == "true" %}
 def run_bandit_dashboard():
     # Bandit Dashboard is a Streamlit app named bandit_dashboard.py inside the package
@@ -168,6 +176,8 @@ def main():
     synthetic_parser = subparsers.add_parser("synthetic", help="Run configurable Synthetic Data Lab")
     synthetic_parser.add_argument("--config", help="Path to synthetic data config")
 
+    subparsers.add_parser("model-card", help="Generate reports/model-card.md artifact")
+
     {% if GENERATE_BANDIT == "true" %}
     subparsers.add_parser("bandit-dashboard", help="Visual explorer for Bandit Lab results")
     {% endif %}
@@ -200,6 +210,8 @@ def main():
         run_monitor()
     elif args.command == "synthetic":
         run_synthetic()
+    elif args.command == "model-card":
+        run_model_card()
     {% if GENERATE_BANDIT == "true" %}
     elif args.command == "bandit-dashboard":
         run_bandit_dashboard()

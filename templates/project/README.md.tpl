@@ -240,6 +240,9 @@ python -m {{PACKAGE_NAME}}.lab train
 # Evaluate
 python -m {{PACKAGE_NAME}}.lab evaluate
 
+# (Optional) Generate model card artifact
+python -m {{PACKAGE_NAME}}.lab model-card
+
 {% if GENERATE_MONITOR == "true" %}
 # (Optional) Run educational monitoring/drift stub
 python -m {{PACKAGE_NAME}}.lab monitor
