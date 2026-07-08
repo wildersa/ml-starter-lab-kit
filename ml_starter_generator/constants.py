@@ -11,4 +11,5 @@ TASKS = {
     "4": "timeseries",
     "5": "vision",
     "6": "bandit",
+    "7": "invoice_agent",
 }

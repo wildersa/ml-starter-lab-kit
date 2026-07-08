@@ -102,6 +102,14 @@ def run_manifest():
         print("\n[INFO] Pipeline Manifest generation is not enabled in this project.")
         print("To enable it, generate a project with the 'guided' mode or 'recommended' profile.")
 
+def run_invoice_agent():
+    try:
+        invoice_pipeline = importlib.import_module(".invoice_pipeline", package=__package__)
+        invoice_pipeline.main()
+    except ImportError:
+        print("\n[INFO] Invoice Agent Lab is not enabled in this project.")
+        print("To enable it, generate a project with the 'invoice-agent' task.")
+
 {% if GENERATE_BANDIT == "true" %}
 def run_bandit_dashboard():
     # Bandit Dashboard is a Streamlit app named bandit_dashboard.py inside the package
@@ -181,6 +189,11 @@ def main():
     monitor_parser.add_argument("--current", help="Path to current (new) data")
     monitor_parser.add_argument("--output", help="Path to save report")
 
+    invoice_parser = subparsers.add_parser("invoice-agent", help="Run Azure Document AI Invoice Agent Lab")
+    invoice_parser.add_argument("invoice_command", choices=["demo", "run", "dossier"], help="Command to run")
+    invoice_parser.add_argument("--invoice-id", default="sample-001", help="Invoice ID to process")
+    invoice_parser.add_argument("--config", default="configs/invoice_agent_config.json", help="Path to config file")
+
     synthetic_parser = subparsers.add_parser("synthetic", help="Run configurable Synthetic Data Lab")
     synthetic_parser.add_argument("--config", help="Path to synthetic data config")
 
@@ -223,6 +236,8 @@ def main():
         run_model_card()
     elif args.command == "manifest":
         run_manifest()
+    elif args.command == "invoice-agent":
+        run_invoice_agent()
     {% if GENERATE_BANDIT == "true" %}
     elif args.command == "bandit-dashboard":
         run_bandit_dashboard()

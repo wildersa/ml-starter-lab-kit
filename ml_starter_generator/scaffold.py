@@ -22,6 +22,10 @@ def create_dirs(root: Path, package_name: str, preset: str, include_docs: bool) 
     if include_docs:
         dirs.append("docs")
 
+    if preset == "invoice_agent" or preset == "7":
+        dirs.append("contracts")
+        dirs.append("data/samples/invoices")
+
     for directory in dirs:
         touch_gitkeep(root / directory)
 
@@ -137,6 +141,9 @@ def create_docs(root: Path, values: dict[str, str], *, force: bool) -> None:
         docs[f"docs/mab-lab{suffix}.md"] = load_template(f"mab-lab{suffix}.md", values, folder="project/docs")
         docs[f"docs/bandit-walkthrough{suffix}.md"] = load_template(f"bandit-walkthrough{suffix}.md", values, folder="project/docs")
 
+    if values.get("GENERATE_INVOICE_AGENT") == "true":
+        docs[f"docs/invoice-agent-lab{suffix}.md"] = load_template(f"invoice-agent-lab{suffix}.md", values, folder="project/docs")
+
     if values.get("INCLUDE_DEMO") == "true":
         template_name = "demo-scenario.md"
         if lang == "pt-BR":
@@ -216,6 +223,16 @@ def create_optional_files(
         "synthetic_config": root / "configs/synthetic_data.json",
         "model_card": package_path / "model_card.py",
         "pipeline_manifest": package_path / "pipeline_manifest.py",
+        "invoice_pipeline": package_path / "invoice_pipeline.py",
+        "invoice_rules": package_path / "invoice_rules.py",
+        "invoice_agent_tools": package_path / "invoice_agent_tools.py",
+        "erp_output": package_path / "erp_output.py",
+        "invoice_agent_config": root / "configs/invoice_agent_config.json",
+        "invoice_extraction_schema": root / "contracts/invoice-extraction.schema.json",
+        "validation_result_schema": root / "contracts/validation-result.schema.json",
+        "agent_dossier_schema": root / "contracts/agent-dossier.schema.json",
+        "erp_output_schema": root / "contracts/erp-output.schema.json",
+        "sample_invoice": root / "data/samples/invoices/sample_invoice.json",
     }
 
     template_names = {
@@ -242,6 +259,16 @@ def create_optional_files(
         "synthetic_config": "synthetic_data.json.tpl",
         "model_card": "model_card.py.tpl",
         "pipeline_manifest": "pipeline_manifest.py.tpl",
+        "invoice_pipeline": "invoice_pipeline.py.tpl",
+        "invoice_rules": "invoice_rules.py.tpl",
+        "invoice_agent_tools": "invoice_agent_tools.py.tpl",
+        "erp_output": "erp_output.py.tpl",
+        "invoice_agent_config": "invoice_agent_config.json.tpl",
+        "invoice_extraction_schema": "invoice-extraction.schema.json.tpl",
+        "validation_result_schema": "validation-result.schema.json.tpl",
+        "agent_dossier_schema": "agent-dossier.schema.json.tpl",
+        "erp_output_schema": "erp-output.schema.json.tpl",
+        "sample_invoice": "sample_invoice.json.tpl",
     }
 
     # Special wiring for Bandit Lab: it REQUIRES metrics.py
@@ -253,11 +280,28 @@ def create_optional_files(
     if options.get("synthetic_data"):
         options["synthetic_config"] = True
 
+    if values.get("GENERATE_INVOICE_AGENT") == "true":
+        options["invoice_pipeline"] = True
+        options["invoice_rules"] = True
+        options["invoice_agent_tools"] = True
+        options["erp_output"] = True
+        options["invoice_agent_config"] = True
+        options["invoice_extraction_schema"] = True
+        options["validation_result_schema"] = True
+        options["agent_dossier_schema"] = True
+        options["erp_output_schema"] = True
+        options["sample_invoice"] = True
+
     for key, enabled in options.items():
         if enabled and key in mapping:
             folder = "common"
             if "config" in key:
                 folder = "project/configs"
+            elif "schema" in key:
+                folder = "project/contracts"
+            elif key == "sample_invoice":
+                folder = "project/data/samples/invoices"
+
             content = load_template(template_names[key], values, folder=folder)
             write_text(mapping[key], content, force=force)
 

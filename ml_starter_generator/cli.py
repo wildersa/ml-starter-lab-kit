@@ -38,6 +38,7 @@ TRANSLATIONS = {
         "task_timeseries": "time series/LSTM",
         "task_vision": "image classification/detection",
         "task_bandit": "Multi-Armed Bandit / adaptive decisions",
+        "task_invoice_agent": "Azure Document AI Invoice Agent Solution Lab",
         "choose_option": "Choose an option",
         "invalid_option": "Invalid option.",
         "dataset_target": "Dataset and target",
@@ -218,6 +219,7 @@ TRANSLATIONS = {
         "task_timeseries": "séries temporais/LSTM",
         "task_vision": "classificação de imagem/detecção",
         "task_bandit": "Multi-Armed Bandit / decisões adaptativas",
+        "task_invoice_agent": "Lab de Solução: Azure Document AI Invoice Agent",
         "choose_option": "Escolha uma opção",
         "invalid_option": "Opção inválida.",
         "dataset_target": "Dataset e alvo (target)",
@@ -523,6 +525,7 @@ def choose_task(t: dict[str, str]) -> str:
         ("timeseries", f"timeseries    - {t['task_timeseries']}"),
         ("vision", f"vision        - {t['task_vision']}"),
         ("bandit", f"bandit        - {t['task_bandit']}"),
+        ("invoice_agent", f"invoice-agent - {t['task_invoice_agent']}"),
     ]
     print(f"\n{t['choose_task']}:")
     return choose_numbered(t['choose_option'], options, default_idx=1, t=t)
@@ -706,6 +709,7 @@ def run_problem_framing_wizard(task: str, t: dict[str, str], lang: str) -> dict[
         "timeseries": t["goal_forecast_values"],
         "vision": t["goal_work_images_text"],
         "bandit": t["task_bandit"],
+        "invoice_agent": t["task_invoice_agent"],
         "generic": t["goal_predict_category"]
     }
     default_goal = goals_map.get(task, t["goal_predict_category"])
@@ -1008,6 +1012,7 @@ def main() -> None:
         "GENERATE_LEARNING": "true" if optional_options.get("learning") else "false",
         "GENERATE_BASELINE": "true" if optional_options.get("baseline_lab") else "false",
         "GENERATE_BANDIT": "true" if optional_options.get("bandit_lab") else "false",
+        "GENERATE_INVOICE_AGENT": "true" if task == "invoice_agent" else "false",
         "GENERATE_MONITOR": "true" if optional_options.get("monitoring") else "false",
         "GENERATE_SYNTHETIC": "true" if optional_options.get("synthetic_data") else "false",
         "GENERATE_MANIFEST": "true" if optional_options.get("pipeline_manifest") else "false",
@@ -1034,7 +1039,7 @@ def main() -> None:
         print(t["aborted"])
         return
 
-    create_dirs(output_dir, package_name, preset, include_docs)
+    create_dirs(output_dir, package_name, task, include_docs)
     create_config(output_dir, values, force=force, problem_profile=problem_profile)
     create_problem_profile(output_dir, problem_profile, force=force)
     create_readme(output_dir, values, force=force)
