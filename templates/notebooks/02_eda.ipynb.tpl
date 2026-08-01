@@ -4,25 +4,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "{% if LANGUAGE == \"pt-BR\" %}\n",
-    "# 02 - Análise Exploratória de Dados (EDA)\n",
-    "\n",
-    "A EDA é uma etapa crucial onde buscamos entender distribuições, correlações e possíveis problemas de qualidade nos dados (como valores ausentes ou outliers).\n",
-    "\n",
-    "## O que este passo ensina:\n",
-    "- Como visualizar a distribuição da variável alvo.\n",
-    "- Como identificar valores ausentes.\n",
-    "- Como detectar possíveis vazamentos de dados (leakage).\n",
-    "{% else %}\n",
-    "# 02 - Exploratory Data Analysis (EDA)\n",
-    "\n",
-    "EDA is a crucial step where we seek to understand distributions, correlations, and potential data quality issues (such as missing values or outliers).\n",
-    "\n",
-    "## What this step teaches:\n",
-    "- How to visualize the target variable distribution.\n",
-    "- How to identify missing values.\n",
-    "- How to detect potential data leakage.\n",
-    "{% endif %}"
+    "{% if LANGUAGE == \"pt-BR\" %}\n# 02 - EDA e Diagnóstico de Features\n\nEste notebook agora cobre a etapa anterior ao modelo final: **qualidade → leakage → sinal das features → XGBoost sonda → explicabilidade → drift**.\n\nO XGBoost é apenas um **probe model**: serve para descobrir se os dados carregam sinal, quais features ajudam, se há indício de overfitting/leakage e se vale avançar para algo mais complexo, como LSTM.\n{% else %}\n# 02 - EDA and Feature Diagnostics\n\nThis notebook now covers the stage before final modeling: **quality → leakage → feature signal → XGBoost probe → explainability → drift**.\n\nXGBoost is only a **probe model**: it checks whether the data carries signal, which features help, whether overfitting/leakage is likely, and whether a more complex model such as an LSTM is justified.\n{% endif %}"
    ]
   },
   {
@@ -31,28 +13,7 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "import os\n",
-    "import sys\n",
-    "import pandas as pd\n",
-    "import matplotlib.pyplot as plt\n",
-    "import seaborn as sns\n",
-    "\n",
-    "if os.getcwd().endswith('notebooks'):\n",
-    "    sys.path.append('..')\n",
-    "\n",
-    "from src.{{PACKAGE_NAME}}.config import load_config\n",
-    "from src.{{PACKAGE_NAME}}.data import load_raw_data"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "{% if LANGUAGE == \"pt-BR\" %}\n",
-    "## 1. Distribuição do Alvo\n",
-    "{% else %}\n",
-    "## 1. Target Distribution\n",
-    "{% endif %}"
+    "import os, sys, warnings\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\nfrom sklearn.compose import ColumnTransformer\nfrom sklearn.dummy import DummyClassifier, DummyRegressor\nfrom sklearn.feature_selection import mutual_info_classif, mutual_info_regression\nfrom sklearn.impute import SimpleImputer\nfrom sklearn.inspection import permutation_importance\nfrom sklearn.metrics import accuracy_score, f1_score, mean_absolute_error, r2_score, roc_auc_score\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import LabelEncoder, OneHotEncoder\n\ntry:\n    from xgboost import XGBClassifier, XGBRegressor\n    XGBOOST_AVAILABLE = True\nexcept ImportError:\n    XGBOOST_AVAILABLE = False\n\ntry:\n    import shap\n    SHAP_AVAILABLE = True\nexcept ImportError:\n    SHAP_AVAILABLE = False\n\nwarnings.filterwarnings('ignore', category=FutureWarning)\nif os.getcwd().endswith('notebooks'):\n    sys.path.append('..')\n\nfrom src.{{PACKAGE_NAME}}.config import load_config\nfrom src.{{PACKAGE_NAME}}.data import load_raw_data\n\nconfig = load_config()\ndf = load_raw_data().copy()\ntarget = config.get('target', {}).get('column')\ntask = config.get('project', {}).get('task', '{{TASK}}')\ndate_columns = [c for c in config.get('eda', {}).get('date_columns', []) if c in df.columns]\ndate_col = date_columns[0] if date_columns else None\nif date_col:\n    df[date_col] = pd.to_datetime(df[date_col], errors='coerce')\n\nprint({'shape': df.shape, 'task': task, 'target': target, 'date_col': date_col})\ndisplay(df.head())"
    ]
   },
   {
@@ -61,31 +22,7 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "config = load_config()\n",
-    "target = config['target'].get('column')\n",
-    "df = load_raw_data()\n",
-    "\n",
-    "if target and target in df.columns:\n",
-    "    plt.figure(figsize=(8, 5))\n",
-    "    if df[target].dtype in ['int64', 'float64'] and df[target].nunique() > 10:\n",
-    "        sns.histplot(df[target], kde=True)\n",
-    "    else:\n",
-    "        sns.countplot(data=df, x=target)\n",
-    "    plt.title(f\"Distribution of {target}\")\n",
-    "    plt.show()\n",
-    "else:\n",
-    "    print(\"Target column not found or not configured.\")"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "{% if LANGUAGE == \"pt-BR\" %}\n",
-    "## 2. Valores Ausentes\n",
-    "{% else %}\n",
-    "## 2. Missing Values\n",
-    "{% endif %}"
+    "# 1) Data quality + leakage screening\nquality = pd.DataFrame([{\n    'feature': c,\n    'dtype': str(df[c].dtype),\n    'missing_pct': float(df[c].isna().mean()),\n    'n_unique': int(df[c].nunique(dropna=True)),\n    'unique_ratio': float(df[c].nunique(dropna=True) / max(len(df), 1)),\n    'constant': bool(df[c].nunique(dropna=True) <= 1),\n    'id_like': bool(c != target and len(df) >= 50 and df[c].nunique(dropna=True) / max(len(df), 1) >= .98),\n} for c in df.columns]).sort_values(['constant', 'missing_pct', 'unique_ratio'], ascending=[False, False, False])\n\nprint(f'duplicated_rows={int(df.duplicated().sum())}')\ndisplay(quality)\n\nleakage_flags = []\nif target and target in df.columns:\n    target_text = df[target].astype('string').fillna('__NA__')\n    suspicious_tokens = {'target','label','outcome','result','resultado','future','futuro','after','post','predicted'}\n    for c in df.columns:\n        if c == target:\n            continue\n        s = df[c]\n        if s.astype('string').fillna('__NA__').equals(target_text):\n            leakage_flags.append((c, 'critical', 'direct target copy'))\n        if len(df) >= 50 and s.nunique(dropna=True) / max(len(df), 1) >= .98:\n            leakage_flags.append((c, 'review', 'near-unique / ID-like'))\n        if any(t in c.lower() for t in suspicious_tokens):\n            leakage_flags.append((c, 'review', 'name suggests target/future/post-event information'))\n\nleakage = pd.DataFrame(leakage_flags, columns=['feature','risk','reason']).drop_duplicates()\ndisplay(leakage)\n\n# 2) Univariate predictive signal (Mutual Information)\nmi = pd.DataFrame()\nif target and target in df.columns and df[target].nunique(dropna=True) > 1:\n    work = df.dropna(subset=[target]).copy()\n    if len(work) > 20000:\n        work = work.sample(20000, random_state=42)\n\n    X_mi = work.drop(columns=[target] + date_columns, errors='ignore')\n    prepared, discrete = pd.DataFrame(index=X_mi.index), []\n    for c in X_mi.columns:\n        s = X_mi[c]\n        if pd.api.types.is_numeric_dtype(s):\n            s = s.replace([np.inf, -np.inf], np.nan)\n            prepared[c] = s.fillna(0 if pd.isna(s.median()) else s.median())\n            discrete.append(False)\n        else:\n            prepared[c] = pd.factorize(s.astype('string').fillna('__MISSING__'), sort=True)[0]\n            discrete.append(True)\n\n    y_raw = work[target]\n    regression = pd.api.types.is_numeric_dtype(y_raw) and y_raw.nunique() > max(20, int(len(y_raw) * .02))\n    if regression:\n        y_mi = pd.to_numeric(y_raw, errors='coerce')\n        ok = y_mi.notna()\n        scores = mutual_info_regression(prepared.loc[ok], y_mi.loc[ok], discrete_features=np.asarray(discrete), random_state=42)\n    else:\n        y_mi = LabelEncoder().fit_transform(y_raw.astype('string'))\n        scores = mutual_info_classif(prepared, y_mi, discrete_features=np.asarray(discrete), random_state=42)\n\n    mi = pd.DataFrame({'feature': prepared.columns, 'mutual_information': scores}).sort_values('mutual_information', ascending=False)\n    total = mi['mutual_information'].clip(lower=0).sum()\n    mi['relative_signal'] = mi['mutual_information'].clip(lower=0) / total if total > 0 else 0.0\ndisplay(mi.head(25))"
    ]
   },
   {
@@ -94,28 +31,23 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "missing = df.isnull().sum()\n",
-    "missing = missing[missing > 0]\n",
-    "if not missing.empty:\n",
-    "    print(\"Missing values per column:\")\n",
-    "    print(missing)\n",
-    "else:\n",
-    "    print(\"No missing values detected.\")"
+    "# 3) XGBoost probe + naive baseline + permutation importance + SHAP\nprobe = None\nprobe_results, permutation_table = {}, pd.DataFrame()\nctx = {}\n\ndef _problem_type(y):\n    if pd.api.types.is_numeric_dtype(y) and y.nunique(dropna=True) > max(20, int(len(y) * .02)):\n        return 'regression'\n    return 'classification'\n\ndef _prep(X):\n    numeric = X.select_dtypes(include=[np.number, 'bool']).columns.tolist()\n    categorical = [c for c in X.columns if c not in numeric]\n    transformers = []\n    if numeric:\n        transformers.append(('num', Pipeline([('imputer', SimpleImputer(strategy='median'))]), numeric))\n    if categorical:\n        transformers.append(('cat', Pipeline([\n            ('imputer', SimpleImputer(strategy='constant', fill_value='__MISSING__')),\n            ('onehot', OneHotEncoder(handle_unknown='ignore')),\n        ]), categorical))\n    return ColumnTransformer(transformers)\n\ncan_probe = target and target in df.columns and df[target].nunique(dropna=True) > 1 and task not in {'unsupervised','bandit'}\n\nif can_probe and XGBOOST_AVAILABLE:\n    work = df.dropna(subset=[target]).copy()\n    if date_col:\n        work = work.sort_values(date_col)\n\n    X = work.drop(columns=[target] + date_columns, errors='ignore')\n    X = X.drop(columns=[c for c in X if X[c].nunique(dropna=True) <= 1], errors='ignore')\n    y_raw = work[target]\n    problem = _problem_type(y_raw)\n\n    if problem == 'classification':\n        y = pd.Series(LabelEncoder().fit_transform(y_raw.astype('string')), index=y_raw.index)\n    else:\n        y = pd.to_numeric(y_raw, errors='coerce')\n        ok = y.notna()\n        X, y = X.loc[ok], y.loc[ok]\n\n    if date_col or task == 'timeseries':\n        cut = int(len(X) * .8)\n        X_train, X_valid, y_train, y_valid = X.iloc[:cut], X.iloc[cut:], y.iloc[:cut], y.iloc[cut:]\n        split_strategy = 'chronological'\n    else:\n        stratify = y if problem == 'classification' and y.value_counts().min() >= 2 else None\n        X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=.2, random_state=42, stratify=stratify)\n        split_strategy = 'random_stratified' if stratify is not None else 'random'\n\n    model = (\n        XGBClassifier(n_estimators=250, max_depth=4, learning_rate=.05, subsample=.85, colsample_bytree=.85,\n                      reg_lambda=1.0, random_state=42, n_jobs=4, eval_metric='logloss')\n        if problem == 'classification'\n        else XGBRegressor(n_estimators=250, max_depth=4, learning_rate=.05, subsample=.85, colsample_bytree=.85,\n                          reg_lambda=1.0, random_state=42, n_jobs=4, objective='reg:squarederror')\n    )\n    dummy = DummyClassifier(strategy='prior') if problem == 'classification' else DummyRegressor(strategy='mean')\n\n    probe = Pipeline([('prep', _prep(X_train)), ('model', model)])\n    baseline = Pipeline([('prep', _prep(X_train)), ('model', dummy)])\n    probe.fit(X_train, y_train)\n    baseline.fit(X_train, y_train)\n\n    def _metrics(m, X_, y_):\n        pred = m.predict(X_)\n        if problem == 'classification':\n            out = {'accuracy': accuracy_score(y_, pred), 'f1_macro': f1_score(y_, pred, average='macro')}\n            if pd.Series(y_).nunique() == 2 and hasattr(m, 'predict_proba'):\n                out['roc_auc'] = roc_auc_score(y_, m.predict_proba(X_)[:, 1])\n            return out\n        return {'mae': mean_absolute_error(y_, pred), 'r2': r2_score(y_, pred)}\n\n    train_m, valid_m, base_m = _metrics(probe, X_train, y_train), _metrics(probe, X_valid, y_valid), _metrics(baseline, X_valid, y_valid)\n    primary = 'roc_auc' if 'roc_auc' in valid_m else ('f1_macro' if problem == 'classification' else 'r2')\n    probe_results = {\n        'problem': problem, 'split_strategy': split_strategy, 'primary_metric': primary,\n        'train': train_m, 'validation': valid_m, 'baseline_validation': base_m,\n        'train_validation_gap': float(train_m[primary] - valid_m[primary]),\n        'improvement_over_baseline': float(valid_m[primary] - base_m[primary]),\n    }\n    display(pd.DataFrame([{'dataset':'train', **train_m}, {'dataset':'validation', **valid_m}, {'dataset':'baseline_validation', **base_m}]))\n\n    scoring = 'roc_auc' if primary == 'roc_auc' else ('f1_macro' if problem == 'classification' else 'neg_mean_absolute_error')\n    Xv, yv = X_valid, y_valid\n    if len(Xv) > 2000:\n        idx = Xv.sample(2000, random_state=42).index\n        Xv, yv = Xv.loc[idx], yv.loc[idx]\n    pi = permutation_importance(probe, Xv, yv, scoring=scoring, n_repeats=5, random_state=42, n_jobs=2)\n    permutation_table = pd.DataFrame({'feature':Xv.columns, 'importance_mean':pi.importances_mean, 'importance_std':pi.importances_std}).sort_values('importance_mean', ascending=False)\n    positive = permutation_table['importance_mean'].clip(lower=0)\n    permutation_table['relative_importance'] = positive / positive.sum() if positive.sum() > 0 else 0.0\n    display(permutation_table.head(25))\n\n    if SHAP_AVAILABLE:\n        try:\n            sample = X_valid.sample(min(500, len(X_valid)), random_state=42)\n            transformed = probe.named_steps['prep'].transform(sample)\n            names = probe.named_steps['prep'].get_feature_names_out()\n            shap.summary_plot(shap.TreeExplainer(probe.named_steps['model']).shap_values(transformed),\n                              transformed, feature_names=names, max_display=20, show=True)\n        except Exception as exc:\n            print(f'SHAP skipped in this environment: {exc}')\n\n    ctx = {'X_train':X_train, 'X_valid':X_valid}\nelif can_probe:\n    print('XGBoost is not installed. Install requirements-ml.txt.')\nelse:\n    print('Probe skipped for this task/target.')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# 4) Drift / stability (PSI)\ndef psi(reference, current, bins=10):\n    if pd.api.types.is_numeric_dtype(reference):\n        ref = pd.to_numeric(reference, errors='coerce').dropna()\n        cur = pd.to_numeric(current, errors='coerce').dropna()\n        if ref.empty or cur.empty or ref.nunique() <= 1:\n            return np.nan\n        edges = np.unique(ref.quantile(np.linspace(0, 1, bins + 1)).values)\n        if len(edges) < 3:\n            return np.nan\n        edges[0], edges[-1] = -np.inf, np.inf\n        ref = pd.cut(ref, edges, include_lowest=True).value_counts(sort=False, normalize=True)\n        cur = pd.cut(cur, edges, include_lowest=True).value_counts(sort=False, normalize=True).reindex(ref.index, fill_value=0)\n    else:\n        ref_s, cur_s = reference.astype('string').fillna('__MISSING__'), current.astype('string').fillna('__MISSING__')\n        top = set(ref_s.value_counts().head(20).index)\n        ref_s, cur_s = ref_s.where(ref_s.isin(top), '__OTHER__'), cur_s.where(cur_s.isin(top), '__OTHER__')\n        cats = sorted(set(ref_s.unique()) | set(cur_s.unique()))\n        ref = ref_s.value_counts(normalize=True).reindex(cats, fill_value=0)\n        cur = cur_s.value_counts(normalize=True).reindex(cats, fill_value=0)\n    ref, cur = ref.clip(lower=1e-6), cur.clip(lower=1e-6)\n    return float(((cur - ref) * np.log(cur / ref)).sum())\n\ndef drift_status(value):\n    if pd.isna(value): return 'insufficient'\n    if value < .10: return 'stable'\n    if value <= .25: return 'watch'\n    return 'drift'\n\ndef drift_report(reference_df, current_df, columns=None):\n    columns = columns or sorted(set(reference_df.columns) & set(current_df.columns))\n    rows = []\n    for c in columns:\n        if c == target: continue\n        value = psi(reference_df[c], current_df[c])\n        rows.append({'feature':c, 'psi':value, 'status':drift_status(value)})\n    return pd.DataFrame(rows).sort_values('psi', ascending=False, na_position='last')\n\nhistorical_drift = pd.DataFrame()\nif len(df) >= 50:\n    ordered = df.sort_values(date_col) if date_col else df\n    cut = int(len(ordered) * .6)\n    historical_drift = drift_report(ordered.iloc[:cut], ordered.iloc[cut:], [c for c in df.columns if c != target])\n    display(historical_drift.head(30))\n\nprediction_drift = np.nan\nif probe is not None:\n    if hasattr(probe, 'predict_proba'):\n        p_train = pd.Series(probe.predict_proba(ctx['X_train']).max(axis=1))\n        p_valid = pd.Series(probe.predict_proba(ctx['X_valid']).max(axis=1))\n    else:\n        p_train, p_valid = pd.Series(probe.predict(ctx['X_train'])), pd.Series(probe.predict(ctx['X_valid']))\n    prediction_drift = psi(p_train, p_valid)\n    print({'prediction_psi':prediction_drift, 'status':drift_status(prediction_drift)})\n\n# 5) Decision summary\ndecisions = []\nif not leakage.empty:\n    for row in leakage.itertuples(index=False):\n        decisions.append((row.risk, row.feature, row.reason))\nif not mi.empty and mi.iloc[0]['relative_signal'] >= .60:\n    r = mi.iloc[0]\n    decisions.append(('review', r['feature'], f\"dominates univariate signal ({r['relative_signal']:.1%}); inspect leakage/availability\"))\nif probe_results:\n    if probe_results['train_validation_gap'] > .10:\n        decisions.append(('review', 'model', f\"train/validation gap={probe_results['train_validation_gap']:.3f}: possible overfitting/drift\"))\n    if probe_results['improvement_over_baseline'] <= .02:\n        decisions.append(('review', 'model', 'probe barely improves over naive baseline; feature signal may be weak'))\nif not permutation_table.empty and permutation_table.iloc[0]['relative_importance'] >= .60:\n    r = permutation_table.iloc[0]\n    decisions.append(('review', r['feature'], f\"dominates positive permutation importance ({r['relative_importance']:.1%})\"))\nif not historical_drift.empty:\n    for c in historical_drift.loc[historical_drift['status'] == 'drift', 'feature'].head(10):\n        decisions.append(('review', c, 'historical PSI > 0.25'))\nif not pd.isna(prediction_drift) and prediction_drift > .25:\n    decisions.append(('review', 'predictions', f'prediction PSI={prediction_drift:.3f}'))\nif not decisions:\n    decisions.append(('ok', 'dataset/model probe', 'no major automatic warning'))\n\ndisplay(pd.DataFrame(decisions, columns=['severity','subject','diagnostic']))"
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "{% if LANGUAGE == \"pt-BR\" %}\n",
-    "## O que tentar a seguir:\n",
-    "- Explore a correlação entre as variáveis usando `df.corr()`.\n",
-    "- Crie gráficos de dispersão (scatter plots) para ver a relação entre features e o alvo.\n",
-    "{% else %}\n",
-    "## What to try next:\n",
-    "- Explore correlations between variables using `df.corr()`.\n",
-    "- Create scatter plots to see the relationship between features and the target.\n",
-    "{% endif %}"
+    "{% if LANGUAGE == \"pt-BR\" %}\n## Como interpretar\n\n- **Leakage confirmado bloqueia o próximo passo.**\n- MI mostra sinal individual; permutation importance mostra contribuição no modelo; SHAP ajuda a entender direção/efeito local.\n- Gap treino × validação sugere overfitting ou mudança de distribuição.\n- PSI `<0.10` é estável; `0.10–0.25` merece atenção; `>0.25` é um alerta forte de drift (heurística, não regra universal).\n- Prediction drift é alerta. **Concept drift** só é confirmável quando chegam labels atuais.\n- Se o XGBoost sonda quase não supera o baseline, uma LSTM não vai magicamente criar sinal.\n- Depois disso, compare XGBoost, baseline temporal e LSTM usando **o mesmo split e as mesmas métricas**.\n{% else %}\n## How to interpret\n\n- **Confirmed leakage blocks the next step.**\n- MI shows individual signal; permutation importance shows model contribution; SHAP helps explain direction/local effects.\n- Train × validation gaps suggest overfitting or distribution change.\n- PSI `<0.10` is stable; `0.10–0.25` deserves attention; `>0.25` is a strong drift warning (heuristic, not a universal rule).\n- Prediction drift is a warning. **Concept drift** requires current labels.\n- If the XGBoost probe barely beats the baseline, an LSTM will not magically create signal.\n- Then compare XGBoost, temporal baseline, and LSTM using **the same split and metrics**.\n{% endif %}"
    ]
   }
  ],
