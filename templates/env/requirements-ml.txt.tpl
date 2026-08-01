@@ -4,6 +4,8 @@ numpy
 scikit-learn
 matplotlib
 seaborn
+xgboost
+shap
 {% if LEARNING_ENABLED == "true" %}
 streamlit
 {% else %}
