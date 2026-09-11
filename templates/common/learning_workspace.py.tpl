@@ -51,6 +51,8 @@ def render_project_doc(relative_path: str):
         "docs/evaluation.pt-BR.md",
         "docs/monitoring.md",
         "docs/monitoring.pt-BR.md",
+        "docs/rl-lab.md",
+        "docs/rl-lab.pt-BR.md",
         "docs/mab-lab.md",
         "docs/mab-lab.pt-BR.md",
         "docs/bandit-walkthrough.md",
@@ -107,6 +109,7 @@ def main():
             {% if GENERATE_BANDIT == "true" %}
             "Bandit Lab",
             {% endif %}
+            "RL Lab",
             "Train & Evaluate",
             "Production & Monitoring",
             "Experiments & MLflow"
@@ -259,6 +262,18 @@ def main():
             st.divider()
             st.info("Run the Baseline Lab to establish or update your performance benchmark:")
             st.code(f"python -m {{PACKAGE_NAME}}.lab baseline")
+
+    elif section == "RL Lab":
+        st.header("🤖 Reinforcement Learning Lab & Assisted Training")
+        st.write("Explore reinforcement learning step-by-step with interactive environment stepping, transition diagnostics, and parameter editing.")
+
+        rl_workspace_path = project_root() / f"src/{{PACKAGE_NAME}}/rl_workspace.py"
+        if rl_workspace_path.exists():
+            st.success("Visual RL Workspace is available!")
+            st.markdown(f"Run the standalone interactive workspace using:\n```bash\nstreamlit run src/{{PACKAGE_NAME}}/rl_workspace.py\n```\nor CLI shortcut:\n```bash\npython -m {{PACKAGE_NAME}}.lab rl-workspace\n```")
+
+        lang_suffix = ".pt-BR" if "{{LANGUAGE}}" == "pt-BR" else ""
+        render_project_doc(f"docs/rl-lab{lang_suffix}.md")
 
     {% if GENERATE_BANDIT == "true" %}
     elif section == "Bandit Lab":
