@@ -6,25 +6,32 @@ Welcome to the **Reinforcement Learning Lab Base**. This foundation provides an 
 
 ## 🎯 Architecture & Base Contracts
 
-The RL foundation is built on four core Python abstractions located in `src/{{PACKAGE_NAME}}/rl.py`:
+The RL foundation is built on explicit abstractions located in `src/{{PACKAGE_NAME}}/rl.py`:
 
-### 1. `StepRecord` Data Structure
-Tracks every detail of a single environment interaction:
+### 1. `AgentTransition` vs. `StepRecord` Data Structures
+To prevent hidden state leakage in partially observable environments (POMDPs), the interaction loop strictly separates agent-visible feedback from full environment debug data:
+
 ```python
 @dataclass
-class StepRecord:
-    episode: int
-    step: int
-    state_before: Any          # True internal state s
+class AgentTransition:
+    """Agent-visible transition data (contains ONLY observable feedback)."""
     observation_before: Any    # Agent observation o
     action: Any                # Action a
     reward: float              # Reward r
-    state_after: Any           # Next true state s'
     observation_after: Any     # Next observation o'
     terminated: bool           # Terminal status
-    truncated: bool            # Truncated status (horizon/limit)
-    info: dict                 # Environment diagnostic info
-    update_info: dict           # Agent update diagnostics (TD error, Q-delta, etc.)
+    truncated: bool            # Truncated status
+    info: dict                 # Diagnostic info
+
+@dataclass
+class StepRecord:
+    """Richer UI debug & history record combining full world state and AgentTransition."""
+    episode: int
+    step: int
+    state_before: Any          # True internal world state s
+    state_after: Any           # Next true internal world state s'
+    transition: AgentTransition
+    update_info: dict          # Diagnostic data from agent update
 ```
 
 ### 2. `BaseEnvironment` Contract
@@ -60,8 +67,8 @@ class BaseAgent:
         """Selects an action given current observation."""
         ...
 
-    def update(self, transition: StepRecord) -> dict:
-        """Updates agent parameters using transition. Returns diagnostic dict."""
+    def update(self, transition: AgentTransition, available_next_actions: Optional[list[Any]] = None) -> dict:
+        """Updates agent parameters using agent-visible transition. Returns diagnostic dict."""
         ...
 
     def get_policy(self, observation: Any, available_actions: Optional[list[Any]] = None) -> dict[Any, float]:
@@ -78,7 +85,7 @@ class BaseAgent:
 ```
 
 ### 4. `RLRunner` Coordinator
-Coordinates stepping, episode counters, cumulative return $G_t$, and transition history:
+Coordinates stepping, episode counters, cumulative return $G_t$ (undiscounted total episode reward $\sum r_t$), and transition history:
 ```python
 runner = RLRunner(env, agent)
 record = runner.step(action=chosen_action)  # Manual step
@@ -131,8 +138,8 @@ To implement a custom **Fully Observable Markov Decision Process (MDP)** exercis
    Implement a tabular algorithm (e.g., Q-Learning, SARSA, Monte Carlo) by subclassing `BaseAgent`.
    ```python
    class MyQLearningAgent(BaseAgent):
-       def update(self, transition: StepRecord) -> dict:
-           # compute TD error and update Q(s, a)
+       def update(self, transition: AgentTransition, available_next_actions=None) -> dict:
+           # compute TD error using AgentTransition and update Q(obs, action)
            ...
            return {"td_error": td_err, "q_new": new_val}
    ```
@@ -172,7 +179,7 @@ To implement a custom **Partially Observable Markov Decision Process (POMDP)** e
    ```
 
 2. **Define Belief Agent**:
-   Implement an agent maintaining a belief state $b(s)$ updated via Bayes rule inside `update(transition)`.
+   Implement an agent maintaining a belief state $b(s)$ updated via Bayes rule inside `update(transition: AgentTransition)`. Note that `AgentTransition` strictly isolates the agent from `self.true_tiger_pos`.
 
 3. **Visualize in Workspace**:
    The transition panel will clearly highlight the distinction between `State Before` and `Observation Before`, allowing students to visually see partial observability in action.

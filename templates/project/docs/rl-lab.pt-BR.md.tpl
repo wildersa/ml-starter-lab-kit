@@ -6,25 +6,32 @@ Bem-vindo ao **Laboratório de Aprendizado por Reforço (RL)**. Esta base fornec
 
 ## 🎯 Arquitetura e Contratos Base
 
-A fundação de RL é construída sobre quatro abstrações Python em `src/{{PACKAGE_NAME}}/rl.py`:
+A fundação de RL é construída sobre abstrações Python em `src/{{PACKAGE_NAME}}/rl.py`:
 
-### 1. Estrutura de Dados `StepRecord`
-Registra cada detalhe de uma etapa de interação com o ambiente:
+### 1. Estruturas `AgentTransition` vs. `StepRecord`
+Para prevenir o vazamento do estado oculto em ambientes parcialmente observáveis (POMDPs), o loop de interação separa estritamente os dados do agente dos dados de depuração:
+
 ```python
 @dataclass
-class StepRecord:
-    episode: int
-    step: int
-    state_before: Any          # Estado interno real s
+class AgentTransition:
+    """Dados visíveis apenas para o agente (apenas feedback observável)."""
     observation_before: Any    # Observação do agente o
     action: Any                # Ação a
     reward: float              # Recompensa r
-    state_after: Any           # Próximo estado real s'
     observation_after: Any     # Próxima observação o'
     terminated: bool           # Status de término
-    truncated: bool            # Status de truncamento (limite de passos)
-    info: dict                 # Informações de diagnóstico do ambiente
-    update_info: dict           # Diagnóstico de atualização do agente (TD error, Q-delta, etc.)
+    truncated: bool            # Status de truncamento
+    info: dict                 # Informações de diagnóstico
+
+@dataclass
+class StepRecord:
+    """Registro mais completo de UI e histórico unindo estado real e AgentTransition."""
+    episode: int
+    step: int
+    state_before: Any          # Estado interno real do mundo s
+    state_after: Any           # Próximo estado interno real do mundo s'
+    transition: AgentTransition
+    update_info: dict          # Diagnóstico de atualização do agente
 ```
 
 ### 2. Contrato `BaseEnvironment`
@@ -60,8 +67,8 @@ class BaseAgent:
         """Seleciona uma ação dada a observação atual."""
         ...
 
-    def update(self, transition: StepRecord) -> dict:
-        """Atualiza os parâmetros do agente usando a transição. Retorna um dicionário de diagnóstico."""
+    def update(self, transition: AgentTransition, available_next_actions: Optional[list[Any]] = None) -> dict:
+        """Atualiza os parâmetros do agente usando a transição observável. Retorna um dicionário de diagnóstico."""
         ...
 
     def get_policy(self, observation: Any, available_actions: Optional[list[Any]] = None) -> dict[Any, float]:
@@ -78,7 +85,7 @@ class BaseAgent:
 ```
 
 ### 4. Coordenador `RLRunner`
-Coordena passos, contadores de episódios, retorno acumulado $G_t$ e histórico de transições:
+Coordena passos, contadores de episódios, retorno acumulado $G_t$ (soma não descontada das recompensas do episódio $\sum r_t$) e histórico de transições:
 ```python
 runner = RLRunner(env, agent)
 record = runner.step(action=chosen_action)  # Passo manual
@@ -127,7 +134,7 @@ Para implementar um exercício **Processo de Decisão de Markov Parcialmente Obs
    - `get_state()` retorna o estado real $s$ (ex: `posicao_tigre = "ESQUERDA"`).
    - `get_observation()` retorna a observação com ruído $o$ (ex: `rugido = "ESQUERDA"` com probabilidade 85%).
 2. **Definir Agente de Crença**:
-   Implemente um agente que mantém o estado de crença $b(s)$ atualizado via regra de Bayes em `update(transition)`.
+   Implemente um agente que mantém o estado de crença $b(s)$ atualizado via regra de Bayes em `update(transition: AgentTransition)`. O `AgentTransition` isola o agente do estado interno.
 3. **Visualizar no Workspace**:
    O painel de transição destacará a distinção entre `Estado Anterior` e `Observação Anterior`.
 

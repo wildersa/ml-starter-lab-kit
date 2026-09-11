@@ -17,6 +17,20 @@ class TestRLLabContractsAndRunner(unittest.TestCase):
         exec(code, namespace)
         self.rl = namespace
 
+    def test_agent_transition_isolation(self):
+        agent_trans_cls = self.rl["AgentTransition"]
+        trans = agent_trans_cls(
+            observation_before="obs_a",
+            action="ACT_1",
+            reward=1.5,
+            observation_after="obs_b",
+            terminated=False,
+            truncated=False,
+            info={"debug": 123}
+        )
+        self.assertFalse(hasattr(trans, "state_before"), "AgentTransition MUST NOT contain state_before")
+        self.assertFalse(hasattr(trans, "state_after"), "AgentTransition MUST NOT contain state_after")
+
     def test_gridworld_env(self):
         env_cls = self.rl["GridworldToyEnv"]
         env = env_cls(grid_size=3)
@@ -57,6 +71,11 @@ class TestRLLabContractsAndRunner(unittest.TestCase):
         self.assertIn("td_error", rec.update_info)
         self.assertEqual(len(runner.history), 1)
 
+        # Verify transition property accessors
+        self.assertEqual(rec.observation_before, (0, 0))
+        self.assertEqual(rec.observation_after, (0, 1))
+        self.assertFalse(hasattr(rec.transition, "state_before"))
+
         # Execute step without specifying action (agent selects action)
         rec2 = runner.step()
         self.assertEqual(rec2.step, 2)
@@ -69,6 +88,28 @@ class TestRLLabContractsAndRunner(unittest.TestCase):
 
         policy = agent.get_policy((0, 1), ["UP", "RIGHT", "DOWN", "LEFT"])
         self.assertGreater(policy["DOWN"], policy["UP"])
+
+    def test_q_learning_full_next_action_set_bootstrap(self):
+        agent_cls = self.rl["ToyRLAgent"]
+        agent_trans_cls = self.rl["AgentTransition"]
+
+        agent = agent_cls(alpha=1.0, gamma=0.9, epsilon=0.0)
+        # Artificially populate a non-zero Q-value for an action at next state
+        agent.set_q_value("obs_next", "LEFT", 10.0)
+
+        trans = agent_trans_cls(
+            observation_before="obs_start",
+            action="RIGHT",
+            reward=2.0,
+            observation_after="obs_next",
+            terminated=False,
+            truncated=False
+        )
+
+        # Update should bootstrap max Q(obs_next, a) over ALL available next actions (including "LEFT")
+        update_diag = agent.update(trans, available_next_actions=["UP", "RIGHT", "DOWN", "LEFT"])
+        # target = 2.0 + 0.9 * 10.0 = 11.0
+        self.assertEqual(update_diag["target"], 11.0)
 
 
 class TestRLLabScaffolding(unittest.TestCase):
