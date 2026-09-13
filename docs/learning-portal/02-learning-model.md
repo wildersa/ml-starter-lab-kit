@@ -1,5 +1,19 @@
 # Learning model
 
+## Adopted foundation
+
+The Learning Portal uses the methodology defined in [`09-learning-science-foundations.md`](09-learning-science-foundations.md) as its default educational model.
+
+The core foundations are:
+
+- Mastery Learning;
+- Cognitive Load management + Worked Examples + Scaffolding;
+- Retrieval Practice;
+- Experiential Learning;
+- Competency / Skill Graph progression.
+
+Gamification is layered on top of this model and must not become the authority for progression.
+
 ## Standard learning loop
 
 Each skill should follow the same conceptual progression unless the subject clearly does not need every step:
@@ -7,12 +21,16 @@ Each skill should follow the same conceptual progression unless the subject clea
 1. **Intuition** — explain what problem the concept solves and why it exists.
 2. **Theory** — introduce the formal concept and vocabulary.
 3. **Visualization** — make the mechanism observable whenever possible.
-4. **Manual execution** — perform one small calculation or state transition when doing so exposes the mechanism.
-5. **Guided experiment** — change inputs/parameters and predict what will happen.
-6. **Library abstraction** — show the standard library/tool that performs the same operation at useful scale.
-7. **Application** — solve a realistic task.
-8. **Review** — retrieve the idea later without simply rereading it.
-9. **Mastery checkpoint** — demonstrate enough understanding to unlock dependent skills.
+4. **Worked example** — show one small, understandable execution before asking for independent problem solving.
+5. **Manual or guided execution** — perform one small calculation or state transition when doing so exposes the mechanism.
+6. **Prediction** — ask what the learner expects before an experiment is run.
+7. **Guided experiment** — change inputs/parameters and observe what happens.
+8. **Reduced scaffolding** — require a similar task with less help.
+9. **Library abstraction** — show the standard library/tool that performs the same operation at useful scale.
+10. **Application** — solve a realistic task.
+11. **Mastery checkpoint** — demonstrate enough understanding to acquire/unlock dependent skills.
+12. **Retrieval review** — revisit the skill later without simply rereading it.
+13. **Transfer** — apply the skill to a different or learner-owned dataset/environment where appropriate.
 
 ## Manual-first rule
 
@@ -34,6 +52,16 @@ Examples where a manual execution is useful:
 
 The portal should not require manual calculation when the operation becomes repetitive arithmetic without adding conceptual value.
 
+## Worked examples and scaffolding
+
+A beginner should not be pushed directly from theory into a full independent problem when a smaller guided progression can expose the mechanism first.
+
+The preferred progression is:
+
+**worked example → partially guided exercise → independent exercise → realistic application**
+
+Hints and structural guidance should decrease as competence increases.
+
 ## Prediction before execution
 
 Whenever practical, ask the learner to predict the effect before running the experiment.
@@ -44,7 +72,9 @@ Examples:
 - If K increases in K-Means, what do you expect to happen to within-cluster distance?
 - If the classification threshold increases, what direction should precision/recall move?
 
-This separates understanding from passive observation.
+This separates understanding from passive observation and supports the experiential loop:
+
+**predict → execute → observe → explain**
 
 ## Library-after-mechanism
 
@@ -87,6 +117,8 @@ A skill may move through states such as:
 
 Completion and mastery are different concepts.
 
+A learner may keep an acquired skill while its review status changes if later retrieval evidence shows that understanding weakened.
+
 ## Error memory
 
 The portal should retain meaningful misconceptions, not only scores.
@@ -101,6 +133,18 @@ Examples:
 
 A future review can target these misconceptions directly.
 
+## Retrieval review
+
+Review should require the learner to retrieve or apply knowledge again instead of only reopening the lesson.
+
+Examples:
+
+- explain the concept without seeing the definition;
+- solve a changed numerical example;
+- diagnose a new scenario;
+- compare two similar concepts;
+- transfer the skill to another dataset or environment.
+
 ## LLM role
 
 An LLM may help with:
@@ -113,3 +157,9 @@ An LLM may help with:
 - open-ended review.
 
 However, deterministic exercises should remain deterministically checkable whenever possible. Core progression must not require an LLM to decide results that can be verified by code or a known expected state.
+
+## Initial mastery implementation
+
+The first version should use explicit and inspectable evidence such as checkpoint results, attempts, hint usage, misconception tags, review outcomes, and transfer activities.
+
+Probabilistic Knowledge Tracing is intentionally deferred. It may be added later without changing the learning model.
