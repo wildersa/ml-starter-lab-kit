@@ -110,6 +110,17 @@ def run_invoice_agent():
         print("\n[INFO] Invoice Agent Lab is not enabled in this project.")
         print("To enable it, generate a project with the 'invoice-agent' task.")
 
+def run_rl_workspace():
+    pkg_dir = Path(__file__).parent
+    workspace_path = pkg_dir / "rl_workspace.py"
+
+    if workspace_path.exists():
+        print("\n[INFO] RL Workspace found.")
+        print("Run it with:")
+        print(f"  streamlit run {workspace_path}")
+    else:
+        print("\n[INFO] RL Workspace is not available in this project.")
+
 {% if GENERATE_BANDIT == "true" %}
 def run_bandit_dashboard():
     # Bandit Dashboard is a Streamlit app named bandit_dashboard.py inside the package
@@ -199,6 +210,7 @@ def main():
 
     subparsers.add_parser("model-card", help="Generate reports/model-card.md artifact")
     subparsers.add_parser("manifest", help="Generate reports/pipeline-manifest.json and reproducibility summary")
+    subparsers.add_parser("rl-workspace", help="Launch interactive RL Workspace and Assisted Training")
 
     {% if GENERATE_BANDIT == "true" %}
     subparsers.add_parser("bandit-dashboard", help="Visual explorer for Bandit Lab results")
@@ -238,6 +250,8 @@ def main():
         run_manifest()
     elif args.command == "invoice-agent":
         run_invoice_agent()
+    elif args.command == "rl-workspace":
+        run_rl_workspace()
     {% if GENERATE_BANDIT == "true" %}
     elif args.command == "bandit-dashboard":
         run_bandit_dashboard()
