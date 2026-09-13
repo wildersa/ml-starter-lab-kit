@@ -13,6 +13,22 @@ The project should support two complementary experiences:
 
 The Learning Portal should reuse project data and services where useful, but it should not depend on the existing UI structure.
 
+## Adopted learning methodology
+
+The Learning Portal follows an explicit learning-science foundation rather than treating its educational model as an open product hypothesis.
+
+The adopted foundation is:
+
+- **Mastery Learning** for progression based on demonstrated competence;
+- **Cognitive Load management + Worked Examples + Scaffolding** for how new concepts are introduced and guidance is removed;
+- **Retrieval Practice** for review and retained understanding;
+- **Experiential Learning** for prediction, execution, observation, and explanation;
+- **Competency / Skill Graph** for prerequisite-aware progression and multiple learning paths.
+
+Gamification is a motivation and presentation layer over this foundation. XP, badges, achievements, and graph expansion must not replace evidence of mastery.
+
+See [`09-learning-science-foundations.md`](09-learning-science-foundations.md) for the adopted rules and references.
+
 ## Core pedagogical principle
 
 > Important abstractions should not appear for the first time hidden behind a library call.
@@ -35,9 +51,12 @@ Manual work is not an end in itself. If a calculation becomes repetitive arithme
 - [`06-activities-and-assessment.md`](06-activities-and-assessment.md) — exercises, deterministic checking, open solutions, review, and scoring.
 - [`07-portal-experience.md`](07-portal-experience.md) — portal surfaces, notes, progress, review, and project integration.
 - [`08-content-and-runtime-boundaries.md`](08-content-and-runtime-boundaries.md) — separation between content, learning engine, portal UI, and existing project runtime.
+- [`09-learning-science-foundations.md`](09-learning-science-foundations.md) — adopted learning-science foundations, gamification boundary, and methodology rules.
 
 ## Status
 
 These documents are product and pedagogical design material, not an implementation contract yet.
+
+The learning methodology itself is an adopted design decision. Implementation details, thresholds, UI mechanics, and individual curriculum nodes may still evolve within those principles.
 
 Before opening implementation issues, convert this concept into bounded ownership slices. Do not mechanically turn each section or curriculum node into a GitHub issue.
