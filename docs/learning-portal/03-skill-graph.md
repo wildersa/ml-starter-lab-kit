@@ -12,6 +12,8 @@ Examples:
 
 Therefore the progression model should be a **directed acyclic graph (DAG)** of competencies rather than a single curriculum list or strict tree.
 
+This graph is the adopted product model for learning progression. The curriculum defines recommended traversals through it; it does not replace the graph.
+
 ## Skill node
 
 Each node represents a demonstrable competency, not merely a chapter.
@@ -43,6 +45,8 @@ Dependencies may support different rules:
 - mastery threshold greater than simple completion.
 
 The initial implementation should prefer simple explicit dependencies before adding complex rule expressions.
+
+Autonomy means choosing among currently valid paths, not bypassing a real prerequisite.
 
 ## Example convergence
 
@@ -92,6 +96,26 @@ Mastery: 78%
 XP: 480
 Status: acquired
 ```
+
+## Adopted gamification rule
+
+Gamification sits on top of the learning model defined in [`09-learning-science-foundations.md`](09-learning-science-foundations.md).
+
+The graph may use:
+
+- XP;
+- badges;
+- unlock animations;
+- branch achievements;
+- optional challenges;
+- visible map expansion.
+
+However:
+
+- XP cannot compensate for missing mastery;
+- viewing or completing a screen cannot automatically grant a competency;
+- achievements should correspond to meaningful competence or milestones;
+- game mechanics must not reward skipping learning steps or abusing hints simply to maximize points.
 
 ## Skill acquisition
 
@@ -153,6 +177,20 @@ This allows the portal to distinguish:
 - exposure;
 - successful completion;
 - retained understanding.
+
+## Initial mastery model
+
+The first version should keep mastery explicit and inspectable using evidence such as:
+
+- checkpoint results;
+- activity results;
+- attempts;
+- hints used;
+- misconception tags;
+- later review performance;
+- transfer activities.
+
+Knowledge Tracing may be introduced later as an estimation layer over this history. It is not required for the first implementation.
 
 ## Graph authoring rule
 
