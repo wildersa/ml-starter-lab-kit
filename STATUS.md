@@ -6,19 +6,15 @@ _Last updated: 2026-09-14_
 
 The current design effort is the new **Learning Portal** for `ml-starter-lab-kit`.
 
-The existing starter generator, generated project structure, labs/workspace, demo datasets, experiment tooling, and optional MLOps capabilities remain intact. The Learning Portal is a **separate educational surface** in the same ecosystem and should not require a broad refactor of the current UI/runtime.
+The existing starter generator, generated project structure, labs/workspace, demo datasets, experiment tooling, and optional MLOps capabilities remain intact. The Learning Portal is a separate educational surface in the same ecosystem and should not require a broad refactor of the current UI/runtime.
 
-The goal is to move beyond static documentation or notebook-only learning and create an interactive platform where a learner acquires ML skills only after producing evidence that the underlying competency was actually demonstrated.
-
-The central flow is:
-
-**Skill -> Activity -> Execution -> Evaluation -> Evidence -> Mastery -> Unlock**
+The goal is to create an interactive ML learning environment where the learner studies theory, practices concepts, receives feedback, builds real competence, and unlocks new skills only when the required knowledge has actually been demonstrated.
 
 Detailed design lives under [`docs/learning-portal/`](docs/learning-portal/README.md).
 
 ## Decisions already made
 
-### Learning model
+### Learning methodology
 
 The adopted methodology is:
 
@@ -26,9 +22,9 @@ The adopted methodology is:
 - **Cognitive Load management + Worked Examples + Scaffolding** — begin with bounded examples and progressively remove assistance;
 - **Retrieval Practice** — review requires recalling/applying knowledge instead of simply rereading;
 - **Experiential Learning** — prefer `predict -> execute -> observe -> explain` when a concept has observable behavior;
-- **Competency / Skill Graph** — learning is represented as a DAG of real prerequisite relationships rather than one rigid linear course.
+- **Competency / Skill Graph** — learning is represented as a graph of real prerequisite relationships rather than one rigid linear course.
 
-Gamification may expose XP, badges, acquired skills, branch achievements, and visible graph progression, but **XP never replaces mastery**.
+Gamification may expose XP, badges, acquired skills, branch achievements, and visible graph progression, but XP never replaces mastery.
 
 The default lesson progression is:
 
@@ -46,36 +42,17 @@ The default lesson progression is:
 
 The Learning Portal will be a dedicated web application rather than Jupyter/Streamlit as the primary product shell.
 
-Current direction:
+Current technical direction:
 
-- **React + TypeScript** — portal UI, Skill Graph, lessons, notes, visualizations, activity surfaces;
+- **React + TypeScript** — learner-facing portal;
 - **FastAPI + Python** — Learning API and application services;
-- **Python Runner** — separate execution boundary for learner code, pandas, NumPy, scikit-learn, etc.;
+- **Python Runner** — separate execution boundary for learner code and ML/data activities;
 - **Evaluator** — deterministic, structural, algorithm-aware, invariant-based, and rubric evaluation;
-- **Evidence Store** — records the proof used to support mastery decisions;
-- **SQLite initially** — learner state, attempts, notes, evidence, mastery, review, achievements;
+- **Evidence/Mastery** — progression should be based on proof of competence;
+- **SQLite initially** — learner state, notes, attempts, review, progress and evidence;
 - **Project Adapter** — narrow integration with generated projects/datasets without coupling learning content to generator internals.
 
-The portal may provide notebook-like Python cells with inline execution, but `.ipynb` is not the product state model. Notebook export can be added later.
-
-### Evaluation direction
-
-The evaluator should validate the **meaning of the result**, not require the learner to reproduce reference code line by line.
-
-Examples:
-
-- numeric result with tolerance;
-- matrix/DataFrame shape, columns, types, null rules, and expected values;
-- confusion matrix correctness;
-- Bellman or Q-learning update;
-- clustering equivalence without depending on arbitrary cluster IDs;
-- model performance against hidden evaluation data;
-- target leakage prevention;
-- train/validation/test discipline;
-- time-aware split invariants;
-- semantic/rubric checks only where deterministic evaluation is insufficient.
-
-`Evidence` is a first-class product entity. The Learning Engine updates mastery and unlocks from accumulated evidence.
+The portal may provide notebook-like Python cells with inline execution, but `.ipynb` is not the product shell or canonical learner state.
 
 ### Content and copyright
 
@@ -85,9 +62,112 @@ The project may adapt sources only when licensing explicitly permits it and attr
 
 The current source/licensing policy is documented in [`docs/learning-portal/05-content-sources-and-licensing.md`](docs/learning-portal/05-content-sources-and-licensing.md).
 
+## Work fronts
+
+The project should now be advanced through four **macro work fronts**. These are not portal modules; they are separate streams of product/design work that can evolve largely in parallel and meet later.
+
+### 1. Content / pedagogical line
+
+Owns **what is taught and how learning is structured**.
+
+This front must define:
+
+- what ML knowledge belongs in the product;
+- curriculum order and prerequisite relationships;
+- theory and learning-science basis;
+- authoritative/reference sources;
+- source licensing and attribution rules;
+- examples and datasets used for teaching;
+- where manual calculation is pedagogically useful;
+- where visualization/simulation is preferable;
+- when standard libraries are introduced;
+- exercise types;
+- how understanding should be evaluated pedagogically;
+- what counts as sufficient mastery for each type of competency;
+- review/retrieval strategy;
+- misconception handling;
+- transfer from controlled examples to real datasets/projects.
+
+This front produces the actual **learning design and skill graph content**.
+
+### 2. Portal / platform
+
+Owns **how the educational product is materialized technically and visually**.
+
+This front includes the entire portal/platform concern:
+
+- information architecture;
+- Home;
+- Skill Graph;
+- Skill Workspace;
+- Practice/Lab surfaces;
+- Review Center;
+- Notes;
+- Progress/Profile;
+- navigation and learner flow;
+- formula and manual-calculation interactions;
+- visualizations and simulations;
+- Python/code cells;
+- DataFrame/chart/model output rendering;
+- hints and feedback;
+- FastAPI services;
+- Python Runner;
+- Evaluator;
+- persistence;
+- evidence/mastery implementation;
+- sandbox/execution boundaries;
+- frontend/backend contracts.
+
+The next work in this front is not yet schema design. First define **what the portal contains, how each surface behaves, and how the learner moves through it**.
+
+### 3. Product / learning experience
+
+Owns **what product we are actually building for the learner**, independent of curriculum details and implementation technology.
+
+This front must define:
+
+- primary audience(s);
+- expected starting knowledge;
+- onboarding experience;
+- how a learner chooses or receives a learning path;
+- how much freedom vs guidance the product provides;
+- what “finishing” means;
+- what “being proficient” means at product level;
+- how progress is communicated;
+- how mastery is communicated without making the product feel punitive;
+- role and limits of gamification;
+- how to reduce abandonment/friction;
+- how review is surfaced to the learner;
+- what differentiates the product from a course, Jupyter notebook, Kaggle notebook, documentation site, or LMS;
+- scope of the first useful release/MVP;
+- explicit non-goals.
+
+This front should keep the product coherent while Content and Portal evolve independently.
+
+### 4. Ecosystem / `ml-starter-lab-kit` integration
+
+Owns **how the Learning Portal relates to the existing project and generated ML projects**.
+
+This front must define:
+
+- whether/how the portal ships with the starter kit;
+- how it opens or attaches to a generated project;
+- how it consumes project configuration and metadata;
+- how it uses the learner's dataset safely;
+- how target/features/demo scenario are exposed;
+- how experiment outputs and artifacts can be reused;
+- how a learned skill is transferred to the learner's real project;
+- installation/distribution model;
+- offline/local behavior;
+- which boundaries must remain independent;
+- what stays in the starter core vs Learning Portal;
+- how to avoid forcing a refactor of the current workspace/runtime.
+
+The default architectural principle remains: **reuse data and capabilities before reusing UI or internal implementation details**.
+
 ## Current proposed first vertical slice
 
-The first technical proof should be a small connected Reinforcement Learning path:
+A small Reinforcement Learning path is still a useful candidate for the first implementation proof because it exercises theory, formulas, intermediate calculations, visualization, mastery and graph dependencies:
 
 ```text
 RL vocabulary
@@ -97,110 +177,53 @@ RL vocabulary
  -> Bellman equation
 ```
 
-Use one small **GridWorld** across the path where useful.
+A small GridWorld can be reused where appropriate.
 
-This vertical slice is intended to prove:
-
-- skill definitions and prerequisites;
-- graph resolution and unlocks;
-- theory rendering;
-- learner notes;
-- worked examples and scaffolding;
-- manual formula/intermediate-step activities;
-- deterministic evaluation;
-- evidence capture;
-- mastery calculation;
-- review state;
-- progress persistence;
-- one interactive visualization/simulation.
-
-A later second vertical slice should use classical/tabular ML to prove:
-
-- Python code cells;
-- pandas/NumPy/scikit-learn execution;
-- DataFrame validation;
-- model evaluation;
-- hidden evaluation data;
-- invariant-based checking such as leakage and split discipline.
+However, this is **not the immediate next task**. The four work fronts must first be decomposed enough to confirm the product, learning, portal, and integration requirements before implementation contracts are frozen.
 
 ## What is still missing
 
-Before implementation issues should be opened, the design still needs the following concrete contracts:
+The project has a strong direction but the four fronts are still too broad.
 
-1. **Minimal skill/content schema**
-   - required skill metadata;
-   - prerequisites;
-   - theory blocks;
-   - activity definitions;
-   - references/provenance;
-   - misconceptions;
-   - mastery/evidence requirements;
-   - transfer activities.
+Before opening implementation issues, each front needs to be broken into smaller research/design topics, decisions, dependencies, and concrete outputs.
 
-2. **Activity/evaluation contract**
-   - supported first activity types;
-   - learner input/output contract;
-   - deterministic evaluator interface;
-   - evidence produced by each activity;
-   - failure/feedback representation.
+Examples of later questions include:
 
-3. **Mastery rule for the first slice**
-   - what evidence is required to acquire a skill;
-   - how attempts and hints affect evidence;
-   - when a skill becomes `needs review`;
-   - exact unlock semantics for the initial graph.
-
-4. **Learner-state model**
-   - skills/progress;
-   - attempts;
-   - evidence;
-   - mastery;
-   - notes;
-   - misconceptions;
-   - review state.
-
-5. **Python Runner boundary**
-   - process model for the local version;
-   - allowed dependencies;
-   - timeout/resource limits;
-   - structured output format;
-   - error handling;
-   - how activity state is passed safely into evaluation.
-
-6. **First RL content specification**
-   - exact skill nodes;
-   - prerequisite edges;
-   - learning objectives;
-   - theory references;
-   - worked/manual exercises;
-   - evaluator expectations;
-   - GridWorld behavior;
-   - mastery checkpoints.
-
-7. **Implementation ownership/slicing**
-   - only after the contracts above are stable enough;
-   - issues must be grouped by code ownership and cohesive delivery, not one issue per skill or documentation section.
+- exact curriculum and skill graph;
+- exact portal surfaces and navigation model;
+- exact learner journey and MVP experience;
+- exact integration boundary with generated projects;
+- only after those are clearer: content schemas, activity/evaluation contracts, persistence models, runner contracts, and implementation slicing.
 
 ## Immediate next step
 
-**Define the minimal Skill + Activity + Evaluation + Evidence contract using the first RL vertical slice as the concrete example.**
+**Break down each of the four work fronts.**
 
-Do not start by building the React shell or a generic runner in isolation. First define one end-to-end learning unit precisely enough that the platform contract can be derived from a real case.
+For each front, define:
 
-The immediate design target should answer, for `Return and discounting` and then `Bellman equation`:
+1. subfronts / topics that must be researched or designed;
+2. decisions already made;
+3. open questions;
+4. dependencies on another front;
+5. concrete deliverables/documents expected from that front;
+6. what must be resolved before implementation can begin.
 
-- What exactly is the skill being claimed?
-- What prerequisite does it require?
-- What theory/content blocks are shown?
-- What manual/worked activity does the learner perform?
-- What inputs are submitted?
-- What does the evaluator check?
-- What evidence is stored?
-- What mastery condition unlocks the next node?
-- What should be revisited later through retrieval practice?
+Do this before designing the detailed `Skill`, `Activity`, `Evaluation`, `Evidence`, database, or API contracts.
 
-Once this contract is concrete for the first connected RL nodes, use it to finalize the content schema, learner-state model, evaluator interface, and then slice the implementation work into bounded issues.
+The immediate continuation point is therefore:
+
+```text
+1. Content / pedagogical line
+2. Portal / platform
+3. Product / learning experience
+4. Ecosystem / ml-starter-lab-kit integration
+
+-> decompose each front
+-> identify research/decisions/deliverables
+-> then converge the fronts
+-> only then freeze implementation contracts and open implementation issues
+```
 
 ## Not part of the current Learning Portal scope
 
-The separate idea of using ML inside game/minigame scenarios is intentionally **not** part of this current portal design. It may become another project later.
+The separate idea of using ML inside game/minigame scenarios is intentionally not part of this current portal design. It may become another project later.
