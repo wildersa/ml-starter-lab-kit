@@ -12,6 +12,41 @@ The goal is to create an interactive ML learning environment where the learner s
 
 Detailed design lives under [`docs/learning-portal/`](docs/learning-portal/README.md).
 
+## Current research activity
+
+Work has started on **Front 1 — Content / pedagogical line**.
+
+The current Deep Research is **Stage 1: Macro Machine Learning Knowledge Map**.
+
+Research thread:
+- [ChatGPT — ml-starter-lab-kit / Macro ML Knowledge Map](https://chatgpt.com/g/g-p-6a2234c6cdd88191a446f29c401f2ecc-ml-starter-lab-kit/c/6aa77b3c-ce68-83e9-b25b-1c1cc8f5f217)
+
+This first research stage is intentionally limited to the **architecture of the ML knowledge domain**. It should identify:
+
+- major knowledge regions;
+- real prerequisite relationships;
+- the minimum ML backbone before specialization;
+- topics that can be learned in parallel;
+- shared foundations across multiple tracks;
+- later specialization branches;
+- areas where teaching order has weak or conflicting consensus;
+- topics that deserve a dedicated follow-up research stage.
+
+It should **not** yet attempt to fully specify every skill, lesson, exercise, mastery rule, or source-license matrix.
+
+The current research strategy for Front 1 is incremental:
+
+```text
+1. Macro ML knowledge map                 <- CURRENT
+2. Refine each major knowledge region
+3. Bibliographic/source research by region
+4. Design theory/examples/activities
+5. Define mastery/evaluation strategy by competency
+6. Consolidate the final pedagogical Skill Graph
+```
+
+Bibliographic/licensing research is intentionally deferred until the content map is sufficiently stable. At that stage, the goal will be to identify authoritative sources and distinguish sources that may be adapted from those that should only be cited/referenced.
+
 ## Decisions already made
 
 ### Learning methodology
@@ -187,6 +222,8 @@ The project has a strong direction but the four fronts are still too broad.
 
 Before opening implementation issues, each front needs to be broken into smaller research/design topics, decisions, dependencies, and concrete outputs.
 
+For Front 1 specifically, Stage 1 research is now underway. Once the macro knowledge map is returned, review and approve/correct that map before opening the next content-research stage.
+
 Examples of later questions include:
 
 - exact curriculum and skill graph;
@@ -197,32 +234,27 @@ Examples of later questions include:
 
 ## Immediate next step
 
-**Break down each of the four work fronts.**
+Two levels of work are now active:
 
-For each front, define:
+### Overall project
 
-1. subfronts / topics that must be researched or designed;
-2. decisions already made;
-3. open questions;
-4. dependencies on another front;
-5. concrete deliverables/documents expected from that front;
-6. what must be resolved before implementation can begin.
+**Break down each of the four work fronts** into subfronts, decisions, open questions, dependencies, and expected deliverables.
 
-Do this before designing the detailed `Skill`, `Activity`, `Evaluation`, `Evidence`, database, or API contracts.
+### Front 1 — current immediate work
 
-The immediate continuation point is therefore:
+**Complete and review Stage 1 of the content research: the Macro Machine Learning Knowledge Map.**
 
-```text
-1. Content / pedagogical line
-2. Portal / platform
-3. Product / learning experience
-4. Ecosystem / ml-starter-lab-kit integration
+Do not yet freeze modules, individual skill schemas, source/license matrices, exercises, or evaluation contracts from this first research result.
 
--> decompose each front
--> identify research/decisions/deliverables
--> then converge the fronts
--> only then freeze implementation contracts and open implementation issues
-```
+First use the result to decide:
+
+- whether the macro knowledge regions are correct;
+- whether prerequisite relationships make sense;
+- whether the proposed backbone is appropriate;
+- where foundations can be taught inside applied ML rather than as isolated prerequisite courses;
+- which region should receive the next focused Deep Research.
+
+Only after that should Front 1 move to region-by-region refinement and later bibliographic research.
 
 ## Not part of the current Learning Portal scope
 
