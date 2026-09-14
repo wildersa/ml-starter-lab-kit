@@ -12,40 +12,250 @@ The goal is to create an interactive ML learning environment where the learner s
 
 Detailed design lives under [`docs/learning-portal/`](docs/learning-portal/README.md).
 
-## Current research activity
+---
 
-Work has started on **Front 1 — Content / pedagogical line**.
+## Program roadmap: four macro work fronts
 
-The current Deep Research is **Stage 1: Macro Machine Learning Knowledge Map**.
+The Learning Portal effort is divided into **four macro work fronts**. These are the main streams of work for the project; they are not portal modules and should not be collapsed into one implementation plan too early.
 
-Research thread:
-- [ChatGPT — ml-starter-lab-kit / Macro ML Knowledge Map](https://chatgpt.com/g/g-p-6a2234c6cdd88191a446f29c401f2ecc-ml-starter-lab-kit/c/6aa77b3c-ce68-83e9-b25b-1c1cc8f5f217)
+### Front 1 — Content / pedagogical line
 
-This first research stage is intentionally limited to the **architecture of the ML knowledge domain**. It should identify:
+**Purpose:** decide what Machine Learning knowledge belongs in the product and how it should be learned.
+
+This front covers:
+
+- macro knowledge map;
+- prerequisite relationships;
+- applied foundations;
+- curriculum and learning paths;
+- theory depth;
+- where mathematics/statistics/programming enter;
+- authoritative sources;
+- source licensing and attribution;
+- examples and datasets;
+- manual calculation vs visualization/simulation;
+- when libraries are introduced;
+- exercises and practice;
+- misconceptions;
+- retrieval/review;
+- transfer to other contexts;
+- pedagogical mastery/evaluation criteria.
+
+**Status:** IN PROGRESS.
+
+The current Deep Research is only the **first step of this front**.
+
+### Front 2 — Portal / platform
+
+**Purpose:** decide how the educational experience exists technically and visually.
+
+This front covers:
+
+- information architecture;
+- Home;
+- Skill Graph;
+- Skill Workspace;
+- Practice/Lab;
+- Review Center;
+- Notes;
+- Progress/Profile;
+- navigation and learner flow;
+- theory/formula rendering;
+- manual-calculation interactions;
+- visualizations and simulations;
+- Python/code cells;
+- DataFrame/chart/model outputs;
+- hints and feedback;
+- FastAPI services;
+- Python Runner;
+- Evaluator;
+- persistence;
+- evidence/mastery implementation;
+- sandbox/execution boundaries;
+- frontend/backend contracts.
+
+**Status:** NOT YET DECOMPOSED.
+
+The next work here is to define the portal surfaces and learner flow before freezing schemas, APIs, or runner contracts.
+
+### Front 3 — Product / learning experience
+
+**Purpose:** decide what product we are actually building for the learner, independently of curriculum details and implementation technology.
+
+This front covers:
+
+- primary audience;
+- expected starting knowledge;
+- onboarding;
+- guided path vs learner freedom;
+- what “finishing” means;
+- what “being proficient” means;
+- how progress is communicated;
+- how mastery is communicated;
+- role and limits of gamification;
+- review UX;
+- abandonment/friction reduction;
+- what differentiates the product from a course, Jupyter notebook, Kaggle notebook, documentation site, or LMS;
+- MVP scope;
+- explicit non-goals.
+
+**Status:** NOT YET DECOMPOSED.
+
+### Front 4 — Ecosystem / `ml-starter-lab-kit` integration
+
+**Purpose:** decide how the Learning Portal relates to the existing starter kit and generated ML projects.
+
+This front covers:
+
+- how the portal ships with or alongside the starter kit;
+- how it opens/attaches to a generated project;
+- project metadata/config consumption;
+- dataset access;
+- target/features/demo scenario integration;
+- reuse of experiments, metrics, and artifacts;
+- transfer of learned skills to the learner’s own project;
+- installation/distribution;
+- local/offline behavior;
+- what stays independent;
+- what belongs to the starter core vs Learning Portal;
+- how to avoid refactoring the existing workspace/runtime unnecessarily.
+
+**Status:** NOT YET DECOMPOSED.
+
+Default principle: **reuse data and capabilities before reusing UI or internal implementation details**.
+
+---
+
+## Current position
+
+```text
+Learning Portal
+|
++-- Front 1: Content / pedagogical line       <- ACTIVE
+|   +-- Stage 1: Macro ML knowledge map       <- CURRENT DEEP RESEARCH
+|   +-- Stage 2: Region-by-region refinement
+|   +-- Stage 3: Bibliographic/source research
+|   +-- Stage 4: Learning design per region
+|   +-- Stage 5: Mastery/evaluation design
+|   +-- Stage 6: Consolidated pedagogical Skill Graph
+|
++-- Front 2: Portal / platform                <- TO DECOMPOSE
++-- Front 3: Product / learning experience    <- TO DECOMPOSE
++-- Front 4: Ecosystem / integration          <- TO DECOMPOSE
+```
+
+The current research does **not** cover the Learning Portal project as a whole. It covers only the beginning of **Front 1**.
+
+---
+
+## Front 1 research program
+
+### Stage 1 — Macro ML knowledge map — CURRENT
+
+Goal: establish the high-level architecture of Machine Learning knowledge before deciding modules or detailed lessons.
+
+The research should identify:
 
 - major knowledge regions;
 - real prerequisite relationships;
 - the minimum ML backbone before specialization;
 - topics that can be learned in parallel;
-- shared foundations across multiple tracks;
-- later specialization branches;
-- areas where teaching order has weak or conflicting consensus;
-- topics that deserve a dedicated follow-up research stage.
+- shared foundations across tracks;
+- specialization branches;
+- areas where teaching order has weak/conflicting consensus;
+- topics that deserve dedicated follow-up research.
 
-It should **not** yet attempt to fully specify every skill, lesson, exercise, mastery rule, or source-license matrix.
+Research thread:
+- [ChatGPT — ml-starter-lab-kit / Macro ML Knowledge Map](https://chatgpt.com/g/g-p-6a2234c6cdd88191a446f29c401f2ecc-ml-starter-lab-kit/c/6aa77b3c-ce68-83e9-b25b-1c1cc8f5f217)
 
-The current research strategy for Front 1 is incremental:
+This stage must **not** attempt to finalize modules, every individual skill, exercises, mastery rules, or a complete bibliography/license matrix.
 
-```text
-1. Macro ML knowledge map                 <- CURRENT
-2. Refine each major knowledge region
-3. Bibliographic/source research by region
-4. Design theory/examples/activities
-5. Define mastery/evaluation strategy by competency
-6. Consolidate the final pedagogical Skill Graph
-```
+### Stage 2 — Region-by-region refinement
 
-Bibliographic/licensing research is intentionally deferred until the content map is sufficiently stable. At that stage, the goal will be to identify authoritative sources and distinguish sources that may be adapted from those that should only be cited/referenced.
+After the macro map is reviewed, research each major region independently and in greater depth.
+
+Examples may include:
+
+- applied ML foundations;
+- classical/supervised ML;
+- unsupervised learning;
+- deep learning;
+- reinforcement learning/bandits;
+- time series;
+- computer vision;
+- NLP;
+- recommendation systems;
+- experimentation/MLOps;
+- responsible ML.
+
+The exact regions should come from Stage 1 rather than being frozen beforehand.
+
+### Stage 3 — Bibliographic/source research
+
+Once a region is sufficiently stable, identify the material we can use to build it.
+
+For each region/skill family, determine:
+
+- authoritative/primary references;
+- strong pedagogical references;
+- open educational material when available;
+- official library/documentation sources;
+- licensing;
+- whether content may be adapted or should only be cited/referenced;
+- attribution/share-alike requirements;
+- sources to avoid because licensing or authority is weak/unclear.
+
+Bibliographic/licensing research is deliberately **after** the first content-map work so effort is spent on sources we are actually likely to use.
+
+### Stage 4 — Learning design per region
+
+Turn the researched knowledge structure and sources into teachable experiences.
+
+Define:
+
+- theory depth;
+- intuition;
+- worked examples;
+- visualizations;
+- manual executions when useful;
+- simulations/experiments;
+- when libraries appear;
+- practical exercises;
+- common misconceptions;
+- retrieval practice;
+- transfer exercises.
+
+### Stage 5 — Mastery/evaluation design
+
+Define how the learner demonstrates each kind of competency.
+
+Possible mechanisms include:
+
+- deterministic checks;
+- numerical tolerance;
+- structural checks;
+- invariants;
+- hidden evaluation datasets;
+- baseline comparison;
+- interpretation/rubrics;
+- multiple pieces of evidence.
+
+This is pedagogical evaluation first; the technical Evaluator implementation belongs to Front 2.
+
+### Stage 6 — Consolidated pedagogical Skill Graph
+
+After the regions are researched, sourced, and designed, reconcile them into the actual learning graph:
+
+- remove duplicated skills;
+- normalize prerequisite relationships;
+- identify shared foundation nodes;
+- decide recommended traversals;
+- preserve alternative paths where valid;
+- mark specializations;
+- connect review/transfer requirements;
+- produce the content-side contract that Front 2 can implement.
+
+---
 
 ## Decisions already made
 
@@ -64,6 +274,12 @@ Gamification may expose XP, badges, acquired skills, branch achievements, and vi
 The default lesson progression is:
 
 **intuition -> theory -> visualization -> worked example -> guided/manual execution -> prediction -> experiment -> reduced scaffolding -> library abstraction -> realistic application -> mastery checkpoint -> later retrieval -> transfer**
+
+### Foundations should not become prerequisite courses by default
+
+Python, data understanding, statistics, probability, and mathematics should enter at the depth and moment needed to understand Machine Learning.
+
+They do not need to be isolated into long preparatory modules before the learner sees a model. Stage 1 research should help identify where these foundations can be introduced inside simple applied ML experiences and revisited later at greater depth.
 
 ### Skill progression
 
@@ -97,112 +313,11 @@ The project may adapt sources only when licensing explicitly permits it and attr
 
 The current source/licensing policy is documented in [`docs/learning-portal/05-content-sources-and-licensing.md`](docs/learning-portal/05-content-sources-and-licensing.md).
 
-## Work fronts
+---
 
-The project should now be advanced through four **macro work fronts**. These are not portal modules; they are separate streams of product/design work that can evolve largely in parallel and meet later.
+## Current proposed first implementation proof
 
-### 1. Content / pedagogical line
-
-Owns **what is taught and how learning is structured**.
-
-This front must define:
-
-- what ML knowledge belongs in the product;
-- curriculum order and prerequisite relationships;
-- theory and learning-science basis;
-- authoritative/reference sources;
-- source licensing and attribution rules;
-- examples and datasets used for teaching;
-- where manual calculation is pedagogically useful;
-- where visualization/simulation is preferable;
-- when standard libraries are introduced;
-- exercise types;
-- how understanding should be evaluated pedagogically;
-- what counts as sufficient mastery for each type of competency;
-- review/retrieval strategy;
-- misconception handling;
-- transfer from controlled examples to real datasets/projects.
-
-This front produces the actual **learning design and skill graph content**.
-
-### 2. Portal / platform
-
-Owns **how the educational product is materialized technically and visually**.
-
-This front includes the entire portal/platform concern:
-
-- information architecture;
-- Home;
-- Skill Graph;
-- Skill Workspace;
-- Practice/Lab surfaces;
-- Review Center;
-- Notes;
-- Progress/Profile;
-- navigation and learner flow;
-- formula and manual-calculation interactions;
-- visualizations and simulations;
-- Python/code cells;
-- DataFrame/chart/model output rendering;
-- hints and feedback;
-- FastAPI services;
-- Python Runner;
-- Evaluator;
-- persistence;
-- evidence/mastery implementation;
-- sandbox/execution boundaries;
-- frontend/backend contracts.
-
-The next work in this front is not yet schema design. First define **what the portal contains, how each surface behaves, and how the learner moves through it**.
-
-### 3. Product / learning experience
-
-Owns **what product we are actually building for the learner**, independent of curriculum details and implementation technology.
-
-This front must define:
-
-- primary audience(s);
-- expected starting knowledge;
-- onboarding experience;
-- how a learner chooses or receives a learning path;
-- how much freedom vs guidance the product provides;
-- what “finishing” means;
-- what “being proficient” means at product level;
-- how progress is communicated;
-- how mastery is communicated without making the product feel punitive;
-- role and limits of gamification;
-- how to reduce abandonment/friction;
-- how review is surfaced to the learner;
-- what differentiates the product from a course, Jupyter notebook, Kaggle notebook, documentation site, or LMS;
-- scope of the first useful release/MVP;
-- explicit non-goals.
-
-This front should keep the product coherent while Content and Portal evolve independently.
-
-### 4. Ecosystem / `ml-starter-lab-kit` integration
-
-Owns **how the Learning Portal relates to the existing project and generated ML projects**.
-
-This front must define:
-
-- whether/how the portal ships with the starter kit;
-- how it opens or attaches to a generated project;
-- how it consumes project configuration and metadata;
-- how it uses the learner's dataset safely;
-- how target/features/demo scenario are exposed;
-- how experiment outputs and artifacts can be reused;
-- how a learned skill is transferred to the learner's real project;
-- installation/distribution model;
-- offline/local behavior;
-- which boundaries must remain independent;
-- what stays in the starter core vs Learning Portal;
-- how to avoid forcing a refactor of the current workspace/runtime.
-
-The default architectural principle remains: **reuse data and capabilities before reusing UI or internal implementation details**.
-
-## Current proposed first vertical slice
-
-A small Reinforcement Learning path is still a useful candidate for the first implementation proof because it exercises theory, formulas, intermediate calculations, visualization, mastery and graph dependencies:
+A small Reinforcement Learning path remains a useful candidate for a later vertical slice because it exercises theory, formulas, intermediate calculations, visualization, mastery, and graph dependencies:
 
 ```text
 RL vocabulary
@@ -214,48 +329,39 @@ RL vocabulary
 
 A small GridWorld can be reused where appropriate.
 
-However, this is **not the immediate next task**. The four work fronts must first be decomposed enough to confirm the product, learning, portal, and integration requirements before implementation contracts are frozen.
+This is **not the current task** and should not constrain Stage 1 research into making RL the center of the overall curriculum.
 
-## What is still missing
+---
 
-The project has a strong direction but the four fronts are still too broad.
+## Immediate next steps
 
-Before opening implementation issues, each front needs to be broken into smaller research/design topics, decisions, dependencies, and concrete outputs.
+### Now
 
-For Front 1 specifically, Stage 1 research is now underway. Once the macro knowledge map is returned, review and approve/correct that map before opening the next content-research stage.
+Complete **Front 1 / Stage 1 — Macro ML Knowledge Map** and review the research result.
 
-Examples of later questions include:
-
-- exact curriculum and skill graph;
-- exact portal surfaces and navigation model;
-- exact learner journey and MVP experience;
-- exact integration boundary with generated projects;
-- only after those are clearer: content schemas, activity/evaluation contracts, persistence models, runner contracts, and implementation slicing.
-
-## Immediate next step
-
-Two levels of work are now active:
-
-### Overall project
-
-**Break down each of the four work fronts** into subfronts, decisions, open questions, dependencies, and expected deliverables.
-
-### Front 1 — current immediate work
-
-**Complete and review Stage 1 of the content research: the Macro Machine Learning Knowledge Map.**
-
-Do not yet freeze modules, individual skill schemas, source/license matrices, exercises, or evaluation contracts from this first research result.
-
-First use the result to decide:
+The review should decide:
 
 - whether the macro knowledge regions are correct;
 - whether prerequisite relationships make sense;
 - whether the proposed backbone is appropriate;
-- where foundations can be taught inside applied ML rather than as isolated prerequisite courses;
-- which region should receive the next focused Deep Research.
+- where foundations can be integrated into applied ML;
+- which region should receive the next focused research.
 
-Only after that should Front 1 move to region-by-region refinement and later bibliographic research.
+### Next project-design session
+
+Decompose **Fronts 2, 3, and 4** with the same level of clarity currently being developed for Front 1:
+
+- subfronts/topics;
+- decisions already made;
+- open questions;
+- dependencies;
+- expected deliverables;
+- what must be resolved before implementation.
+
+Do not freeze `Skill`, `Activity`, `Evaluation`, `Evidence`, database, API, or runner contracts before the four fronts are sufficiently understood.
+
+---
 
 ## Not part of the current Learning Portal scope
 
-The separate idea of using ML inside game/minigame scenarios is intentionally not part of this current portal design. It may become another project later.
+The separate idea of using ML inside game/minigame scenarios is intentionally **not** part of this Learning Portal design. It may become another project later.
