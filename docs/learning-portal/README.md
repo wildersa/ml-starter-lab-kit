@@ -41,6 +41,26 @@ The standard learning loop is:
 
 Manual work is not an end in itself. If a calculation becomes repetitive arithmetic without adding understanding, the portal should prefer visualization, simulation, or an interactive tool.
 
+## Current platform direction
+
+The Learning Portal is a dedicated web application, not a Jupyter notebook or Streamlit application used as the product shell.
+
+Current direction:
+
+- React + TypeScript for the learner-facing portal;
+- FastAPI + Python for APIs and learning-engine integration;
+- a separate Python execution worker for code/data/ML activities;
+- an Evaluator that checks results and pedagogical invariants;
+- Evidence as the bridge between activity execution and mastery;
+- SQLite initially for local learner state;
+- notebook-like Python cells only where code is the appropriate activity surface.
+
+The central technical flow is:
+
+**Skill → Activity → Execution → Evaluation → Evidence → Mastery → Unlock**
+
+See [`10-platform-architecture.md`](10-platform-architecture.md) for the current technical direction.
+
 ## Documentation surfaces
 
 - [`01-product-vision.md`](01-product-vision.md) — macro objective, boundaries, and user experience.
@@ -50,13 +70,14 @@ Manual work is not an end in itself. If a calculation becomes repetitive arithme
 - [`05-content-sources-and-licensing.md`](05-content-sources-and-licensing.md) — theory sources, citation rules, and copyright policy.
 - [`06-activities-and-assessment.md`](06-activities-and-assessment.md) — exercises, deterministic checking, open solutions, review, and scoring.
 - [`07-portal-experience.md`](07-portal-experience.md) — portal surfaces, notes, progress, review, and project integration.
-- [`08-content-and-runtime-boundaries.md`](08-content-and-runtime-boundaries.md) — separation between content, learning engine, portal UI, and existing project runtime.
+- [`08-content-and-runtime-boundaries.md`](08-content-and-runtime-boundaries.md) — separation between content, learning engine, portal UI, execution runner, evaluator, and existing project runtime.
 - [`09-learning-science-foundations.md`](09-learning-science-foundations.md) — adopted learning-science foundations, gamification boundary, and methodology rules.
+- [`10-platform-architecture.md`](10-platform-architecture.md) — adopted web platform direction, Python execution, evaluator, evidence model, persistence, and first technical proof.
 
 ## Status
 
 These documents are product and pedagogical design material, not an implementation contract yet.
 
-The learning methodology itself is an adopted design decision. Implementation details, thresholds, UI mechanics, and individual curriculum nodes may still evolve within those principles.
+The learning methodology and current platform direction are adopted design decisions. Implementation details, thresholds, UI mechanics, security/sandboxing details, and individual curriculum nodes may still evolve within those principles.
 
 Before opening implementation issues, convert this concept into bounded ownership slices. Do not mechanically turn each section or curriculum node into a GitHub issue.
