@@ -62,21 +62,38 @@ These names are working names. Their responsibilities should remain separate eve
 
 **PROPOSED**
 
-Persistent primary navigation should make it easy to answer:
+The primary navigation model uses a **collapsible left sidebar (desktop)** combined with a **top header/status bar**.
 
-- Where am I now?
-- What can I learn next?
-- What needs review?
-- Where can I practice freely?
-- Where are my notes?
-- What have I actually mastered?
+The primary navigation enables the learner to immediately answer:
+- Where am I now? (Active route in header/sidebar)
+- What can I learn next? (Home recommendation / Skill Graph)
+- What needs review? (Review Center queue count in top header and sidebar badge)
+- Where can I practice freely? (Practice Lab)
+- Where are my notes? (Notes surface or contextual side panel)
+- What have I actually mastered? (Progress / Profile)
 
-**OPEN**
+### Primary surface access
 
-- desktop navigation shape: sidebar, top navigation, hybrid;
-- mobile/responsive behavior;
-- whether `Project Context` is a first-class navigation item or contextual mode;
-- whether `Practice Lab` is always visible or only appears after relevant skills are acquired.
+- **Always-visible primary destinations**: Home, Skill Graph, Practice Lab, Review Center, Notes, Progress / Profile.
+- **Contextual mode vs first-class surface**: `Project Context` is accessible via a persistent indicator in the top header when a project is attached, as well as an integrated mode inside Skill Workspace and Practice Lab.
+- **Availability rules**: `Practice Lab` is always visible in primary navigation, but specific practice packs or datasets unlock as dependent skills are acquired.
+
+## Desktop and responsive constraints
+
+- **Desktop (>= 1024px)**: Left collapsible sidebar for primary navigation; persistent top header for status and active skill context; main central workspace; right contextual panel (collapsible/toggleable).
+- **Tablet (768px - 1023px)**: Left sidebar collapses to icon-only rail or drawer; right contextual panel converts to slide-over drawer or tabbed bottom panel.
+- **Mobile (< 768px)**: Bottom navigation bar for core destinations (Home, Graph, Practice, Review, Profile); top app bar with hamburger menu for Notes and Project Context; workspace renders full width.
+
+## Alternatives and trade-offs
+
+- **Top navigation bar only**:
+  - *Pros*: Maximizes horizontal workspace width for code/data tables.
+  - *Cons*: Limited space for badges (e.g., review queue counters), deep section indicators, or project status.
+- **Collapsible left sidebar (Recommended)**:
+  - *Pros*: Scales well as learning paths grow; provides clear vertical hierarchy and badge space; can collapse to icon rail during execution/coding tasks.
+  - *Cons*: Consumes horizontal width on narrower desktop viewports.
+- **Hybrid (Left rail + Contextual right panel) (Adopted Direction)**:
+  - *Pros*: Keeps primary navigation stable on the left while keeping task-relevant tools (notes, hints, prerequisites) adjacent to the central workspace on the right.
 
 ---
 
@@ -84,62 +101,77 @@ Persistent primary navigation should make it easy to answer:
 
 ## Purpose
 
-Provide stable navigation and context while the central workspace changes between theory, exercises, simulations, code, review, and project transfer.
+Provide stable navigation, persistent learner state, and context while the central workspace transitions between theory, exercises, simulations, code, review, and project transfer.
 
-## Proposed regions
+## Stable shell regions
 
-### Primary navigation
+```text
++-----------------------------------------------------------------------------------+
+| Top Header / Status Bar (Global context, active path, review queue, project link) |
++------------------+------------------------------------------+---------------------+
+| Primary Nav Rail | Main Workspace                           | Context Panel       |
+| (Home, Graph,    | (Explanatory content, code cells,        | (Notes, hints,      |
+|  Practice,       |  simulations, checkpoints, charts)       |  prerequisites,     |
+|  Review, Notes,  |                                          |  project context)   |
+|  Progress)       |                                          |                     |
++------------------+------------------------------------------+---------------------+
+```
 
-May contain:
+### 1. Top Header / Status Bar
 
-- Home;
-- Skill Graph;
-- Practice;
-- Review;
-- Notes;
-- Progress.
+Provides global situational awareness across all surfaces:
+- active skill or learning path breadcrumb;
+- review queue badge (e.g., "3 skills due for review");
+- connected project context indicator (e.g., "Attached: `bank-campaign`");
+- global learner progress summary (e.g., current streak, acquired skills count).
 
-### Main workspace
+### 2. Primary Navigation Rail (Left)
 
-The active learner task occupies the majority of the screen.
+Stable navigation bar allowing one-click access to all top-level surfaces. Supports collapsed (icon-only) and expanded states.
 
-It may render:
+### 3. Main Workspace Area (Center)
 
-- explanatory content;
-- formulas;
-- interactive diagrams;
-- tables;
-- manual calculation tools;
-- code cells;
-- DataFrames;
-- charts;
-- simulations;
-- checkpoints;
-- review activities.
+Occupies the majority of the viewport. Holds the active surface content (Skill Workspace, Graph view, Practice Lab canvas, Review session, or Notes manager).
 
-### Context panel
+### 4. Contextual Side Panel (Right)
 
-**PROPOSED**
+Collapsible side panel that stays synchronized with the active task in the Main Workspace.
+- Shares tabs or collapsible sections for: Learner Notes, Hints & Explanations, Skill Prerequisites / Related Concepts, and Project Context details.
+- Allows taking notes or consulting references without navigating away from an exercise or code cell.
 
-A contextual side panel may expose, depending on the current activity:
+## Persisted global context
 
-- learner notes;
-- skill progress;
-- prerequisites;
-- related concepts;
-- hints;
-- glossary terms;
-- references;
-- current project context.
+While the learner moves between surfaces, the shell maintains:
+- active learning path and current skill selection;
+- connected project metadata and adapter connection state;
+- review queue counters;
+- uncommitted note drafts or workspace inputs;
+- execution worker connection status.
 
-The context panel should reduce unnecessary navigation away from the active learning task.
+## Distraction-free / Full-width mode
 
-**OPEN**
+For immersive activities (such as writing multi-line Python code, inspecting large DataFrames, or manipulating complex interactive simulations):
+- The learner or system can trigger **Distraction-free Mode**.
+- Collapses the left primary navigation rail to hidden/hover-only and closes the right contextual side panel.
+- Expands the Main Workspace to 100% viewport width.
+- Preserves a minimal top bar with exit/toggle affordance and run controls.
 
-- which contextual functions deserve permanent visibility;
-- whether notes and hints share a panel or use separate affordances;
-- how much screen space code/data activities need;
-- whether the shell supports distraction-free/full-width activity mode.
+## Global vs surface-local indicators
+
+| Indicator / Control | Shell Scope | Owning Surface |
+| --- | --- | --- |
+| Route Navigation | Global (Shell) | Shared Shell |
+| Review Queue Count | Global (Shell Top Bar) | Review Center |
+| Connected Project Status | Global (Shell Top Bar) | Project Context |
+| Active Skill Progress / Stage | Surface-Local | Skill Workspace |
+| Graph Filters / Views | Surface-Local | Skill Graph |
+| Code Execution Controls | Surface-Local | Skill Workspace / Practice Lab |
+| Local Note Editor | Contextual Panel | Notes / Skill Workspace |
+
+## Dependencies on other fronts
+
+- **Front 3 (Product/UX)**: Final preference on gamification counter visibility (XP/streak) in the top header vs Profile surface.
+- **Front 4 (Ecosystem/Integration)**: Metadata contract for connected project indicator (project name, dataset status, read-only safeguards).
 
 ---
 

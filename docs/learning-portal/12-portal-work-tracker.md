@@ -151,7 +151,7 @@ This stage does **not** design React components or runtime contracts.
 
 ### P2-S1-A — Shared shell and top-level navigation
 
-**Status:** `ELIGIBLE`
+**Status:** `DONE`
 
 Define:
 
@@ -496,4 +496,5 @@ Add newest entries first.
 
 | Date | Round | Selected package | Result | Notes |
 | --- | --- | --- | --- | --- |
+| 2026-09-14 | P2-S1-A | P2-S1-A | DONE | Refined shared shell and top-level navigation (regions, navigation rail, contextual panel, distraction-free mode, and global vs surface-local boundaries) in Section 2 and 3 of the blueprint. |
 | 2026-09-14 | bootstrap | tracker creation | DONE | Created the incremental Portal work protocol and defined stage endpoints. |
