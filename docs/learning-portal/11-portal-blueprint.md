@@ -464,17 +464,73 @@ Before leaving the Skill Graph, the learner must clearly understand:
 
 # 6. Skill Workspace
 
-## Purpose
+## Learner purpose and primary job
 
-The Skill Workspace is the **main learning surface**.
+**ADOPTED DIRECTION**
 
-A skill should not be rendered as one long article. The workspace must compose different learning interactions according to what the concept needs.
+The Skill Workspace's single primary learner job is **guided competency acquisition for a single skill node through active, structured pedagogical progression**.
+
+When entering the workspace, the surface must answer one central question:
+> **"How do I understand this specific concept deeply and demonstrate my competence to acquire this skill?"**
+
+The Skill Workspace is the primary educational surface where theory, interactive manipulation, guided practice, code execution, and summative assessment converge for **one skill at a time**.
+
+It is explicitly **not**:
+- a passive, long-form reading article (like a blog post or static documentation page);
+- an open-ended multi-skill sandbox (which belongs to the Practice Lab);
+- a spaced-repetition queue manager (which belongs to the Review Center).
+
+---
+
+## Conceptual coexistence of pedagogical components
+
+To avoid turning learning into either a static textbook or an unguided coding canvas, the Skill Workspace coordinates six pedagogical components in a structured, non-competing layout:
+
+### 1. Explanation / Explanatory Content
+- **Role**: Introduces core intuition ("why it matters"), formal definitions, mathematical formulas, and target misconception callouts.
+- **Placement**: Anchors the beginning of each learning stage in the central workspace canvas.
+
+### 2. Guided Interaction & Practice
+- **Role**: Transitions the learner from passive reading to active experimentation via interactive blocks (parameter sliders, prediction-before-run prompts, step-by-step calculations, editable Python execution cells).
+- **Placement**: Dominates the central workspace during active learning and exercise stages.
+
+### 3. Mastery Checkpoint
+- **Role**: Provides summative validation task(s) required to demonstrate competency and transition the skill state to `acquired`.
+- **Placement**: Concludes the skill progression as a distinct, dedicated stage.
+
+### 4. Hints & Remediation
+- **Role**: Contextual scaffolding available when a learner requests help during practice or checkpoints without revealing direct answers.
+- **Placement**: Exposed via the **Contextual Side Panel (Right)** on demand, ensuring hints do not clutter the primary focal path.
+
+### 5. Learner Notes
+- **Role**: Personal reflections, explanations, summaries, and code snippets created by the learner.
+- **Placement**: Accessible via the **Contextual Side Panel (Right)** or inline block triggers; notes persist across visits and sync with the active skill node.
+
+### 6. References & Glossary
+- **Role**: Instant lookup for mathematical formulas, canonical definitions, API docs, and prerequisite concepts.
+- **Placement**: Accessible via hover popovers or the **Contextual Side Panel (Right)** without navigating away from active exercises.
+
+---
+
+## Boundary: Skill Workspace vs Practice Lab
+
+The Skill Workspace and Practice Lab are distinguished by **learner intent and pedagogical scaffolding**, not UI appearance or execution mechanics:
+
+| Dimension | Skill Workspace | Practice Lab |
+| --- | --- | --- |
+| **Primary Learner Intent** | **Acquiring a single new skill** through guided instruction and verified checkpoint assessment. | **Applying, combining, or testing acquired skills** in open-ended or challenge scenarios. |
+| **Pedagogical Scaffolding** | **High & Structured**: Step-by-step progression (intuition -> execution -> checkpoint), guided prompts, and progressive hints. | **Low / Unstructured**: Open canvas, minimal step-by-step guidance, self-directed strategy. |
+| **Target Scope** | **1 Skill Node** in the directed acyclic graph (DAG). | **Multi-skill synthesis**, branch challenge packs, or raw learner dataset exploration. |
+| **Mastery Evidence** | Produces **primary acquisition evidence** required to transition a node from `available`/`started` to `acquired`. | Produces **advanced mastery, branch achievement, or transfer evidence** across multiple skills. |
+| **Error & Failure Handling** | Diagnostic feedback pointing directly to specific misconceptions and providing guided remediation. | Open-ended error feedback requiring independent debugging and iterative problem solving. |
+
+---
 
 ## Default learning sequence
 
 **ADOPTED**
 
-The pedagogy may use this sequence where appropriate:
+The pedagogy within a Skill Workspace node follows a structured progression where appropriate:
 
 ```text
 why / intuition
@@ -492,70 +548,84 @@ why / intuition
 -> transfer
 ```
 
-A specific skill may omit steps that do not add pedagogical value.
+Individual skills may omit or merge steps that do not add pedagogical value, but the transition from **guided mechanism to independent checkpoint** remains mandatory.
 
-## Workspace blocks
+---
 
-The workspace needs a reusable vocabulary of blocks rather than one hard-coded lesson template.
+## Skill-level navigation and stage progression
 
-### Content blocks
+To balance structured guidance with learner autonomy, progress within a skill is structured into **explicit stages** rather than an infinite scroll canvas or locked linear video playlist:
 
-**PROPOSED**
+### Navigation Rules: Revisit, Skip, Continue, Exit
 
-- explanation/text;
-- definition/concept;
-- formula;
-- callout / misconception;
-- worked example;
-- reference/further reading;
-- glossary link.
+1. **Revisit (Backwards Navigation)**:
+   - Learners may freely navigate back to any previously completed stage within the active skill to review explanations, re-run interactive simulations, or inspect prior code outputs.
+2. **Skip (Explanatory Browsing)**:
+   - Learners may browse or scan ahead through explanatory and theory sections within an active stage.
+   - **Checkpoints cannot be skipped**: Transitioning a skill to `acquired` strictly requires completing the Mastery Checkpoint.
+3. **Continue (Stage Advancement)**:
+   - Advancing to the next stage requires completing mandatory stage interactions (e.g., submitting a prediction prompt or executing a required code cell).
+   - An explicit "Continue to Stage [N]" button unlocks at the bottom of the active stage upon fulfilling stage criteria.
+4. **Exit (Session Interruption)**:
+   - Learners can exit the workspace at any time via the shell navigation rail or top header breadcrumbs.
+   - The workspace automatically persists all uncommitted inputs, code cell states, and active stage positions before navigating away.
 
-### Interactive blocks
+---
 
-**PROPOSED**
+## Continue and resume behavior for unfinished skills
 
-- numeric/formula input;
-- structured step-by-step calculation;
-- table/grid interaction;
-- slider/parameter control;
-- drag/manipulation interaction;
-- visualization;
-- simulation;
-- prediction-before-run prompt;
-- short written interpretation.
+When a learner returns to an unfinished skill (`started` state):
 
-### Code/data blocks
+1. **Direct Stage Landing**: The workspace opens directly at the **first incomplete stage** (e.g., landing on `Stage 3: Guided Code Execution` if Stages 1 and 2 were previously completed).
+2. **Draft State Preservation**:
+   - Partially typed Python code in execution cells is restored.
+   - Uncommitted parameter settings or numerical inputs are reloaded.
+3. **Context Summary Banner**: A subtle banner at the top of the workspace summarizes prior progress (e.g., *"Resuming Stage 3 of 4. Stages 1 and 2 completed."*) with a one-click option to review Stage 1 intuition.
 
-**ADOPTED DIRECTION**
+---
 
-- editable Python cell;
-- run action;
-- inline structured result;
-- stdout/error presentation;
-- DataFrame preview;
-- chart output;
-- model/metric result;
-- evaluator feedback.
+## Local skill context vs distraction-free shell behavior
 
-The notebook interaction model may be used, but `.ipynb` state is not the canonical product model.
+### Local skill context (Always visible in Header / Workspace bar)
+While inside the Skill Workspace, the shell header and workspace bar display local skill indicators:
+- **Skill Title & Parent Branch**: e.g., `Decision Trees` inside `Classical ML / Tree Models`.
+- **Active State Badge**: e.g., `started` or `needs review`.
+- **Stage Stepper**: Visual indicator showing current stage (e.g., `1. Intuition` -> `2. Guided Execution` -> `3. Code` -> `4. Checkpoint`).
+- **Primary Advancement CTA**: Prominent button to advance to the next stage or submit checkpoint.
 
-## Progress within a skill
+### Distraction-free mode relation
+For intensive activities inside the workspace (such as editing Python code cells, manipulating complex multi-parameter visualizations, or analyzing wide DataFrames):
+- The learner or system can toggle **Distraction-free Mode**.
+- Collapses the left Primary Navigation Rail and closes the right Contextual Side Panel.
+- Expands the Main Workspace canvas to **100% viewport width**.
+- Preserves the minimal top status bar with the Stage Stepper, Run/Submit controls, and exit toggle.
 
-**OPEN**
+---
 
-Need to decide whether a skill appears as:
+## Surface boundaries and separation of responsibilities
 
-- one continuous scroll/canvas;
-- explicit stages/steps;
-- hybrid sections with free navigation;
-- adaptive sequence based on demonstrated understanding.
+| Surface | What Skill Workspace OWNS | What Skill Workspace explicitly DOES NOT OWN |
+| --- | --- | --- |
+| **Home** | Active skill stage execution, interactive blocks, checkpoint evaluation. | Top-level next action recommendation, global streak/review counters. |
+| **Skill Graph** | Detailed pedagogical content rendering for a selected node. | DAG visualization, cross-skill dependency graph, unlock animations. |
+| **Practice Lab** | Step-by-step guided exercises for 1 skill node with progressive hints. | Open-ended multi-skill challenges, unguided coding canvas, raw dataset exploration. |
+| **Review Center** | In-depth workspace review when learner chooses to re-study full node. | Spaced repetition queue scheduling, quick retrieval flashcard sessions, review scoring. |
+| **Notes** | Local note triggers and inline note synchronization within active blocks. | Global notes repository management, cross-skill search, tag filtering. |
+| **Progress / Profile** | Direct checkpoint evidence generation for single node acquisition. | Overall mastery score aggregation, achievement badge gallery, public profile. |
+| **Project Context** | Guided transfer activities connecting skill concept to project dataset. | Raw project config editing, pipeline execution logs, environment setup. |
 
-Also resolve:
+---
 
-- which completed blocks remain editable/re-runnable;
-- how returning to an unfinished skill works;
-- when checkpoint access becomes available;
-- whether learners may intentionally skip explanatory blocks.
+## Dependencies on other fronts
+
+1. **Front 1 (Content & Pedagogy)**:
+   - Canonical stage definitions, block composition rules, and checkpoint pass/fail thresholds per skill node.
+   - Hint progression rules and diagnostic misconception mapping.
+2. **Front 3 (Product & UX)**:
+   - Policy on checkpoint retries (cooldown periods, maximum attempts before required review).
+   - Gamification rewards (XP, streak increments) awarded upon checkpoint completion.
+3. **Front 4 (Ecosystem & Integration)**:
+   - Python Runner and state persistence specs for executing code cells safely inside the workspace.
 
 ---
 
