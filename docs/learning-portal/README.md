@@ -73,6 +73,7 @@ See [`10-platform-architecture.md`](10-platform-architecture.md) for the current
 - [`08-content-and-runtime-boundaries.md`](08-content-and-runtime-boundaries.md) — separation between content, learning engine, portal UI, execution runner, evaluator, and existing project runtime.
 - [`09-learning-science-foundations.md`](09-learning-science-foundations.md) — adopted learning-science foundations, gamification boundary, and methodology rules.
 - [`10-platform-architecture.md`](10-platform-architecture.md) — adopted web platform direction, Python execution, evaluator, evidence model, persistence, and first technical proof.
+- [`11-portal-blueprint.md`](11-portal-blueprint.md) — working blueprint for Front 2: portal surfaces, shared shell, learner flows, interaction primitives, open design questions, and the staged plan for Jules/agent refinement before implementation.
 
 ## Status
 
