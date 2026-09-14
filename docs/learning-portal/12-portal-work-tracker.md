@@ -182,7 +182,7 @@ Define:
 
 ### P2-S1-C — Skill Graph
 
-**Status:** `ELIGIBLE`
+**Status:** `DONE`
 
 Define:
 
@@ -496,6 +496,7 @@ Add newest entries first.
 
 | Date | Round | Selected package | Result | Notes |
 | --- | --- | --- | --- | --- |
+| 2026-09-14 | P2-S1-C | P2-S1-C | DONE | Defined Skill Graph IA (visual decision surface for ML knowledge structure and next-step decisions, default vs inspector visible details, visual/textual representation of 6 adopted states, node detail interactions & lock rationales, recommended path vs free DAG exploration, large-graph usability strategies, strict surface boundaries, entry/exit paths, and external dependencies) in Section 5 of the blueprint. |
 | 2026-09-14 | P2-S1-B | P2-S1-B | DONE | Defined Home IA (orientation & momentum launchpad, bounded hybrid recommendation model, learner states, strict surface boundaries, summary-only limits, entry/exit paths, and external dependencies) in Section 4 of the blueprint. |
 | 2026-09-14 | P2-S1-A | P2-S1-A | DONE | Refined shared shell and top-level navigation (regions, navigation rail, contextual panel, distraction-free mode, and global vs surface-local boundaries) in Section 2 and 3 of the blueprint. |
 | 2026-09-14 | bootstrap | tracker creation | DONE | Created the incremental Portal work protocol and defined stage endpoints. |

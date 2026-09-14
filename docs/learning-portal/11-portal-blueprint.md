@@ -324,62 +324,141 @@ Home must only store and render **summary-level projections** of learner state:
 
 # 5. Skill Graph
 
-## Purpose
+## Learner purpose and primary job
 
-The Skill Graph is the learner's visual map of Machine Learning knowledge.
+**ADOPTED DIRECTION**
 
-It must make progression and dependency visible rather than presenting an opaque course list.
+The Skill Graph's single primary learner job is to act as the **visual decision surface for understanding Machine Learning knowledge structure and deciding what to learn next**.
 
-## Required concepts
+When navigating the graph, the surface must answer four core questions:
+1. *"Where does this concept fit in the broader landscape of Machine Learning?"*
+2. *"Why is a particular skill currently locked or available to me?"*
+3. *"What valid choices do I have to learn next, and what is recommended?"*
+4. *"What downstream capabilities or advanced topics will learning this skill unlock?"*
+
+The Skill Graph is **not** an execution environment, a linear module list, or a generic progress analytics dashboard. It preserves the directed acyclic graph (DAG) structure of ML competence, ensuring the learner retains agency to choose among valid prerequisite-satisfied paths without turning learning into a rigid sequence or an overwhelming open-world map.
+
+---
+
+## Visible information: Default vs inspection
+
+To prevent visual clutter while maintaining rich pedagogical context, node and edge information is split into default graph rendering and inspector details:
+
+### 1. Default graph rendering (Always visible)
+- **Node Identifier & Title**: Concise name of the competency (e.g., `Decision Trees`).
+- **State Badge & Styling**: Distinct color code and icon reflecting one of the six adopted learner states.
+- **Direct Edges**: Solid lines showing explicit prerequisite relationships; directional arrows showing flow.
+- **Recommended Path Accent**: Subtle visual glow or path styling highlighting the suggested default trajectory.
+- **Compact Progress Indicator**: Small ring or bar on `started` nodes showing activity completion.
+- **Review Alert Badge**: Subtle pulse/warning indicator on nodes flagged as `needs review`.
+
+### 2. Node inspection panel (Visible on node select)
+Selecting a node opens a non-modal **Node Detail Drawer/Panel** alongside the graph:
+- **Purpose & Covered Concepts**: 2-3 sentence overview of what the skill teaches and why it matters.
+- **Current State & Metrics**: Exact state (e.g., `locked`, `acquired`), progress percentage, and mastery score.
+- **Prerequisite Breakdown**: List of direct prerequisite skills with state indicators (explaining why locked if unmet).
+- **Unlocks / Downstream Nodes**: Explicit list of skills that become available once this node is acquired.
+- **Target Misconceptions**: Common traps addressed by this skill.
+- **Project Transfer Tag**: Indicator if the skill directly applies to an attached `ml-starter-lab-kit` project.
+- **Primary Action CTA**: Single context-aware button (`Start Skill`, `Resume Skill`, `Start Review`, or `View Missing Prerequisite`).
+
+---
+
+## Communication of the six adopted learner states
 
 **ADOPTED**
 
-The graph must distinguish at least:
+The Skill Graph must visually and textually differentiate all six adopted states so the learner instantly understands their standing:
 
-- locked;
-- available;
-- started;
-- acquired;
-- mastered;
-- needs review.
+| Learner State | Visual Representation | Textual Explanation in Inspector | Primary Action |
+| --- | --- | --- | --- |
+| **`locked`** | Muted gray node, lock icon, faded edge inputs | *"Locked: Requires prerequisites [Skill A] and [Skill B]."* | `Inspect Prerequisites` |
+| **`available`** | Unlocked status, neutral highlight border, clean edge inputs | *"Available: All prerequisites met. Ready to begin."* | `Start Skill` |
+| **`started`** | Active color, partial ring fill (e.g., 40% complete) | *"In Progress: Stage 2 of 4 completed."* | `Resume Skill` |
+| **`acquired`** | Solid badge fill, checkmark icon | *"Acquired: Checkpoint passed on [Date]. Competency demonstrated."* | `Revisit Material` |
+| **`mastered`** | Distinction badge/border, star icon | *"Mastered: Advanced proficiency and retention verified across contexts."* | `Practice Advanced Lab` |
+| **`needs review`** | Acquired fill + amber pulse overlay / warning icon | *"Needs Review: Retention check due. Core prerequisite for upcoming node."* | `Start Review` |
 
-It should show real prerequisite edges and explain why a locked skill is unavailable.
+### Critical state rule: Acquisition vs Decay
+A node flagged as `needs review` **retains its `acquired` badge**. Spaced-repetition decay indicates that retrieval practice is due; it does not revoke demonstrated history or re-lock downstream nodes.
 
-## Core interactions
+---
 
-**PROPOSED**
+## Node-detail interaction and lock rationales
 
-Selecting a node should expose:
+Selecting a node provides immediate diagnostic clarity without navigating away from the graph layout:
 
-- skill purpose;
-- current status;
-- prerequisite skills;
-- why it is locked, when applicable;
-- mastery/progress state;
-- concepts it unlocks;
-- option to start/continue/review when available.
+- **Lock Rationale**: If a node is `locked`, the detail panel explicitly lists missing dependencies (e.g., *"Cannot start 'Random Forests' until 'Decision Trees' is acquired"*). Clicking a missing dependency re-centers the graph on that prerequisite node.
+- **Unlock Preview**: The detail panel lists downstream nodes unlocked upon acquisition, explaining the forward value of studying the current node.
+- **Direct Actions**:
+  - `available` -> launches **Skill Workspace** at Stage 1.
+  - `started` -> launches **Skill Workspace** at the active stage.
+  - `needs review` -> launches **Review Center** focused on this skill.
+  - `acquired`/`mastered` -> offers `Revisit Workspace` or `Practice in Lab`.
 
-## Graph views to investigate
+---
 
-**OPEN**
+## Recommended path vs free exploration
 
-- full ML map;
-- recommended path focus;
-- specialization/branch focus;
-- weak/review overlay;
-- completed-only / progress view;
-- project-relevant skills overlay.
+The Skill Graph balances pedagogical guidance with learner autonomy:
 
-## Questions to resolve
+- **Guided Recommendation**: A visual "Recommended Path" highlight overlays the DAG based on the active track or curriculum heuristics (e.g., Supervised ML track).
+- **Free DAG Exploration**: Any node in `available` state can be started immediately, regardless of whether it lies on the recommended path.
+- **No Rigid Collapsing**: The DAG is never flattened into a forced linear list. Branching options (e.g., choosing between `Time Series` or `Tree Models` after `Regression Fundamentals`) are explicitly presented as valid parallel choices.
 
-**OPEN**
+---
 
-- how much of the future graph is visible initially;
-- whether distant advanced skills are visible but locked;
-- how to keep a large graph usable;
-- whether branches collapse/expand;
-- how recommended paths are represented without turning the DAG back into a fixed course;
-- how graph updates/unlocks are animated without becoming distracting gamification.
+## Usability strategies for large/growing graphs
+
+As the Machine Learning knowledge map expands across domains (Supervised, Unsupervised, Time Series, Vision, Bandits, MLOps), graph navigation uses structural IA strategies:
+
+1. **Collapsible Subgraphs / Domains**: Major branches (e.g., *Deep Learning Foundations*) render as macro-nodes when collapsed and expand into detailed subgraphs upon interaction.
+2. **Focal Zoom / Neighborhood View**: Learner can trigger "Focus Mode" on a selected node, rendering only its immediate prerequisites (1-2 hops up) and downstream unlocks (1-2 hops down) to eliminate visual noise.
+3. **Graph Filtering**: Toggle views by status (`Available Only`, `In Progress`, `Needs Review`, `Project Relevant`).
+4. **Instant Concept Search**: A top search input highlights matching nodes and pans the canvas directly to them.
+
+---
+
+## Surface boundaries and separation of responsibilities
+
+| Surface | What Skill Graph OWNS | What Skill Graph explicitly DOES NOT OWN |
+| --- | --- | --- |
+| **Home** | Full DAG visual map, node dependency inspection, path choices. | Single next recommended hero action, summary streak/review metrics. |
+| **Skill Workspace** | Launch trigger into workspace; skill node state reflections. | Explanatory content, interactive blocks, Python code execution, checkpoints. |
+| **Review Center** | `needs review` visual flag on decay nodes; direct review launcher. | Spaced repetition queue management, retrieval question cards, review scoring. |
+| **Progress / Profile** | Structural position in knowledge map; acquired/mastered nodes. | Total XP lists, badge gallery, evidence attempt logs, score analytics. |
+
+---
+
+## Entry and exit paths
+
+### Entry paths into Skill Graph
+- **Home Surface**: Clicking the track summary card or "Explore Skill Graph" action.
+- **Global Header / Nav Rail**: Direct navigation via "Skill Graph" item.
+- **Skill Workspace**: "View in Graph" button in skill header to inspect unlocked nodes after checkpoint completion.
+
+### Exit paths from Skill Graph
+- **Node Detail CTA click** -> Navigates into **Skill Workspace** (Start/Resume) or **Review Center** (Review).
+- **Prerequisite Jump** -> Pans canvas to adjacent prerequisite node.
+- **Header / Rail click** -> Navigates to Home, Practice Lab, or Progress.
+
+### Learner exit orientation
+Before leaving the Skill Graph, the learner must clearly understand:
+1. Exact position in the Machine Learning curriculum.
+2. Why their chosen target skill is available (prerequisites satisfied).
+3. What downstream capabilities acquiring this skill will unlock next.
+
+---
+
+## Dependencies on other fronts
+
+1. **Front 1 (Content & Pedagogy)**:
+   - Canonical DAG prerequisite structure and dependency types.
+   - Criteria for transitioning a node from `acquired` to `mastered`.
+2. **Front 3 (Product & UX)**:
+   - Graph visual themes, unlock animation rules, and branch achievement badges.
+3. **Front 4 (Ecosystem & Integration)**:
+   - Metadata for tagging graph nodes that correspond to active local project datasets.
 
 ---
 
