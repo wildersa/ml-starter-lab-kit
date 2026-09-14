@@ -58,6 +58,23 @@ Project Context
 
 These names are working names. Their responsibilities should remain separate even if navigation labels change later.
 
+## Surface responsibilities & validation (Stage 1)
+
+**ADOPTED**
+
+Each surface must have an independent, non-overlapping learner purpose:
+
+| Surface | Primary Learner Goal | Key Content / Actions | Distinct Ownership (Non-Overlap) |
+|---|---|---|---|
+| **Home** | Orient & launch next action | Recommendation tiles, active skill entry, review alerts, project transfer prompt | Does not contain full graph visualization or complete lesson content; acts as a launching pad. |
+| **Skill Graph** | Map knowledge & prerequisites | Visual DAG of skills, node statuses, dependency edges, unlock requirements | Map/navigation surface only; selecting a node opens detail or launches Workspace, but content is not taught here. |
+| **Skill Workspace** | Learn & acquire specific skill | Intuition, theory, visualizations, manual calculations, guided code, mastery checkpoint | The main learning surface; contains interactive pedagogical blocks for a single skill. |
+| **Practice Lab** | Open unguided experimentation | Dataset sandbox, parameter tuning, multi-step challenge scenarios, model comparisons | Scaffolding-free environment for applying acquired skills without step-by-step lesson sequences. |
+| **Review Center** | Reinforce retained knowledge | Retrieval practice queue, changed numeric problems, misconception resolution | Uses new/varied items for spaced retrieval; does not repeat original Workspace linear teaching text. |
+| **Notes** | Synthesize learner understanding | Per-concept reflections, formulas, self-explanations, search/tagging | Learner-authored content only; distinct from platform curriculum source text. |
+| **Progress / Profile** | Track mastery & evidence | Acquired skills, mastery evidence log, branch milestones, review health | Evidence dashboard; shows competence history without collapsing metrics into a single gamified score. |
+| **Project Context** | Transfer skills to real code | Local project dataset binding, experiment artifacts, leakage checks, MLOps transfer | Bridge to `ml-starter-lab-kit` generated codebase; inspects external runtime artifacts. |
+
 ## Navigation model
 
 **PROPOSED**
@@ -75,7 +92,7 @@ Persistent primary navigation should make it easy to answer:
 
 - desktop navigation shape: sidebar, top navigation, hybrid;
 - mobile/responsive behavior;
-- whether `Project Context` is a first-class navigation item or contextual mode;
+- whether `Project Context` is a first-class navigation item or contextual mode/panel;
 - whether `Practice Lab` is always visible or only appears after relevant skills are acquired.
 
 ---
@@ -147,46 +164,48 @@ The context panel should reduce unnecessary navigation away from the active lear
 
 ## Purpose
 
-The Home surface should orient the learner immediately.
+The Home surface should orient the learner immediately upon entering the portal.
 
-It should answer:
-
-1. What am I learning now?
-2. What can I do next?
-3. What should I review?
-4. Is there anything important from my current project that I can practice against?
+Primary learner goal: Answer "What should I do right now to make the best progress?" within 5 seconds.
 
 ## Candidate blocks
 
 **PROPOSED**
 
-- Continue current skill;
-- recommended next skill;
-- skills needing review;
-- current learning path / branch;
-- recent progress;
-- recent notes;
-- optional current-project transfer opportunity.
+- **Continue Active Skill:** Quick-resume card for the skill currently in progress;
+- **Recommended Next Skill:** Highest-priority available node in the current track;
+- **Review Queue Alert:** Notification of skills entering retrieval decay or detected misconceptions;
+- **Current Branch Progress:** Visual summary of completion in active track (e.g., Supervised ML, RL);
+- **Recent Notes:** Last updated personal reflections;
+- **Project Transfer Opportunity:** Prompt to apply newly acquired skill to connected `ml-starter-lab-kit` project.
 
-## States to design
+## Overlap prevention
 
-**OPEN**
+Home is strictly an orientation/launching pad. It must **not**:
+- Render full interactive lesson blocks (delegated to Skill Workspace);
+- Render the entire DAG graph (delegated to Skill Graph);
+- Store or edit full notes (delegated to Notes).
 
-- first visit / no progress;
-- active learner;
-- all currently available skills completed;
-- review backlog exists;
-- user opened portal from a generated project;
-- user opened portal without a project.
+## Entry and exit paths
 
-## Questions to resolve
+- **Entry:** Default landing page after login/launch; return via Primary Navigation "Home" icon.
+- **Exit:** Launching a skill (`-> Skill Workspace`), clicking the graph overview (`-> Skill Graph`), starting a review (`-> Review Center`), or transferring to a project (`-> Project Context`).
 
-**OPEN**
+## UX States (Stage 1)
 
-- Is Home primarily a dashboard or a recommendation surface?
-- Should there be one strongly recommended next action or several choices?
-- How prominently should review compete with new learning?
-- What does the first-run Home show before a path exists?
+**PROPOSED**
+
+- **First Visit / Cold Start:** No skills started. Prominently features track selection and starting node recommendation; no review alerts or notes.
+- **Active Learner / Normal:** Shows active skill card, next recommendation, and pending review counts.
+- **All Track Skills Completed:** Recommends branching to another track or diving into open Practice Lab challenges.
+- **Review Backlog Warning:** Highlighted prompt when multiple prerequisite skills are decaying or flagged with misconceptions.
+- **Project Connected vs. Disconnected:** Displays active project badge and transfer prompt when a generated project is attached; shows "Connect Project" invitation otherwise.
+- **Error / Offline State:** Gracefully displays cached progress and offline-available skills if execution server is disconnected.
+
+## Dependencies
+
+- **Front 1 (Content):** Depends on Front 1 defining prerequisite priority for recommendations.
+- **Front 3 (Product):** Depends on Front 3 deciding onboarding choices and initial track selection.
 
 ---
 
@@ -196,7 +215,7 @@ It should answer:
 
 The Skill Graph is the learner's visual map of Machine Learning knowledge.
 
-It must make progression and dependency visible rather than presenting an opaque course list.
+Primary learner goal: Provide clear mental model of overall ML domain structure, prerequisite dependencies, and unlocked paths.
 
 ## Required concepts
 
@@ -213,41 +232,43 @@ The graph must distinguish at least:
 
 It should show real prerequisite edges and explain why a locked skill is unavailable.
 
-## Core interactions
+## Information & Core interactions
 
 **PROPOSED**
 
-Selecting a node should expose:
+Selecting a node exposes a details drawer/modal with:
 
-- skill purpose;
-- current status;
-- prerequisite skills;
-- why it is locked, when applicable;
-- mastery/progress state;
-- concepts it unlocks;
-- option to start/continue/review when available.
+- skill purpose and learning goals;
+- current state (locked/available/mastered/needs review);
+- prerequisite nodes and completion status;
+- explanation of lock reasons (missing prerequisites);
+- concept nodes unlocked upon completion;
+- direct action button: "Start Skill", "Continue", or "Review".
 
-## Graph views to investigate
+## Overlap prevention
 
-**OPEN**
+The Skill Graph is a visual map and navigation surface. It must **not**:
+- Render active interactive exercises or code runners (must launch Skill Workspace);
+- Replace the detailed mastery evidence log (delegated to Progress / Profile).
 
-- full ML map;
-- recommended path focus;
-- specialization/branch focus;
-- weak/review overlay;
-- completed-only / progress view;
-- project-relevant skills overlay.
+## Entry and exit paths
 
-## Questions to resolve
+- **Entry:** Primary Navigation "Skill Graph" or clicking "View Graph" on Home/Progress.
+- **Exit:** Selecting an available node launches `Skill Workspace`; selecting a node needing review launches `Review Center`.
 
-**OPEN**
+## UX States (Stage 1)
 
-- how much of the future graph is visible initially;
-- whether distant advanced skills are visible but locked;
-- how to keep a large graph usable;
-- whether branches collapse/expand;
-- how recommended paths are represented without turning the DAG back into a fixed course;
-- how graph updates/unlocks are animated without becoming distracting gamification.
+**PROPOSED**
+
+- **Initial / Unexplored Graph:** Root nodes highlighted as "Available", all downstream nodes shown as "Locked" with visible prerequisite edges.
+- **In-Progress Graph:** Nodes colored by status (started, acquired, mastered, needs review).
+- **Filtered / Subgraph View:** Option to focus on a single track (e.g., Supervised, Bandit, Time Series).
+- **Graph Loading / Error State:** Displays skeleton node layout if backend graph definition loading fails.
+
+## Dependencies
+
+- **Front 1 (Content):** Direct dependency on Front 1 to provide the canonical Skill Graph DAG structure, prerequisite edges, and node metadata.
+- **Front 3 (Product):** Depends on Front 3 decision on whether distant locked nodes are visible or hidden (fog of war).
 
 ---
 
@@ -257,7 +278,7 @@ Selecting a node should expose:
 
 The Skill Workspace is the **main learning surface**.
 
-A skill should not be rendered as one long article. The workspace must compose different learning interactions according to what the concept needs.
+Primary learner goal: Master a specific ML concept through structured, interactive, multi-modal pedagogical blocks.
 
 ## Default learning sequence
 
@@ -328,23 +349,30 @@ The workspace needs a reusable vocabulary of blocks rather than one hard-coded l
 
 The notebook interaction model may be used, but `.ipynb` state is not the canonical product model.
 
-## Progress within a skill
+## Overlap prevention
 
-**OPEN**
+Skill Workspace focuses exclusively on linear/guided acquisition of a single skill. It must **not**:
+- Host multi-step open dataset challenges without scaffolding (delegated to Practice Lab);
+- Host general notes management (notes written here sync to the Notes surface).
 
-Need to decide whether a skill appears as:
+## Entry and exit paths
 
-- one continuous scroll/canvas;
-- explicit stages/steps;
-- hybrid sections with free navigation;
-- adaptive sequence based on demonstrated understanding.
+- **Entry:** Launch from Home ("Continue Active Skill"), Skill Graph node detail, or Review Center recommendation.
+- **Exit:** Completing mastery checkpoint unlocks next nodes and returns to Skill Graph or Home; learner can exit anytime with progress auto-saved.
 
-Also resolve:
+## UX States (Stage 1)
 
-- which completed blocks remain editable/re-runnable;
-- how returning to an unfinished skill works;
-- when checkpoint access becomes available;
-- whether learners may intentionally skip explanatory blocks.
+**PROPOSED**
+
+- **In-Progress Stage:** Learner working through blocks; previous completed blocks re-runnable.
+- **Evaluation / Checking State:** Runner executing code/calculation; showing loading indicator and deterministic feedback.
+- **Mastery Checkpoint Passed:** Celebratory unlock state showing demonstrated evidence and newly unlocked prerequisite branches.
+- **Execution Error / Timeout:** Learner code error cleanly separated from platform execution error.
+
+## Dependencies
+
+- **Front 1 (Content):** Defines pedagogical sequence, formulas, worked examples, and checkpoint rubrics.
+- **Front 3 (Product):** Defines gating policy (whether skipping explanatory blocks is permitted).
 
 ---
 
@@ -352,43 +380,43 @@ Also resolve:
 
 ## Purpose
 
-The Practice Lab should provide a less guided environment than the Skill Workspace.
+The Practice Lab provides an unguided, open sandbox environment.
 
-The Skill Workspace teaches and scaffolds. The Practice Lab asks the learner to combine or independently apply acquired skills.
+Primary learner goal: Combine and apply multiple acquired skills independently without step-by-step tutorial scaffolding.
 
-## Possible uses
+## Candidate capabilities & uses
 
 **PROPOSED**
 
-- open dataset exploration;
-- multi-step ML problems;
-- code/data experimentation;
-- comparing models;
-- modifying parameters and interpreting outcomes;
-- challenge exercises;
-- practice using the learner's current project.
+- open dataset exploration and feature engineering sandbox;
+- multi-step ML problem solving;
+- comparing alternative model algorithms or parameters on identical datasets;
+- stress-testing models under noise or dataset drift;
+- challenge packs (e.g., "Fix leakage in this baseline pipeline").
 
-## Relationship to skills
+## Overlap prevention
 
-**OPEN**
+Practice Lab is unguided and exploratory. It must **not**:
+- Teach initial concepts step-by-step (delegated to Skill Workspace);
+- Force structured step-by-step checkpoints required for initial skill acquisition.
 
-Determine whether Practice Lab experiences are:
+## Entry and exit paths
 
-- attached to specific skills;
-- attached to branches;
-- independent challenge packs;
-- generated from project context;
-- some combination of the above.
+- **Entry:** Primary Navigation "Practice Lab" or "Try in Practice Lab" button at the end of a Skill Workspace.
+- **Exit:** Return to Home, Skill Graph, or transfer configuration to Project Context.
 
-## Questions to resolve
+## UX States (Stage 1)
 
-**OPEN**
+**PROPOSED**
 
-- how much scaffolding remains;
-- whether hints are available;
-- whether practice affects mastery;
-- whether failures are stored as evidence or only practice history;
-- how a learner knows which skills are being exercised.
+- **No Skills Acquired:** Empty state explaining that Practice Lab challenges unlock as relevant skills are acquired.
+- **Active Challenge / Sandbox:** Workspace with dataset selector, code/parameter workspace, and evaluation metrics panel.
+- **Submission Feedback:** Displays performance comparison against target benchmarks or baseline rules.
+
+## Dependencies
+
+- **Front 1 (Content):** Supply challenge datasets and benchmark criteria.
+- **Front 3 (Product):** Decide whether Practice Lab activities generate formal mastery evidence or remain un-scored sandbox practice.
 
 ---
 
@@ -396,42 +424,49 @@ Determine whether Practice Lab experiences are:
 
 ## Purpose
 
-Review is an active learning surface, not a list of lessons to reread.
+The Review Center is an active retrieval practice surface.
 
-It should prioritize retrieval, changed examples, misconceptions, and weak prerequisite knowledge.
+Primary learner goal: Reinforce retained knowledge and clear identified misconceptions through targeted retrieval exercises.
 
 ## Candidate queues
 
 **PROPOSED**
 
-- skills marked `needs review`;
-- repeated misconception;
-- weak prerequisite blocking a desired skill;
-- time since last successful retrieval;
-- manually requested review;
-- failed transfer/application activity.
+- **Decay Queue:** Skills due for retrieval based on time elapsed since mastery;
+- **Misconception Queue:** Specific concepts flagged due to past checkpoint errors;
+- **Prerequisite Review:** Weak prerequisite skills blocking access to a desired downstream node;
+- **Manual Review:** Skills manually marked by the learner for re-study.
 
 ## Review interaction types
 
-Possible forms:
+- recall questions with varied phrasing;
+- changed numerical calculation problems (different parameters from original lesson);
+- diagnosis tasks (identify the flaw in a given pipeline or chart);
+- compare/contrast concept choices.
 
-- recall question;
-- changed numerical example;
-- diagnosis task;
-- quick calculation;
-- compare/contrast concepts;
-- new dataset/context;
-- explain a previous misconception.
+## Overlap prevention
 
-## Questions to resolve
+Review Center focuses on active testing and retrieval. It must **not**:
+- Re-render the full linear tutorial text of the original Skill Workspace;
+- Act as an open coding sandbox (delegated to Practice Lab).
 
-**OPEN**
+## Entry and exit paths
 
-- how review priority is calculated initially;
-- whether review is scheduled or recommendation-based;
-- what happens to mastery after failed review;
-- how review is presented without feeling punitive;
-- whether review sessions should be short mixed sets or skill-specific sessions.
+- **Entry:** Primary Navigation "Review", Home "Skills Needing Review" alert, or Skill Graph node review option.
+- **Exit:** Completing a review session updates mastery health and returns to Home or Skill Graph.
+
+## UX States (Stage 1)
+
+**PROPOSED**
+
+- **Queue Empty / All Clear:** Displays confirmation that retention health is optimal with no pending reviews.
+- **Active Review Session:** Flashcard / calculation / diagnosis interaction sequence.
+- **Session Complete:** Summary showing items answered correctly, misconceptions cleared, and updated retention strength.
+
+## Dependencies
+
+- **Front 1 (Content):** Provision of varied question variants, changed numeric examples, and misconception diagnostic items.
+- **Front 3 (Product):** Definition of spaced retrieval algorithms and impact of failed review on mastery status.
 
 ---
 
@@ -439,33 +474,41 @@ Possible forms:
 
 ## Purpose
 
-Notes represent the learner's own knowledge, not curriculum source content.
+Notes represent the learner's personal knowledge base and reflections.
 
-## Per-skill note model
+Primary learner goal: Record, organize, and reference personal explanations, insights, and formulas across all skills.
+
+## Note model & Capabilities
 
 **PROPOSED**
 
-Suggested prompts:
+- Structured per-skill prompts ("My explanation", "Key takeaway", "Common mistakes to avoid");
+- Free-form Markdown notes;
+- Inline note creation inside Context Panel during Skill Workspace sessions;
+- Global search and tagging across all personal notes.
 
-- My explanation;
-- What I did not understand;
-- My example;
-- Mistakes I made;
-- Summary.
+## Overlap prevention
 
-Free-form notes should also be possible.
+Notes store learner-generated commentary only. It must **not**:
+- Modify or overwrite canonical platform content;
+- Serve as a progress log (delegated to Progress / Profile).
 
-## Portal behavior
+## Entry and exit paths
 
-**OPEN**
+- **Entry:** Primary Navigation "Notes" or Context Panel tab inside Skill Workspace.
+- **Exit:** Clicking a note's source skill link opens `Skill Workspace` or `Skill Graph`.
 
-- notes inline in Skill Workspace vs centralized Notes surface;
-- search/tagging;
-- links from notes back to skills/activities;
-- whether notes can attach to a formula, output, chart, or failed attempt;
-- later LLM-assisted summarization or recall-question generation.
+## UX States (Stage 1)
 
-Original learner notes must remain preserved if AI assistance is added later.
+**PROPOSED**
+
+- **Empty Notes State:** Displays prompts inviting learner to take notes during their next skill session.
+- **Notes List / Search View:** Searchable index grouped by track and skill node.
+- **Context Panel View:** Compact slide-out panel accessible while working on a skill.
+
+## Dependencies
+
+- **Front 3 (Product):** Policy on whether AI-assisted note summarization or self-generated quiz questions will be supported.
 
 ---
 
@@ -473,7 +516,9 @@ Original learner notes must remain preserved if AI assistance is added later.
 
 ## Purpose
 
-Show competence development without reducing learning to XP or completion percentage.
+Provide transparent visualization of competence development and evidence history.
+
+Primary learner goal: Inspect demonstrated skills, mastery evidence, milestone achievements, and learning history.
 
 ## Distinct concepts
 
@@ -481,32 +526,42 @@ Show competence development without reducing learning to XP or completion percen
 
 Do not collapse these into one score:
 
-- progress;
-- acquired skills;
-- mastery;
-- review status;
+- progress (completion percentage);
+- acquired skills (skills with passing checkpoints);
+- mastery (sustained competence verified over time/retrieval);
+- review status (retention decay metrics);
 - achievements/XP when enabled.
 
-## Candidate views
+## Information & Candidate views
 
 **PROPOSED**
 
-- acquired/mastered skills;
-- branch/specialization progress;
-- skills needing review;
-- activity/evidence history;
-- misconceptions improved/resolved;
-- achievements;
-- transfer/application history.
+- **Competency Matrix:** Detailed list of acquired and mastered skills categorized by domain;
+- **Evidence Log:** Audit trail of passed checkpoints, code runs, and calculation scores;
+- **Track Milestones:** Completion status across ML tracks;
+- **Misconception Resolution History:** Record of identified and resolved misconceptions.
 
-## Questions to resolve
+## Overlap prevention
 
-**OPEN**
+Progress / Profile is an analytical dashboard. It must **not**:
+- Launch interactive exercises directly without going through Skill Workspace or Review Center.
 
-- whether numeric mastery percentages are useful or falsely precise;
-- what the learner should see about evidence;
-- what progress visualization encourages learning rather than point optimization;
-- whether there is a public/shareable profile later.
+## Entry and exit paths
+
+- **Entry:** Primary Navigation "Progress" or clicking profile icon in shell.
+- **Exit:** Clicking any listed skill opens `Skill Graph` or `Skill Workspace`.
+
+## UX States (Stage 1)
+
+**PROPOSED**
+
+- **New Learner:** Shows clean slate with 0 acquired skills and onboarding milestone trackers.
+- **Established Learner:** Full breakdown of mastery level, evidence history timeline, and branch badges.
+
+## Dependencies
+
+- **Front 1 (Content):** Mapping of skills to macro domains and mastery evidence criteria.
+- **Front 3 (Product):** Decisions on gamification visibility (XP, badges) vs pure mastery evidence display.
 
 ---
 
@@ -514,43 +569,41 @@ Do not collapse these into one score:
 
 ## Purpose
 
-Connect learned concepts to a generated `ml-starter-lab-kit` project without making project integration mandatory for basic learning.
+Connect portal learning directly to a generated `ml-starter-lab-kit` local project dataset and code structure.
+
+Primary learner goal: Apply theoretical ML concepts to real project code and datasets generated in the local workspace.
 
 ## Candidate capabilities
 
 **PROPOSED**
 
-When a project is connected, the portal may expose:
+- Automatically detect attached `ml-starter-lab-kit` project configuration (`config.json`, dataset path, target feature);
+- Run diagnostic checks (leakage inspection, class imbalance, missing value analysis) on project data;
+- Generate transfer tasks (e.g., "Build baseline for your bank_campaign project");
+- Compare project metrics against portal benchmark implementations.
 
-- dataset identity/path;
-- target/features;
-- demo scenario;
-- project config;
-- metrics;
-- experiment artifacts;
-- relevant learning opportunities.
+## Overlap prevention
 
-Examples:
+Project Context is a bridge to local generated projects. It must **not**:
+- Replace standard tutorial datasets used in foundational Skill Workspaces (teaching data must remain controlled and clean);
+- Overwrite user project source files directly without confirmation.
 
-- apply EDA skill to current dataset;
-- identify target/features;
-- create a baseline;
-- calculate current project metrics;
-- inspect leakage risk;
-- interpret feature importance;
-- connect project experiments to MLOps skills.
+## Entry and exit paths
 
-## Questions to resolve
+- **Entry:** Home "Project Transfer" card, Context Panel "Project" tab, or starting portal via `python -m <pkg>.lab portal`.
+- **Exit:** Return to Home or Skill Workspace.
 
-**OPEN**
+## UX States (Stage 1)
 
-- whether project context is a mode, panel, or dedicated surface;
-- when transfer becomes available;
-- how controlled teaching data and learner data are visibly distinguished;
-- read-only vs write actions against the project;
-- how to prevent educational experiments from damaging project artifacts.
+**PROPOSED**
 
-Detailed integration ownership belongs to Front 4.
+- **No Project Connected:** Displays instructions on how to attach a generated `ml-starter-lab-kit` project.
+- **Project Attached & Validated:** Displays project metadata (Dataset: Bank Campaign, Task: Binary Classification, Target: `y`).
+- **Transfer Task Ready:** Highlights relevant skills that can now be executed against the connected project dataset.
+
+## Dependencies
+
+- **Front 4 (Ecosystem / Integration):** Complete dependency on Front 4 for project metadata format, local file IPC/API contracts, and safe read/write boundaries.
 
 ---
 
