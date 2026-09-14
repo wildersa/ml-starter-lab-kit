@@ -177,48 +177,148 @@ For immersive activities (such as writing multi-line Python code, inspecting lar
 
 # 4. Home
 
-## Purpose
+## Learner purpose and core job
 
-The Home surface should orient the learner immediately.
+**ADOPTED DIRECTION**
 
-It should answer:
+Home's single primary learner job is to act as an **orientation and momentum launchpad**.
 
-1. What am I learning now?
-2. What can I do next?
-3. What should I review?
-4. Is there anything important from my current project that I can practice against?
+When a learner opens the portal, Home must instantly answer one central question:
+> **"What is my single best next learning step right now to maintain momentum?"**
 
-## Candidate blocks
+Home is **not** a general-purpose analytical dashboard, a full course catalog, or an execution environment. It eliminates decision paralysis by evaluating current progress, spaced-repetition review needs, and connected project opportunities to recommend one immediate, high-priority primary action while keeping alternative paths easily reachable.
 
-**PROPOSED**
+---
 
-- Continue current skill;
-- recommended next skill;
-- skills needing review;
-- current learning path / branch;
-- recent progress;
-- recent notes;
-- optional current-project transfer opportunity.
+## Recommendation model: Bounded hybrid
 
-## States to design
+**ADOPTED DIRECTION**
 
-**OPEN**
+Home adopts a **bounded hybrid model** (1 Hero Recommendation + up to 3 secondary choices):
 
-- first visit / no progress;
-- active learner;
-- all currently available skills completed;
-- review backlog exists;
-- user opened portal from a generated project;
-- user opened portal without a project.
+1. **Primary Hero Action (Single CTA)**: One prominent primary action card at the top of the surface.
+   - If a skill is in progress -> "Resume [Skill Name]".
+   - If high-priority review is due -> "Start Retrieval Session ([N] items due)".
+   - If previous skill was mastered -> "Start Next Skill: [Skill Name]".
+2. **Bounded Secondary Choices (Max 3 Cards)**:
+   - *Review Status*: Summary of items due for retrieval practice (launches Review Center).
+   - *Active Branch / Graph Snapshot*: Current position in the active learning track (launches Skill Graph focused on current branch).
+   - *Project Transfer Opportunity*: Available transfer activity if an `ml-starter-lab-kit` project is connected (launches Project Context or Practice Lab).
 
-## Questions to resolve
+### Rationale and trade-offs
 
-**OPEN**
+- **Alternative 1: Pure Single-Recommendation (e.g., Netflix "Play Next")**:
+  - *Pros*: Minimizes cognitive load and decision latency.
+  - *Cons*: Frustrates learners who want to switch focus (e.g., review before starting new material or practice on their project).
+- **Alternative 2: Open Dashboard (Grid of all widgets and metrics)**:
+  - *Pros*: Maximum information density in one place.
+  - *Cons*: Causes decision paralysis, duplicates Skill Graph and Progress/Profile, and dilutes learning momentum.
+- **Decision (Bounded Hybrid)**: Provides a clear, low-friction default path (Hero CTA) while respecting learner autonomy through 2-3 structured alternative entry points.
 
-- Is Home primarily a dashboard or a recommendation surface?
-- Should there be one strongly recommended next action or several choices?
-- How prominently should review compete with new learning?
-- What does the first-run Home show before a path exists?
+---
+
+## Learner states and UX behavior
+
+Home adapts its layout and content dynamically based on learner lifecycle and context:
+
+### 1. First-visit state (No prior progress)
+- **Learner Context**: New user entering the portal for the first time without learning history.
+- **Primary Hero Action**: "Start Onboarding Track" or "Begin Foundation: [First Skill Name]".
+- **Surface Content**: A welcoming orientation block introducing the Skill Graph model, a track selector (e.g., "Supervised Learning", "Time Series", "Bandits"), and a single primary action to start the first node.
+- **Secondary Cards**: Hidden or collapsed into a quick orientation preview.
+
+### 2. Returning-learner state (Active learning track)
+- **Learner Context**: Active user with at least one in-progress or recently completed skill.
+- **Primary Hero Action**: "Resume [Active Skill]" showing current stage (e.g., "Stage 3: Guided Execution").
+- **Secondary Cards**:
+  - Current Track progress summary card ("3 of 8 skills in Classical ML").
+  - Spaced repetition summary badge ("1 item due for review").
+  - Connected project transfer prompt (if attached).
+
+### 3. Review-needed state (Retrieval backlog exists)
+- **Learner Context**: Spaced repetition algorithm flags one or more acquired skills as `needs review`.
+- **Primary Hero Action**: If review backlog exceeds urgency threshold (e.g., critical prerequisite weak or review overdue), the Hero CTA temporarily switches to "Start Critical Review: [Skill Name]". Otherwise, review remains a high-priority secondary card.
+- **Behavior**: Prominently displays why review is suggested (e.g., "Prerequisite for upcoming node 'Random Forests' needs reinforcement").
+
+### 4. Project-connected state (`ml-starter-lab-kit` attached)
+- **Learner Context**: Portal opened from or connected to a local generated ML project (e.g., `bank-campaign-bandit`).
+- **Surface Behavior**:
+  - Header indicator confirms project linkage.
+  - Displays a dedicated "Project Transfer Opportunity" card (e.g., "Apply Feature Analysis to your `bank-campaign` dataset").
+  - Hero action offers one-click transfer when the active skill directly aligns with project state.
+
+### 5. Project-independent state (Standalone learning)
+- **Learner Context**: Portal running in standalone educational mode without a linked local project.
+- **Surface Behavior**:
+  - Standard curriculum path and synthetic teaching datasets are used for all exercises.
+  - Secondary card displays a subtle invitation: "Connect a generated project to practice on your own data."
+
+### 6. Branch completion / Endpoint state
+- **Learner Context**: Learner has completed all available nodes in the active branch or current release.
+- **Primary Hero Action**: "Explore Next Branch in Skill Graph" or "Attempt Practice Lab Challenge".
+- **Surface Content**: Congratulatory summary, milestone evidence summary, and direct links to secondary branches or Practice Lab.
+
+---
+
+## Surface boundaries and separation of responsibilities
+
+To prevent Home from degenerating into a bloated dashboard, strict boundaries are enforced against other portal surfaces:
+
+| Surface | What Home OWNS (Summary / Launchpad) | What Home explicitly DOES NOT OWN (Deep Surface) |
+| --- | --- | --- |
+| **Skill Graph** | Single next recommended node; current branch name and step count summary. | Full DAG visualization, interactive node exploration, edge dependency inspection, path switching. |
+| **Skill Workspace** | Launch button ("Resume / Start") and active stage snippet. | Interactive content rendering, Python code execution, formula inputs, simulations, checkpoints. |
+| **Review Center** | Review queue count, urgency warning badge, direct launch trigger. | Spaced repetition queue management, retrieval question cards, review history, performance scoring. |
+| **Practice Lab** | Single optional project/challenge transfer prompt. | Open dataset exploration, multi-step unguided exercises, sandbox coding canvas. |
+| **Progress / Profile** | High-level momentum indicators (e.g., streak, total acquired skills count). | Detailed skill mastery breakdown, evidence logs, misconception history, XP/achievement lists. |
+| **Notes** | Optional snippet of last edited note or bookmark link. | Note editor, search, tag filtering, full note repository management. |
+| **Project Context** | Project connection badge (e.g., `bank-campaign`) and transfer readiness status. | Raw dataset browser, project config editor, pipeline artifact inspector, execution logs. |
+
+---
+
+## Summary-only information boundary
+
+Home must only store and render **summary-level projections** of learner state:
+
+- **Allowed on Home**:
+  - Active skill title, progress percentage, and current stage label.
+  - Review queue total item count and top urgent skill name.
+  - Active learning track title and overall completion ratio (e.g., "4/10 acquired").
+  - Connected project name and 1-line transfer status.
+  - Current active streak count.
+- **Prohibited on Home**:
+  - Full activity cards, interactive exercises, or code editors.
+  - Complete list of acquired/locked skills.
+  - Full review item queue list or question previews.
+  - Detailed evidence logs, test attempt histories, or raw metrics tables.
+
+---
+
+## Entry and exit paths
+
+### Entry paths into Home
+- **Default root route**: Direct landing upon opening the web application (`/`).
+- **Global Header**: Clicking the application logo or "Home" icon in the top/left navigation rail.
+- **Post-Session exit**: Returning to Home after completing a Skill Workspace checkpoint or Review session.
+
+### Exit paths from Home
+- **Hero CTA click** -> Navigates directly into **Skill Workspace** (or **Review Center** if review hero is active).
+- **Review Card click** -> Navigates to **Review Center**.
+- **Track / Graph Card click** -> Navigates to **Skill Graph** focused on the active branch.
+- **Project Transfer Card click** -> Navigates to **Project Context** or transfer mode in **Practice Lab**.
+
+---
+
+## Dependencies on other fronts
+
+1. **Front 1 (Content & Pedagogy)**:
+   - Recommendation ranking rules (determining whether a review item overrides a new skill recommendation).
+   - Track structure and default starting nodes for first-visit orientation.
+2. **Front 3 (Product & UX)**:
+   - Onboarding survey/preference decisions (whether new learners pick a track manually or take a diagnostic placement).
+   - Final policy on streak/gamification visual priority on Home.
+3. **Front 4 (Ecosystem & Integration)**:
+   - Contract for detecting local project presence (`.ml-starter-project.json` or adapter handshake) to trigger project-connected states.
 
 ---
 
