@@ -1,6 +1,6 @@
 # Project Status
 
-_Last updated: 2026-09-14_
+_Last updated: 2026-09-24_
 
 ## Current focus
 
@@ -11,6 +11,13 @@ The existing starter generator, generated project structure, labs/workspace, dem
 The goal is to create an interactive ML learning environment where the learner studies theory, practices concepts, receives feedback, builds real competence, and unlocks new skills only when the required knowledge has actually been demonstrated.
 
 Detailed design lives under [`docs/learning-portal/`](docs/learning-portal/README.md).
+
+**Implementation state:** the new Learning Portal is still design/planning only. No React Portal, FastAPI Learning API, or new Lab Runtime has been implemented yet.
+
+Two focused documents now make the implementation target concrete without bypassing the staged design process:
+
+- [`docs/learning-portal/14-autonomous-agent-rl-track.md`](docs/learning-portal/14-autonomous-agent-rl-track.md) — detailed RL/autonomous-agent specialization;
+- [`docs/learning-portal/15-implementation-plan.md`](docs/learning-portal/15-implementation-plan.md) — vertical implementation slices and gates.
 
 ---
 
@@ -265,30 +272,47 @@ See [`docs/learning-portal/05-content-sources-and-licensing.md`](docs/learning-p
 
 # Current proposed implementation proof
 
-A small Reinforcement Learning path remains a useful candidate for a **later** vertical slice:
+The preferred proving workload is now a focused **Reinforcement Learning for autonomous agents** specialization.
+
+It begins with a deliberately small product proof:
 
 ```text
-RL vocabulary
- -> Return and discounting
+reward / return
+ -> discounting
  -> MDP
- -> Value functions
- -> Bellman equation
+ -> V / Q
+ -> Bellman
+ -> TD
+ -> Q-Learning
+ -> function approximation
+ -> DQN
 ```
 
-A small GridWorld can be reused where appropriate.
+Later branches extend the same environment family and platform primitives toward:
 
-This is not the current implementation task and should not bias Front 1 into making RL the center of the overall curriculum.
+- partial observability / POMDP;
+- memory and belief;
+- delayed credit / n-step / TD(lambda);
+- model-based planning and rollout;
+- options / SMDP / hierarchical policies;
+- Behavior Trees and hybrid agent architecture.
+
+This specialization is a **reference vertical slice**, not the center of the global ML curriculum. It exists to force concrete decisions about Skill Workspace, Practice Lab, Runtime execution, evidence, mastery and review while keeping the platform reusable for other ML regions.
+
+Implementation sequencing is canonicalized in [`docs/learning-portal/15-implementation-plan.md`](docs/learning-portal/15-implementation-plan.md).
 
 ---
 
 # Immediate next steps
 
-1. **Front 1:** complete and review Stage 1 Deep Research — Macro ML Knowledge Map.
-2. **Front 2:** use `11-portal-blueprint.md` as the canonical skeleton and start filling Stage 1 — information architecture and surface responsibilities, potentially with Jules one bounded surface/stage at a time.
-3. **Front 3:** decompose into its own staged research/design program.
-4. **Front 4:** decompose into its own staged research/design program.
+1. **Front 1:** keep the global ML knowledge map broad; use the autonomous-agent RL track as a detailed refinement of one region, not as the root of the curriculum.
+2. **Front 2:** finish P2-S1 information architecture, using the RL track as the concrete scenario for Skill Workspace, Practice Lab, Review, Progress and runtime-unavailable states.
+3. **Front 2 later stages:** use the same track to validate interaction primitives, learner flows, mastery/review presentation and finally the Portal/Runtime contract.
+4. **Implementation gate:** once the staged design reaches implementation readiness, start with the Portal-only Bellman vertical slice before adding a separate Runtime.
+5. **Runtime proof:** add deterministic RL simulation first, then controlled Python execution, then Q-Learning/DQN experiments.
+6. **Fronts 3/4:** continue decomposing product experience and ecosystem integration without making them depend on RL-specific assumptions.
 
-Do not freeze `Skill`, `Activity`, `Evaluation`, `Evidence`, database, API, or Runner contracts until the relevant fronts are sufficiently understood.
+Do not freeze universal `Skill`, `Activity`, `Evaluation`, `Evidence`, database, API or Runner contracts earlier than the design stages permit. The implementation plan defines minimum concepts to prove, not a final universal schema.
 
 ---
 
