@@ -1,7 +1,13 @@
 """HTTP client for communicating with the Lab Runtime execution plane."""
 import os
 from typing import Any, Dict, Optional
-import httpx
+
+try:
+    import httpx
+    HTTPX_AVAILABLE = True
+except ImportError:
+    HTTPX_AVAILABLE = False
+    httpx = None
 
 
 class RuntimeUnavailableError(Exception):
@@ -18,6 +24,11 @@ class LabRuntimeClient:
 
     def get_status(self) -> Dict[str, Any]:
         """Queries the health and capability status of the Lab Runtime service."""
+        if not HTTPX_AVAILABLE:
+            return {
+                "status": "offline",
+                "error": "httpx package not installed",
+            }
         try:
             with httpx.Client(base_url=self.base_url, timeout=self.timeout) as client:
                 res = client.get("/capabilities")
@@ -33,6 +44,8 @@ class LabRuntimeClient:
         self, session_id: Optional[str] = None, seed: Optional[int] = 42
     ) -> Dict[str, Any]:
         """Requests an RL simulation environment reset from the Lab Runtime."""
+        if not HTTPX_AVAILABLE:
+            raise RuntimeUnavailableError("httpx package not installed")
         try:
             with httpx.Client(base_url=self.base_url, timeout=self.timeout) as client:
                 res = client.post(
@@ -58,6 +71,8 @@ class LabRuntimeClient:
         self, action: int, session_id: Optional[str] = None
     ) -> Dict[str, Any]:
         """Requests one simulation step and Q-update calculation from the Lab Runtime."""
+        if not HTTPX_AVAILABLE:
+            raise RuntimeUnavailableError("httpx package not installed")
         try:
             with httpx.Client(base_url=self.base_url, timeout=self.timeout) as client:
                 res = client.post(
