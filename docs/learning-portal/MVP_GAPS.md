@@ -35,11 +35,13 @@ The MVP is usable when a learner can:
 ## Active gaps
 
 ### DEFER
-- **DQN / Deep RL algorithms**: Currently limited to tabular Q-Learning on 3x3 GridWorld.
+- **Deep RL / Neural Function Approximator Execution**: The theoretical bridge to DQN (neural network Q(s,a; theta) with target networks and replay buffer D) from `docs/learning-portal/content/rl-foundations/03-temporal-difference-and-control.md` is ingested as theory and conceptual activities; live neural network execution runtime (PyTorch/TensorFlow) is deferred to future stages.
+- **Custom Sandbox Environments (2D Continuous Survival & Hazardous River Sandboxes)**: Guided experiment ideas (e.g. hazardous river cliff paths comparing SARSA vs Q-Learning) from content packs are documented in theory and worked examples; live interactive simulation is currently scoped to the 3x3 GridWorld environment in `portal/lab_rl`.
 - **Advanced Graph Visualizations**: Currently renders hierarchical list-based DAG nodes rather than force-directed interactive graphs.
 - **Multi-user authentication / RBAC**: SQLite store is local-first single-learner without user logins.
 - **Full Course Authoring System**: Curriculum is defined in code (`portal/api/graph.py`).
 
 ## Resolved gaps
 
+- **[2026-09-24] RL Content Packs Ingested**: Ingested all 7 foundational RL learning modules (`rl-vocab`, `reward-return`, `discounting`, `mdp`, `v-and-q`, `bellman-backup`, `td-q-learning`) from `docs/learning-portal/content/rl-foundations/` into the working Portal API, React UI, and Evaluator Engine without placeholder/lorem content. Included worked calculations, multi-activity checkpoints, misconception tag diagnostics (`MISC_*`), and Review Variant retrieval challenges.
 - **[2026-09-24] Initial Vertical Slice Delivered**: Learner Portal MVP with FastAPI backend, SQLite persistence, React frontend, 7-node RL Skill Graph, evaluated math activities, and first LabRL 3x3 GridWorld Q-Learning activity.

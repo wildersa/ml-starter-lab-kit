@@ -9,12 +9,24 @@ interface SkillNode {
   lab_rl_enabled: boolean;
 }
 
+interface MisconceptionRule {
+  expected_value: any;
+  tag: string;
+  message: string;
+}
+
 interface Activity {
   id: string;
   prompt: string;
   type: "numeric" | "choice";
   options?: string[];
   explanation: string;
+  misconceptions?: MisconceptionRule[];
+}
+
+interface ReviewVariant {
+  prompt: string;
+  key_answer: string;
 }
 
 interface Workspace {
@@ -24,6 +36,7 @@ interface Workspace {
   worked_example: string;
   activities: Activity[];
   lab_rl_enabled: boolean;
+  review_variant?: ReviewVariant;
   user_progress: {
     state: string;
     completed_activities: string[];
@@ -52,7 +65,8 @@ export function App() {
   const [activeSkillId, setActiveSkillId] = useState<string>("rl-vocab");
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [feedback, setFeedback] = useState<Record<string, { is_correct: boolean; message: string }>>({});
+  const [feedback, setFeedback] = useState<Record<string, { is_correct: boolean; message: string; misconception_tag?: string | null }>>({});
+  const [showReviewAnswer, setShowReviewAnswer] = useState<boolean>(false);
 
   // LabRL state
   const [labState, setLabState] = useState<[number, number]>([0, 0]);
@@ -75,6 +89,7 @@ export function App() {
       const res = await fetch(`${API_BASE}/workspace/${skillId}`);
       const data = await res.json();
       setWorkspace(data);
+      setShowReviewAnswer(false);
     } catch (err) {
       console.error("Failed to fetch workspace:", err);
     }
@@ -127,7 +142,11 @@ export function App() {
       const data = await res.json();
       setFeedback((prev) => ({
         ...prev,
-        [activityId]: { is_correct: data.is_correct, message: data.feedback },
+        [activityId]: {
+          is_correct: data.is_correct,
+          message: data.feedback,
+          misconception_tag: data.misconception_tag,
+        },
       }));
       setNodes(data.unlocked_next);
       fetchWorkspace(activeSkillId);
@@ -150,22 +169,24 @@ export function App() {
   return (
     <div className="app-container">
       <header className="top-header">
-        <div className="brand">ML Starter Learning Portal — Autonomous RL Path</div>
+        <div className="brand">ML Starter Learning Portal — Autonomous RL Curriculum</div>
         <button
           className="btn btn-secondary"
           onClick={async () => {
             await fetch(`${API_BASE}/reset-progress`, { method: "POST" });
             fetchGraph();
             fetchWorkspace(activeSkillId);
+            setFeedback({});
+            setAnswers({});
           }}
         >
-          Reset Learner State
+          Reset Learner Progress
         </button>
       </header>
 
       <div className="main-content">
         <aside className="sidebar">
-          <h2>Skill Graph</h2>
+          <h2>Skill Graph Path</h2>
           <div className="graph-container">
             {nodes.map((node) => {
               const isActive = node.id === activeSkillId;
@@ -200,75 +221,115 @@ export function App() {
 
               <section className="theory-box">
                 <h2>1. Theory & Intuition</h2>
-                <p style={{ whiteSpace: "pre-line" }}>{workspace.theory}</p>
+                <p style={{ whiteSpace: "pre-line", lineHeight: 1.6 }}>{workspace.theory}</p>
               </section>
 
               <section className="worked-example-box">
                 <h2>2. Worked Example</h2>
-                <p style={{ whiteSpace: "pre-line" }}>{workspace.worked_example}</p>
+                <p style={{ whiteSpace: "pre-line", lineHeight: 1.6 }}>{workspace.worked_example}</p>
               </section>
 
               <section className="activity-box">
-                <h2>3. Evaluated Activity</h2>
-                {workspace.activities.map((act) => (
-                  <div key={act.id}>
-                    <p><strong>Question:</strong> {act.prompt}</p>
-                    {act.type === "choice" && act.options ? (
-                      <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
-                        {act.options.map((opt) => (
-                          <label key={opt} style={{ cursor: "pointer" }}>
-                            <input
-                              type="radio"
-                              name={act.id}
-                              value={opt}
-                              checked={answers[act.id] === opt}
-                              onChange={(e) =>
-                                setAnswers({ ...answers, [act.id]: e.target.value })
-                              }
-                            />{" "}
-                            {opt}
-                          </label>
-                        ))}
-                      </div>
-                    ) : (
-                      <input
-                        type="number"
-                        step="0.01"
-                        className="input-field"
-                        placeholder="Enter calculated number"
-                        value={answers[act.id] || ""}
-                        onChange={(e) =>
-                          setAnswers({ ...answers, [act.id]: e.target.value })
-                        }
-                      />
-                    )}
-                    <div>
-                      <button className="btn" onClick={() => submitActivity(act.id)}>
-                        Submit Answer
-                      </button>
-                    </div>
+                <h2>3. Practice Activities & Checkpoints</h2>
+                {workspace.activities.map((act, index) => {
+                  const isDone = workspace.user_progress.completed_activities.includes(act.id);
+                  return (
+                    <div key={act.id} style={{ marginBottom: "2rem", borderBottom: index < workspace.activities.length - 1 ? "1px solid #374151" : "none", paddingBottom: "1rem" }}>
+                      <p>
+                        <strong>Activity {index + 1}:</strong> {act.prompt}{" "}
+                        {isDone && <span className="badge acquired" style={{ marginLeft: "0.5rem" }}>Completed</span>}
+                      </p>
 
-                    {feedback[act.id] && (
-                      <div
-                        style={{
-                          marginTop: "0.75rem",
-                          color: feedback[act.id].is_correct ? "#34d399" : "#f87171",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {feedback[act.id].message}
+                      {act.type === "choice" && act.options ? (
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginBottom: "1rem" }}>
+                          {act.options.map((opt) => (
+                            <label key={opt} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                              <input
+                                type="radio"
+                                name={act.id}
+                                value={opt}
+                                checked={answers[act.id] === opt}
+                                onChange={(e) =>
+                                  setAnswers({ ...answers, [act.id]: e.target.value })
+                                }
+                              />
+                              <span>{opt}</span>
+                            </label>
+                          ))}
+                        </div>
+                      ) : (
+                        <input
+                          type="number"
+                          step="0.01"
+                          className="input-field"
+                          placeholder="Enter numerical value"
+                          value={answers[act.id] || ""}
+                          onChange={(e) =>
+                            setAnswers({ ...answers, [act.id]: e.target.value })
+                          }
+                        />
+                      )}
+
+                      <div>
+                        <button className="btn" onClick={() => submitActivity(act.id)}>
+                          Submit Answer
+                        </button>
                       </div>
-                    )}
-                  </div>
-                ))}
+
+                      {feedback[act.id] && (
+                        <div
+                          style={{
+                            marginTop: "0.75rem",
+                            padding: "0.75rem",
+                            borderRadius: "6px",
+                            backgroundColor: feedback[act.id].is_correct ? "rgba(52, 211, 153, 0.1)" : "rgba(248, 113, 113, 0.1)",
+                            border: `1px solid ${feedback[act.id].is_correct ? "#34d399" : "#f87171"}`,
+                            color: feedback[act.id].is_correct ? "#34d399" : "#f87171",
+                          }}
+                        >
+                          {feedback[act.id].misconception_tag && (
+                            <div style={{ marginBottom: "0.25rem", fontWeight: "bold" }}>
+                              <span className="badge misconception" style={{ backgroundColor: "#7f1d1d", color: "#fca5a5" }}>
+                                Tag: {feedback[act.id].misconception_tag}
+                              </span>
+                            </div>
+                          )}
+                          <div>{feedback[act.id].message}</div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </section>
+
+              {workspace.review_variant && (
+                <section className="theory-box" style={{ borderColor: "#8b5cf6" }}>
+                  <h2>4. Review Variant & Retrieval Challenge</h2>
+                  <p style={{ fontWeight: "bold", fontSize: "1.05rem" }}>{workspace.review_variant.prompt}</p>
+
+                  <button
+                    className="btn btn-secondary"
+                    style={{ marginTop: "0.5rem" }}
+                    onClick={() => setShowReviewAnswer(!showReviewAnswer)}
+                  >
+                    {showReviewAnswer ? "Hide Model Answer" : "Reveal Model Answer"}
+                  </button>
+
+                  {showReviewAnswer && (
+                    <div style={{ marginTop: "1rem", padding: "1rem", backgroundColor: "#1e1b4b", borderRadius: "6px", border: "1px solid #6366f1" }}>
+                      <strong style={{ color: "#a78bfa" }}>Model Answer:</strong>
+                      <p style={{ marginTop: "0.5rem", whiteSpace: "pre-line" }}>{workspace.review_variant.key_answer}</p>
+                    </div>
+                  )}
+                </section>
+              )}
 
               {workspace.lab_rl_enabled && (
                 <section className="theory-box" style={{ borderColor: "#3b82f6" }}>
-                  <h2>4. Interactive LabRL Practice</h2>
+                  <h2>5. Interactive LabRL Practice</h2>
                   <p>Step through the 3x3 GridWorld environment and trace actual TD Q-Learning updates in real time.</p>
 
-                  <div style={{ display: "flex", gap: "2rem", alignItems: "flex-start" }}>
+                  <div style={{ display: "flex", gap: "2rem", alignItems: "flex-start", flexWrap: "wrap" }}>
                     <div>
                       <h3>GridWorld MDP (3x3)</h3>
                       <div className="lab-grid">
@@ -306,7 +367,7 @@ export function App() {
                       </div>
                     </div>
 
-                    <div style={{ flex: 1 }}>
+                    <div style={{ flex: 1, minWidth: "300px" }}>
                       <h3>Step Diagnostic Trace</h3>
                       {diagnostic ? (
                         <div className="diagnostic-panel">
