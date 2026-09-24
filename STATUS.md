@@ -1,297 +1,110 @@
 # Project Status
 
-_Last updated: 2026-09-14_
+_Last updated: 2026-09-24_
 
 ## Current focus
 
-The current design effort is the new **Learning Portal** for `ml-starter-lab-kit`.
+The active delivery is the **Learning Portal MVP** for `ml-starter-lab-kit`, with Reinforcement Learning as the first proving path for the autonomous-agent learning program.
 
-The existing starter generator, generated project structure, labs/workspace, demo datasets, experiment tooling, and optional MLOps capabilities remain intact. The Learning Portal is a separate educational surface in the same ecosystem and should not require a broad refactor of the current UI/runtime.
+The project is no longer in design-only mode. A working vertical slice is already on `main`.
 
-The goal is to create an interactive ML learning environment where the learner studies theory, practices concepts, receives feedback, builds real competence, and unlocks new skills only when the required knowledge has actually been demonstrated.
+## Current implementation state
 
-Detailed design lives under [`docs/learning-portal/`](docs/learning-portal/README.md).
+### Delivered on `main`
 
----
+- React + TypeScript learner Portal.
+- FastAPI application API.
+- SQLite learner-state persistence.
+- prerequisite-aware Skill Graph;
+- Skill Workspace with theory, worked examples and evaluated activities;
+- deterministic evaluator with numeric tolerance, exact-choice/text checks, feedback and misconception tags;
+- Evidence -> Mastery -> Unlock progression;
+- seven integrated RL foundation skills:
+  - RL vocabulary;
+  - Reward vs Return;
+  - Discounting;
+  - MDP;
+  - V and Q;
+  - Bellman backup;
+  - TD / Q-Learning;
+- first LabRL practical activity with GridWorld and visible Q-Learning diagnostics;
+- foundational and advanced RL content packs with source/license tracking.
 
-# Program roadmap: four macro work fronts
+## Base-platform work still active
 
-These are independent work streams that converge later. They are not portal modules.
+### 1. Separate Lab Runtime — ACTIVE
 
-## Front 1 — Content / pedagogical line
+Issue: #212  
+PR: #219
 
-**Purpose:** decide what Machine Learning knowledge belongs in the product and how it should be learned.
+Goal: move execution-sensitive Lab work out of the Portal/control-plane process and expose it through an explicit Runtime boundary.
 
-**Status:** IN PROGRESS.
+This is the current structural priority.
 
-### Stages
+### 2. Declarative Skill/Course engine — QUEUED NEXT
 
-```text
-1. Macro ML knowledge map                    <- CURRENT DEEP RESEARCH
-2. Region-by-region refinement
-3. Bibliographic/source/licensing research
-4. Learning design per region
-5. Mastery/evaluation design
-6. Consolidated pedagogical Skill Graph
-```
+Issue: #220
 
-### Stage 1 — current research
+Goal: remove normal curriculum authoring from hardcoded `portal/api/graph.py` definitions and load versioned declarative course/skill content through a validated engine.
 
-Goal: establish the high-level architecture of Machine Learning knowledge before deciding final modules or detailed lessons.
+A normal new lesson should not require changing core Portal application code.
 
-Research thread:
-- [ChatGPT — ml-starter-lab-kit / Macro ML Knowledge Map](https://chatgpt.com/g/g-p-6a2234c6cdd88191a446f29c401f2ecc-ml-starter-lab-kit/c/6aa77b3c-ce68-83e9-b25b-1c1cc8f5f217)
+### 3. Learner identity/profile boundary — QUEUED NEXT
 
-This stage should identify:
+Issue: #221
 
-- major knowledge regions;
-- real prerequisite relationships;
-- minimum ML backbone before specialization;
-- topics that can be learned in parallel;
-- shared foundations across tracks;
-- specialization branches;
-- areas where teaching order has weak/conflicting consensus;
-- regions requiring focused follow-up research.
+Goal: replace implicit single-global-learner state with an explicit local learner identity so progress, evidence and mastery are learner-owned and isolated.
 
-It should **not** yet finalize every skill, lesson, exercise, mastery rule, or source/license matrix.
+No production authentication is required for this stage.
 
-### Important content principle already adopted
+## Content work
 
-Python, data understanding, statistics, probability, and mathematics should enter at the depth and moment needed to understand ML.
+Content authoring is intentionally **parallel and order-independent** when it writes to isolated content paths.
 
-They do not need to become long independent prerequisite courses before the learner sees a model. Stage 1 research should help identify where these foundations can be introduced through simple applied ML experiences and revisited later with greater depth.
+Already present:
 
-### Later stages
+- RL foundations;
+- DQN foundations;
+- policy gradients / actor-critic;
+- POMDP and delayed credit;
+- model-based/planning concepts;
+- hierarchical RL / Options / SMDP;
+- Behavior Trees and layered-agent architecture;
+- misconceptions, experiments and transfer exercises.
 
-**Stage 2 — Region refinement:** research each major region independently once Stage 1 defines the real regions.
+Content creation does not need to wait for Runtime or Portal-base work. Integration into interactive Portal surfaces may wait for the relevant platform capability.
 
-**Stage 3 — Bibliographic/source research:** find authoritative sources, pedagogical references, open materials, licensing, adaptation rights, attribution, and source restrictions.
-
-**Stage 4 — Learning design:** define theory depth, intuition, worked examples, visualizations, manual executions, experiments, library introduction, exercises, misconceptions, retrieval, and transfer.
-
-**Stage 5 — Mastery/evaluation design:** define pedagogically what evidence proves each competency.
-
-**Stage 6 — Skill Graph consolidation:** reconcile all regions into the final content-side DAG, remove duplicates, normalize prerequisites, identify shared nodes, and define recommended traversals.
-
----
-
-## Front 2 — Portal / platform
-
-**Purpose:** decide how the educational experience exists technically and visually.
-
-**Status:** BLUEPRINT CREATED; STAGE 1 READY TO REFINE.
-
-Canonical working document:
-- [`docs/learning-portal/11-portal-blueprint.md`](docs/learning-portal/11-portal-blueprint.md)
-
-The blueprint already structures:
-
-- portal role and shared application shell;
-- Home;
-- Skill Graph;
-- Skill Workspace;
-- Practice Lab;
-- Review Center;
-- Notes;
-- Progress/Profile;
-- Project Context / transfer;
-- interaction primitive catalog;
-- learner flows;
-- feedback model;
-- execution/error states;
-- first-release boundary;
-- agent/Jules filling rules.
-
-### Front 2 stages
+## Next implementation priority
 
 ```text
-1. Information architecture + surface responsibilities   <- NEXT FOR FRONT 2
-2. Skill Workspace + interaction model
-3. Learner flows + state UX
-4. Progress/mastery/review presentation
-5. Runtime interaction boundary
-6. First-release portal specification
+#219 Separate Lab Runtime
+        ↓
+#220 Declarative Skill/Course engine
+#221 Learner identity/profile
+        ↓
+#214 DQN interactive/execution slice
+        ↓
+additional advanced interactive learning surfaces
 ```
 
-### Stage 1 — next Front 2 work
+#220 and #221 may run in parallel only when file ownership is sufficiently separated to avoid predictable merge conflicts.
 
-For each proposed surface:
+## Operational authority
 
-- validate whether it should exist independently;
-- define its primary learner goal;
-- define what belongs there;
-- remove overlap with other surfaces;
-- define entry/exit paths;
-- define main empty/loading/error/returning states;
-- identify dependencies on Front 1 or Front 3.
+For current delivery decisions, use:
 
-Do **not** yet design React components, API routes, database tables, evaluator schemas, or Python Runner protocols.
+1. `docs/learning-portal/MVP_DELIVERY_PLAN.md`
+2. `docs/learning-portal/MVP_GAPS.md`
+3. `docs/learning-portal/12-portal-work-tracker.md`
 
-Jules/agents should fill **one stage or one bounded surface at a time**, preserving adopted decisions and leaving unresolved alternatives explicitly open.
+The earlier blueprint/research documents under `docs/learning-portal/` remain architectural and pedagogical references, but they are not a reason to revert the project to a design-only workflow.
 
----
+## MVP policy
 
-## Front 3 — Product / learning experience
+Prefer a working vertical slice over perfect polish.
 
-**Purpose:** decide what product we are actually building for the learner, independently of curriculum details and implementation technology.
+- **BLOCKING NOW** — breaks current use, next-stage delivery, learner-state integrity, or a hard Portal/Runtime boundary.
+- **FIX SOON** — material near-term risk that does not invalidate the current core.
+- **DEFER** — polish or future capability; record and keep delivery moving.
 
-**Status:** TO DECOMPOSE.
-
-This front must cover:
-
-- primary audience;
-- expected starting knowledge;
-- onboarding;
-- guided path vs learner freedom;
-- what “finishing” means;
-- what “being proficient” means;
-- how progress/mastery are communicated;
-- role and limits of gamification;
-- review experience;
-- abandonment/friction reduction;
-- differentiation from a course, Jupyter/Kaggle notebook, documentation site, or LMS;
-- MVP definition;
-- explicit non-goals.
-
-Next work: break this front into an incremental research/design program similar to Fronts 1 and 2.
-
----
-
-## Front 4 — Ecosystem / `ml-starter-lab-kit` integration
-
-**Purpose:** decide how the Learning Portal relates to the existing starter kit and generated ML projects.
-
-**Status:** TO DECOMPOSE.
-
-This front must cover:
-
-- how the portal ships with or alongside the starter kit;
-- attach/open project behavior;
-- project config/metadata access;
-- dataset access;
-- target/features/demo-scenario integration;
-- reuse of experiments, metrics and artifacts;
-- transfer of learned skills to the learner's own project;
-- installation/distribution;
-- local/offline behavior;
-- read/write boundaries;
-- what remains independent;
-- what belongs to starter core vs Learning Portal.
-
-Default principle: **reuse data and capabilities before reusing UI or internal implementation details**.
-
-Next work: break this front into an incremental research/design program similar to Fronts 1 and 2.
-
----
-
-# Current position
-
-```text
-Learning Portal
-|
-+-- Front 1: Content / pedagogical line
-|   +-- Stage 1: Macro ML knowledge map                 <- ACTIVE DEEP RESEARCH
-|   +-- Stage 2: Region refinement
-|   +-- Stage 3: Bibliographic/source research
-|   +-- Stage 4: Learning design
-|   +-- Stage 5: Mastery/evaluation
-|   +-- Stage 6: Skill Graph consolidation
-|
-+-- Front 2: Portal / platform
-|   +-- Blueprint created
-|   +-- Stage 1: Information architecture              <- READY TO REFINE
-|   +-- Stage 2: Skill Workspace / interactions
-|   +-- Stage 3: Learner flows / state UX
-|   +-- Stage 4: Mastery/review presentation
-|   +-- Stage 5: Runtime interaction boundary
-|   +-- Stage 6: First-release portal spec
-|
-+-- Front 3: Product / learning experience             <- TO DECOMPOSE
-|
-+-- Front 4: Ecosystem / integration                   <- TO DECOMPOSE
-```
-
----
-
-# Decisions already made
-
-## Learning methodology
-
-Adopted foundation:
-
-- **Mastery Learning**;
-- **Cognitive Load management + Worked Examples + Scaffolding**;
-- **Retrieval Practice**;
-- **Experiential Learning**;
-- **Competency / Skill Graph**.
-
-Gamification may expose XP, badges, acquired skills, branch achievements, and visible graph progression, but XP never replaces mastery.
-
-Default learning progression:
-
-**intuition -> theory -> visualization -> worked example -> guided/manual execution -> prediction -> experiment -> reduced scaffolding -> library abstraction -> realistic application -> mastery checkpoint -> later retrieval -> transfer**
-
-## Skill progression
-
-- A graph node represents a demonstrable competency, not merely a chapter.
-- Skills can require multiple prerequisites.
-- Completion, acquisition, mastery, and review status are separate concepts.
-- A previously acquired skill may later require review without erasing the achievement.
-- Knowledge Tracing/BKT is a possible future enhancement, not a first-version requirement.
-
-## Platform direction
-
-Current direction:
-
-- **React + TypeScript** — learner-facing portal;
-- **FastAPI + Python** — Learning API/application services;
-- **Python Runner** — separate execution boundary for learner code and ML/data activities;
-- **Evaluator** — deterministic, structural, algorithm-aware, invariant-based and rubric evaluation;
-- **Evidence/Mastery** — progression based on demonstrated competence;
-- **SQLite initially** — local learner state;
-- **Project Adapter** — narrow integration with generated projects/datasets.
-
-Notebook-like Python cells are supported where useful, but `.ipynb` is not the product shell or canonical learner state.
-
-## Content and copyright
-
-Educational content should be declarative and versionable where practical.
-
-Adapt source material only when licensing explicitly permits it. Protected books/papers may be cited and used as references for original content, but public accessibility alone does not grant adaptation rights.
-
-See [`docs/learning-portal/05-content-sources-and-licensing.md`](docs/learning-portal/05-content-sources-and-licensing.md).
-
----
-
-# Current proposed implementation proof
-
-A small Reinforcement Learning path remains a useful candidate for a **later** vertical slice:
-
-```text
-RL vocabulary
- -> Return and discounting
- -> MDP
- -> Value functions
- -> Bellman equation
-```
-
-A small GridWorld can be reused where appropriate.
-
-This is not the current implementation task and should not bias Front 1 into making RL the center of the overall curriculum.
-
----
-
-# Immediate next steps
-
-1. **Front 1:** complete and review Stage 1 Deep Research — Macro ML Knowledge Map.
-2. **Front 2:** use `11-portal-blueprint.md` as the canonical skeleton and start filling Stage 1 — information architecture and surface responsibilities, potentially with Jules one bounded surface/stage at a time.
-3. **Front 3:** decompose into its own staged research/design program.
-4. **Front 4:** decompose into its own staged research/design program.
-
-Do not freeze `Skill`, `Activity`, `Evaluation`, `Evidence`, database, API, or Runner contracts until the relevant fronts are sufficiently understood.
-
----
-
-# Out of scope for the current Learning Portal
-
-The separate idea of using ML inside game/minigame scenarios is intentionally **not** part of this Learning Portal design. It may become another project later.
+Sensible overdelivery is kept when it remains coherent with the product direction.
