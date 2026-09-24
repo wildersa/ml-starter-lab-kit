@@ -49,7 +49,7 @@ def get_graph():
 
 @app.get("/api/workspace/{skill_id}")
 def get_workspace(skill_id: str):
-    """Returns workspace theory, worked example, and activities for a skill."""
+    """Returns workspace theory, worked example, activities, and review variant for a skill."""
     if skill_id not in graph.SKILL_GRAPH_NODES:
         raise HTTPException(status_code=404, detail="Skill not found")
     node = graph.SKILL_GRAPH_NODES[skill_id]
@@ -66,6 +66,7 @@ def get_workspace(skill_id: str):
         "worked_example": node.worked_example,
         "activities": node.activities,
         "lab_rl_enabled": node.lab_rl_enabled,
+        "review_variant": node.review_variant,
         "user_progress": progress,
     }
 
