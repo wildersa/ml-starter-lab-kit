@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(vars.CI_ON_PREM_ONLY == 'true' && '["self-hosted","local-ci","docker","shared","ml-starter-lab-kit"]' || '"ubuntu-latest"') }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python 3.12
