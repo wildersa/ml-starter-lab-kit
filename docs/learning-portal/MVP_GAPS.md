@@ -39,7 +39,10 @@ The MVP is usable when a learner can:
 - **Advanced Graph Visualizations**: Currently renders hierarchical list-based DAG nodes rather than force-directed interactive graphs.
 - **Multi-user authentication / RBAC**: SQLite store is local-first single-learner without user logins.
 - **Full Course Authoring System**: Curriculum is defined in code (`portal/api/graph.py`).
+- **Production Container / Sandbox Isolation**: Local runtime boundary uses HTTP process isolation; OCI container/gVisor sandboxing deferred for hosted SaaS.
+- **Multi-user Runtime Session Persistence**: Active runtime sessions are kept in-memory per runtime process; persistent session registry across restarts deferred.
 
 ## Resolved gaps
 
 - **[2026-09-24] Initial Vertical Slice Delivered**: Learner Portal MVP with FastAPI backend, SQLite persistence, React frontend, 7-node RL Skill Graph, evaluated math activities, and first LabRL 3x3 GridWorld Q-Learning activity.
+- **[2026-09-24] Explicit Lab Execution Boundary**: Separated Control Plane (Portal API) and Execution Plane (Lab Runtime) into independent processes communicating via HTTP capability/session requests.

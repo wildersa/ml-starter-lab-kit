@@ -1,4 +1,4 @@
-"""FastAPI Application Server for Learning Portal and LabRL Proxy."""
+"""FastAPI Application Server for Learning Portal Control Plane."""
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -7,8 +7,7 @@ import os
 
 from portal.api import database
 from portal.api import graph
-from portal.lab_rl.env import GridWorldEnv
-from portal.lab_rl.agent import QLearningAgent
+from portal.api.runtime_client import runtime_client, RuntimeUnavailableError
 
 app = FastAPI(title="Learning Portal API", version="0.1.0")
 
@@ -20,10 +19,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Global in-memory LabRL session
-lab_env = GridWorldEnv()
-lab_agent = QLearningAgent(alpha=0.1, gamma=0.9)
 
 
 @app.on_event("startup")
@@ -39,6 +34,7 @@ class EvaluationRequest(BaseModel):
 
 class LabStepRequest(BaseModel):
     action: int
+    session_id: Optional[str] = None
 
 
 @app.get("/api/graph")
@@ -87,62 +83,31 @@ def reset_progress():
     return {"status": "success", "graph": graph.get_curriculum_state()}
 
 
-# --- LabRL Endpoints ---
+# --- Lab Runtime Status & Proxy Endpoints ---
+
+@app.get("/api/runtime/status")
+def get_runtime_status():
+    """Returns availability and capability status of the separate Lab Runtime."""
+    return runtime_client.get_status()
+
 
 @app.post("/api/lab/reset")
-def reset_lab(seed: Optional[int] = 42):
-    """Resets LabRL environment and agent."""
-    start_state = lab_env.reset(seed=seed)
-    lab_agent.reset_q_table()
-    return {
-        "state": start_state,
-        "grid_size": lab_env.grid_size,
-        "goal_state": lab_env.goal_state,
-        "pit_state": lab_env.pit_state,
-        "q_table": lab_agent.get_serialized_q_table(),
-        "step_count": lab_env.step_count,
-        "done": lab_env.done,
-    }
+def reset_lab(seed: Optional[int] = 42, session_id: Optional[str] = None):
+    """Proxies reset request to the separate Lab Runtime execution plane."""
+    try:
+        return runtime_client.reset_simulation(session_id=session_id, seed=seed)
+    except RuntimeUnavailableError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @app.post("/api/lab/step")
 def step_lab(req: LabStepRequest):
-    """Executes one step in LabRL and performs Q-learning update."""
-    if lab_env.done:
-        raise HTTPException(status_code=400, detail="Environment is done. Call /api/lab/reset first.")
-
+    """Proxies simulation step request to the separate Lab Runtime execution plane."""
     try:
-        step_record = lab_env.step(req.action)
-        diagnostic = lab_agent.update(step_record.transition)
-
-        return {
-            "step_record": {
-                "step_number": step_record.step_number,
-                "transition": {
-                    "state": list(step_record.transition.state),
-                    "action": step_record.transition.action,
-                    "reward": step_record.transition.reward,
-                    "next_state": list(step_record.transition.next_state),
-                    "done": step_record.transition.done,
-                },
-                "info": step_record.info,
-            },
-            "diagnostic": {
-                "state": list(diagnostic.state),
-                "action": diagnostic.action,
-                "reward": diagnostic.reward,
-                "next_state": list(diagnostic.next_state),
-                "done": diagnostic.done,
-                "old_q": diagnostic.old_q,
-                "max_next_q": diagnostic.max_next_q,
-                "target": diagnostic.target,
-                "td_error": diagnostic.td_error,
-                "new_q": diagnostic.new_q,
-                "alpha": diagnostic.alpha,
-                "gamma": diagnostic.gamma,
-            },
-            "q_table": lab_agent.get_serialized_q_table(),
-            "done": lab_env.done,
-        }
-    except Exception as e:
+        return runtime_client.step_simulation(action=req.action, session_id=req.session_id)
+    except RuntimeUnavailableError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
