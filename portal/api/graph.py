@@ -201,7 +201,7 @@ SKILL_GRAPH_NODES: Dict[str, SkillNode] = {
 }
 
 
-def get_curriculum_state(db_path: str = database.DB_PATH) -> List[Dict[str, Any]]:
+def get_curriculum_state(db_path: Optional[str] = None) -> List[Dict[str, Any]]:
     progress = database.get_all_skill_progress(db_path)
 
     nodes_result = []
@@ -234,7 +234,7 @@ def evaluate_activity(
     skill_id: str,
     activity_id: str,
     given_answer: Any,
-    db_path: str = database.DB_PATH,
+    db_path: Optional[str] = None,
 ) -> Dict[str, Any]:
     if skill_id not in SKILL_GRAPH_NODES:
         raise ValueError(f"Unknown skill_id: {skill_id}")

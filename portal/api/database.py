@@ -4,16 +4,19 @@ import json
 import os
 from typing import Dict, List, Optional, Any
 
-DB_PATH = os.environ.get("PORTAL_DB_PATH", "portal.db")
+
+def get_db_path() -> str:
+    return os.environ.get("PORTAL_DB_PATH", "portal.db")
 
 
-def get_db_connection(db_path: str = DB_PATH) -> sqlite3.Connection:
-    conn = sqlite3.connect(db_path)
+def get_db_connection(db_path: Optional[str] = None) -> sqlite3.Connection:
+    path = db_path if db_path is not None else get_db_path()
+    conn = sqlite3.connect(path)
     conn.row_factory = sqlite3.Row
     return conn
 
 
-def init_db(db_path: str = DB_PATH) -> None:
+def init_db(db_path: Optional[str] = None) -> None:
     conn = get_db_connection(db_path)
     with conn:
         conn.execute("""
@@ -39,7 +42,7 @@ def init_db(db_path: str = DB_PATH) -> None:
     conn.close()
 
 
-def save_skill_progress(skill_id: str, state: str, mastery_score: float, completed_activities: List[str], db_path: str = DB_PATH) -> None:
+def save_skill_progress(skill_id: str, state: str, mastery_score: float, completed_activities: List[str], db_path: Optional[str] = None) -> None:
     conn = get_db_connection(db_path)
     activities_json = json.dumps(completed_activities)
     with conn:
@@ -55,7 +58,8 @@ def save_skill_progress(skill_id: str, state: str, mastery_score: float, complet
     conn.close()
 
 
-def get_all_skill_progress(db_path: str = DB_PATH) -> Dict[str, Dict[str, Any]]:
+def get_all_skill_progress(db_path: Optional[str] = None) -> Dict[str, Dict[str, Any]]:
+    init_db(db_path)
     conn = get_db_connection(db_path)
     cursor = conn.cursor()
     cursor.execute("SELECT skill_id, state, mastery_score, completed_activities FROM skill_progress")
@@ -72,7 +76,8 @@ def get_all_skill_progress(db_path: str = DB_PATH) -> Dict[str, Dict[str, Any]]:
     return result
 
 
-def record_evidence(skill_id: str, activity_id: str, is_correct: bool, given_response: str, feedback: str, db_path: str = DB_PATH) -> None:
+def record_evidence(skill_id: str, activity_id: str, is_correct: bool, given_response: str, feedback: str, db_path: Optional[str] = None) -> None:
+    init_db(db_path)
     conn = get_db_connection(db_path)
     with conn:
         conn.execute("""
@@ -82,7 +87,8 @@ def record_evidence(skill_id: str, activity_id: str, is_correct: bool, given_res
     conn.close()
 
 
-def reset_learner_db(db_path: str = DB_PATH) -> None:
+def reset_learner_db(db_path: Optional[str] = None) -> None:
+    init_db(db_path)
     conn = get_db_connection(db_path)
     with conn:
         conn.execute("DELETE FROM skill_progress")
