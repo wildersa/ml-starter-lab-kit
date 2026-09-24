@@ -1,90 +1,189 @@
 # Learning Portal
 
-This folder defines the product, pedagogy, content model, and implementation boundaries for a future interactive learning experience inside the `ml-starter-lab-kit` ecosystem.
+This folder contains the product, pedagogy, platform boundaries, active design work, and implementation planning for the Learning Portal inside the ml-starter-lab-kit ecosystem.
 
-The Learning Portal is intentionally documented as a separate surface. The current generator, generated project structure, labs, and existing workspace should not be refactored merely to fit this concept.
+The current starter generator, generated project structure, labs, and existing Streamlit workspace remain separate. The Portal may reuse capabilities and data, but it is not a refactor of the current workspace.
 
-## Product idea
+## Start here
 
-The project should support two complementary experiences:
+For current work, read these documents first:
+
+1. [../../STATUS.md](../../STATUS.md) — project-level status and active fronts.
+2. [11-portal-blueprint.md](11-portal-blueprint.md) — canonical working blueprint for the learner-facing Portal.
+3. [12-portal-work-tracker.md](12-portal-work-tracker.md) — current Portal design stage and bounded work packages.
+4. [10-platform-architecture.md](10-platform-architecture.md) — platform ownership and technical direction.
+5. [13-access-and-runtime-boundaries.md](13-access-and-runtime-boundaries.md) — hard Portal/Lab Runtime and access constraints.
+6. [15-implementation-plan.md](15-implementation-plan.md) — implementation sequence once the design gates permit implementation.
+
+For the current focused proving content:
+
+- [14-autonomous-agent-rl-track.md](14-autonomous-agent-rl-track.md) — RL specialization aimed at autonomous-agent reasoning, from Bellman/Q-Learning through DQN, POMDP, planning and hierarchy.
+
+## Authority map
+
+The numbered files are not intended to be read as one long linear specification. Use them by concern.
+
+### Product and pedagogy
+
+- [01-product-vision.md](01-product-vision.md) — product purpose, boundaries and long-term learner experience.
+- [02-learning-model.md](02-learning-model.md) — standard learning loop, mastery, retrieval and transfer.
+- [09-learning-science-foundations.md](09-learning-science-foundations.md) — adopted learning-science foundation and methodology rules.
+
+When these overlap, 09 defines the adopted methodology, 02 applies it operationally, and 01 remains the product-level framing.
+
+### Content and progression
+
+- [03-skill-graph.md](03-skill-graph.md) — graph progression, prerequisites, unlocks and mastery states.
+- [04-curriculum.md](04-curriculum.md) — broad curriculum map and candidate teaching order.
+- [05-content-sources-and-licensing.md](05-content-sources-and-licensing.md) — source, citation and licensing rules.
+- [06-activities-and-assessment.md](06-activities-and-assessment.md) — activity/evaluation patterns.
+- [14-autonomous-agent-rl-track.md](14-autonomous-agent-rl-track.md) — detailed focused specialization used as the preferred proving track.
+
+The broad curriculum remains authoritative for the global ML graph. The RL track refines one region and must not turn RL into the root of the whole product.
+
+### Platform and runtime
+
+- [10-platform-architecture.md](10-platform-architecture.md) — Portal/control-plane and Lab Runtime/execution-plane architecture.
+- [13-access-and-runtime-boundaries.md](13-access-and-runtime-boundaries.md) — adopted hard constraints for execution, project access, roles and topology.
+- [08-content-and-runtime-boundaries.md](08-content-and-runtime-boundaries.md) — supporting separation of content, learning engine, evaluator and existing project capabilities.
+
+For new technical decisions, prefer 10 and 13 as the active authorities. Keep 08 as supporting background unless it is explicitly promoted.
+
+### Learner experience and active design
+
+- [07-portal-experience.md](07-portal-experience.md) — earlier learner-surface framing and supporting product context.
+- [11-portal-blueprint.md](11-portal-blueprint.md) — canonical active design blueprint.
+- [12-portal-work-tracker.md](12-portal-work-tracker.md) — canonical operational tracker for Portal design rounds.
+
+When 07 and 11 overlap, 11 is the active design authority.
+
+### Implementation planning
+
+- [15-implementation-plan.md](15-implementation-plan.md) — first implementation path, vertical slices, gates, test strategy and ownership targets.
+
+This plan does not bypass the staged design process in 12. It gives the team a concrete implementation target so current design decisions can be tested against a real workload.
+
+## Product model
+
+The project supports two complementary experiences:
 
 1. **Starter / experiment mode** — generate a clean ML project and work normally.
-2. **Learning mode** — learn concepts through an interactive portal that combines theory, notes, visualizations, hand-worked exercises, guided practice, library-based implementation, review, and mastery tracking.
+2. **Learning mode** — learn concepts through an interactive Portal with theory, worked examples, guided/manual practice, experiments, library use, review and mastery tracking.
 
-The Learning Portal should reuse project data and services where useful, but it should not depend on the existing UI structure.
+The Portal is a dedicated web application, not Jupyter or Streamlit as the product shell.
 
-## Adopted learning methodology
+## Adopted learning model
 
-The Learning Portal follows an explicit learning-science foundation rather than treating its educational model as an open product hypothesis.
+The foundation is:
 
-The adopted foundation is:
+- Mastery Learning;
+- Cognitive Load management + Worked Examples + Scaffolding;
+- Retrieval Practice;
+- Experiential Learning;
+- Competency / Skill Graph progression.
 
-- **Mastery Learning** for progression based on demonstrated competence;
-- **Cognitive Load management + Worked Examples + Scaffolding** for how new concepts are introduced and guidance is removed;
-- **Retrieval Practice** for review and retained understanding;
-- **Experiential Learning** for prediction, execution, observation, and explanation;
-- **Competency / Skill Graph** for prerequisite-aware progression and multiple learning paths.
+Gamification may sit on top of the model, but XP never substitutes for evidence of competence.
 
-Gamification is a motivation and presentation layer over this foundation. XP, badges, achievements, and graph expansion must not replace evidence of mastery.
+The default learning progression is:
 
-See [`09-learning-science-foundations.md`](09-learning-science-foundations.md) for the adopted rules and references.
+~~~text
+intuition
+→ theory
+→ visualization
+→ worked example
+→ guided/manual execution
+→ prediction
+→ experiment
+→ reduced scaffolding
+→ library abstraction
+→ realistic application
+→ mastery checkpoint
+→ later retrieval
+→ transfer
+~~~
 
-## Core pedagogical principle
+## Platform invariant
 
-> Important abstractions should not appear for the first time hidden behind a library call.
+The central ownership split is:
 
-Whenever a small manual execution exposes the mechanism behind a concept, the learner should perform that execution before using the library abstraction.
+~~~text
+PORTAL / CONTROL PLANE
+- content
+- Skill Graph
+- learner state
+- attempts
+- evidence
+- mastery
+- review
+- notes
+- runtime/session requests
+- result presentation
 
-The standard learning loop is:
+          │ scoped capability/session
+          ▼
 
-**intuition → theory → visualization → manual execution → guided experiment → library abstraction → application → review → mastery checkpoint**
+LAB RUNTIME / EXECUTION PLANE
+- Python execution
+- simulations
+- ML/data dependencies
+- project/dataset access when authorized
+- structured execution outputs
+- artifacts
+- timeout/cancellation
+- isolation/cleanup
+~~~
 
-Manual work is not an end in itself. If a calculation becomes repetitive arithmetic without adding understanding, the portal should prefer visualization, simulation, or an interactive tool.
+This split applies even when both run on the same local machine.
 
-## Current platform direction
+Arbitrary learner code never executes inside the Portal/API process. Runtime results are evidence inputs; the Runtime does not own progression or mastery.
 
-The Learning Portal is a dedicated web application, not a Jupyter notebook or Streamlit application used as the product shell.
+## Focused proving track
 
-Current direction:
+The first detailed specialization is Reinforcement Learning for autonomous agents.
 
-- React + TypeScript for the learner-facing portal;
-- FastAPI + Python for APIs and learning-engine integration;
-- a separate Lab Runtime/execution plane for code/data/ML activities;
-- an Evaluator that checks results and pedagogical invariants;
-- Evidence as the bridge between activity execution and mastery;
-- SQLite initially for local learner state;
-- notebook-like Python cells only where code is the appropriate activity surface.
+It is useful because one coherent track can exercise:
 
-The Portal/control plane and Lab Runtime/execution plane remain separate responsibilities even in fully local mode. SaaS and hybrid deployments change topology, not this ownership boundary.
+- manual numeric activities;
+- Skill Graph prerequisites;
+- deterministic checking;
+- simulations;
+- multi-seed experiments;
+- Python execution;
+- PyTorch;
+- evidence/mastery/unlocks;
+- review;
+- later partial observability, planning and hierarchy.
 
-The platform must also preserve separation of duties between learner, content-authoring, and platform-administration responsibilities. Detailed authorization contracts are deferred, but server-side authorization and ownership-aware state are architectural requirements.
+The first implementation proof is intentionally smaller than the full specialization:
 
-The central technical flow is:
+~~~text
+reward / return
+→ discounting
+→ MDP
+→ V / Q
+→ Bellman
+→ TD
+→ Q-Learning
+→ function approximation
+→ DQN
+~~~
 
-**Skill → Activity → Execution → Evaluation → Evidence → Mastery → Unlock**
+Later branches extend the same platform to POMDP, delayed credit, model-based planning, options/SMDP and Behavior Trees.
 
-See [`10-platform-architecture.md`](10-platform-architecture.md) for the current technical direction and [`13-access-and-runtime-boundaries.md`](13-access-and-runtime-boundaries.md) for the adopted access/runtime constraints.
+## Documentation maintenance rules
 
-## Documentation surfaces
+To keep this folder from becoming another specification dump:
 
-- [`01-product-vision.md`](01-product-vision.md) — macro objective, boundaries, and user experience.
-- [`02-learning-model.md`](02-learning-model.md) — pedagogical loop and mastery model.
-- [`03-skill-graph.md`](03-skill-graph.md) — graph-based progression, prerequisites, unlocks, and gamification.
-- [`04-curriculum.md`](04-curriculum.md) — proposed teaching order and learning tracks.
-- [`05-content-sources-and-licensing.md`](05-content-sources-and-licensing.md) — theory sources, citation rules, and copyright policy.
-- [`06-activities-and-assessment.md`](06-activities-and-assessment.md) — exercises, deterministic checking, open solutions, review, and scoring.
-- [`07-portal-experience.md`](07-portal-experience.md) — portal surfaces, notes, progress, review, and project integration.
-- [`08-content-and-runtime-boundaries.md`](08-content-and-runtime-boundaries.md) — separation between content, learning engine, portal UI, execution runner, evaluator, and existing project runtime.
-- [`09-learning-science-foundations.md`](09-learning-science-foundations.md) — adopted learning-science foundations, gamification boundary, and methodology rules.
-- [`10-platform-architecture.md`](10-platform-architecture.md) — adopted web platform direction, control-plane/execution-plane split, evaluator, evidence model, persistence, and technical proof strategy.
-- [`11-portal-blueprint.md`](11-portal-blueprint.md) — working blueprint for Front 2: portal surfaces, shared shell, learner flows, interaction primitives, open design questions, and staged refinement before implementation.
-- [`12-portal-work-tracker.md`](12-portal-work-tracker.md) — operational stage/work-package tracker for incremental Jules/agent rounds and stage checkpoints.
-- [`13-access-and-runtime-boundaries.md`](13-access-and-runtime-boundaries.md) — adopted access-role, separation-of-duties, Portal/control-plane, Lab Runtime/execution-plane, and local/SaaS/hybrid boundary rules.
+1. Add a decision to its owning authority instead of copying it into several files.
+2. Use this README as the navigation and authority map.
+3. Do not rename/move numbered documents merely for aesthetics; avoid link churn unless ownership really changes.
+4. Mark older framing documents as supporting when a newer authority supersedes them.
+5. Keep current operational state in STATUS/work trackers, not in every design document.
+6. Keep focused specialization detail out of the global curriculum except for links and cross-track prerequisites.
+7. Do not turn every document section into an implementation issue.
 
-## Status
+## Current status
 
-These documents are product and pedagogical design material, not an implementation contract yet.
+The Learning Portal itself is not implemented yet.
 
-The learning methodology, platform direction, and access/runtime separation are adopted design decisions. Detailed protocols, schemas, thresholds, UI mechanics, sandbox implementation, and individual curriculum nodes may still evolve within those principles.
-
-Before opening implementation issues, convert this concept into bounded ownership slices. Do not mechanically turn each section or curriculum node into a GitHub issue.
+Existing starter/lab capabilities remain operational, while the Portal is still in staged product/platform design. The focused RL track and implementation plan now provide a concrete target for those design stages without changing the requirement that Portal and Lab Runtime remain separate.
