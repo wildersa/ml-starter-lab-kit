@@ -34,3 +34,6 @@ dist/
 Thumbs.db
 .vscode/
 .idea/
+
+# SQLite databases
+*.db
