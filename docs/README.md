@@ -1,21 +1,30 @@
 # Documentation Index
 
-Use this page as the main map for the learning notes.
+Use this page as the main map for the project documentation.
 
-The documentation is intentionally short. It should help you start a project, not replace full books or framework docs.
+## Learning Portal
+
+The new interactive Learning Portal has its own design and implementation documentation:
+
+- [Learning Portal documentation map](learning-portal/README.md)
+- [Current project status](../STATUS.md)
+- [Autonomous-agent RL learning track](learning-portal/14-autonomous-agent-rl-track.md)
+- [Learning Portal implementation plan](learning-portal/15-implementation-plan.md)
+
+The Portal is a separate learner-facing product surface. Existing starter-generator and Streamlit lab documentation below remains valid for the current toolkit.
 
 ## Beginner Learning Journey
 
 Follow this path to understand how to go from a raw dataset to a monitored model.
 
-1.  **Project Setup**: [Starter and generated project layout](usage/project-layout.md)
-2.  **Dataset Understanding**: [Exploratory Data Analysis (EDA)](workflows/eda.md)
-3.  **Establish a Baseline**: [Baselines and Evaluation](concepts/evaluation-and-monitoring.md#2-the-baseline-your-performance-floor)
-4.  **Choose Your Metrics**: [Metrics Overview](metrics/README.md)
-5.  **Training & Evaluation**: [Evaluation vs Monitoring](concepts/evaluation-and-monitoring.md#1-evaluation-vs-monitoring)
-6.  **Experiment Tracking**: [Experiment Visualization](experiment-visualization.md)
-7.  **Production & Monitoring**: [Drift and Retraining](concepts/evaluation-and-monitoring.md#6-drift-and-retraining)
-8.  **Avoid Pitfalls**: [Common Mistakes](common-mistakes/README.md)
+1. **Project Setup**: [Starter and generated project layout](usage/project-layout.md)
+2. **Dataset Understanding**: [Exploratory Data Analysis (EDA)](workflows/eda.md)
+3. **Establish a Baseline**: [Baselines and Evaluation](concepts/evaluation-and-monitoring.md#2-the-baseline-your-performance-floor)
+4. **Choose Your Metrics**: [Metrics Overview](metrics/README.md)
+5. **Training & Evaluation**: [Evaluation vs Monitoring](concepts/evaluation-and-monitoring.md#1-evaluation-vs-monitoring)
+6. **Experiment Tracking**: [Experiment Visualization](experiment-visualization.md)
+7. **Production & Monitoring**: [Drift and Retraining](concepts/evaluation-and-monitoring.md#6-drift-and-retraining)
+8. **Avoid Pitfalls**: [Common Mistakes](common-mistakes/README.md)
 
 ## Specialized Educational Paths
 
@@ -28,6 +37,7 @@ Beyond standard supervised learning, you can explore:
 
 ## Navigation by Topic
 
+- [Learning Portal](learning-portal/README.md): Skill Graph, mastery, interactive learning, Portal/Runtime architecture and implementation planning.
 - [Learning paths](learning-paths.md): Specific paths for tabular, vision, and time-series.
 - [ML architectures](architectures/README.md): How the pieces fit together.
 - [Workflows](workflows/README.md): Step-by-step guides for training and fine-tuning.
@@ -41,6 +51,7 @@ Beyond standard supervised learning, you can explore:
 
 | Question | Start here |
 |---|---|
+| What is the new interactive learning product? | [Learning Portal](learning-portal/README.md) |
 | How should I organize the project? | [Architectures](architectures/README.md) |
 | What steps happen before training? | [Workflows](workflows/README.md) |
 | Which model family should I use? | [Model overview](models/README.md) |
