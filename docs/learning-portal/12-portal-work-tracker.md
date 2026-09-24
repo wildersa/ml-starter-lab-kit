@@ -31,6 +31,13 @@ Before every round, read at least:
 6. [`13-access-and-runtime-boundaries.md`](13-access-and-runtime-boundaries.md) — adopted access-role and Portal/Lab Runtime separation constraints;
 7. [`../../STATUS.md`](../../STATUS.md) — project-level current status and cross-front dependencies.
 
+When the selected package needs a concrete learning workload, use:
+
+- [`14-autonomous-agent-rl-track.md`](14-autonomous-agent-rl-track.md) — preferred focused content scenario;
+- [`15-implementation-plan.md`](15-implementation-plan.md) — implementation target and vertical-slice gates.
+
+These two documents are **reference constraints, not permission to skip the active Portal stage**. They should make abstract surface decisions concrete without freezing later API/runtime details early.
+
 When a round touches project transfer or generated-project behavior, also read:
 
 - [`08-content-and-runtime-boundaries.md`](08-content-and-runtime-boundaries.md).
