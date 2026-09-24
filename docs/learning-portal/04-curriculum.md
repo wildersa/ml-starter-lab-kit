@@ -137,6 +137,8 @@ The objective is conceptual readiness, not a general mathematics curriculum.
 
 The initial RL line should make the decision-process model explicit before algorithms.
 
+For the focused autonomous-agent specialization and the preferred first implementation workload, see [14-autonomous-agent-rl-track.md](14-autonomous-agent-rl-track.md). That document refines this region through DQN, partial observability, delayed credit, planning, hierarchical RL/options and Behavior Trees. It does **not** replace this broad curriculum map or make RL the root of the global Skill Graph.
+
 ## RL foundations
 
 1. agent
